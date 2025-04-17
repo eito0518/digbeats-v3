@@ -1,0 +1,82 @@
+<mxfile host="65bd71144e">
+    <diagram id="8-NhO92qU92r9aKNCqwj" name="ページ1">
+        <mxGraphModel dx="702" dy="523" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="3" value="Digbeats-v3" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;horizontal=1;verticalAlign=top;" vertex="1" parent="1">
+                    <mxGeometry x="160" y="80" width="440" height="530" as="geometry"/>
+                </mxCell>
+                <mxCell id="2" value="ログインする" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="200" y="120" width="140" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="17" style="edgeStyle=none;html=1;entryX=0;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="4" target="2">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="220" y="170" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="18" style="edgeStyle=none;html=1;" edge="1" parent="1" source="4" target="7">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="90" y="324" as="sourcePoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="19" style="edgeStyle=none;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="4" target="8">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="20" style="edgeStyle=none;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="4" target="9">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="23" style="edgeStyle=none;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="4" target="10">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="26" style="edgeStyle=none;html=1;" edge="1" parent="1" source="4" target="25">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="ユーザー" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" vertex="1" parent="1">
+                    <mxGeometry x="50" y="310" width="30" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="7" value="&lt;div&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;アーティストを&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;検索する&lt;/span&gt;&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="200" y="220" width="140" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="8" value="アーティストを&lt;div&gt;フォローする&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="200" y="320" width="140" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="9" value="レコメンドを&lt;div&gt;取得する&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="200" y="420" width="140" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="10" value="レコメンド履歴を&lt;div&gt;見る&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="200" y="515" width="140" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="14" value="Extends" style="edgeStyle=none;html=1;" edge="1" parent="1" source="11" target="9">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="11" value="曲を&lt;div&gt;いいねする&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="430" y="480" width="140" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="15" value="Extends" style="edgeStyle=none;html=1;" edge="1" parent="1" source="12" target="9">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="12" value="プレビューを&lt;div&gt;再生する&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="430" y="380" width="140" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="25" value="&lt;div&gt;フォロー中の&lt;/div&gt;&lt;div&gt;アーティストを&lt;/div&gt;&lt;div&gt;確認する&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="414" y="240" width="140" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="28" value="Extends" style="edgeStyle=none;html=1;" edge="1" parent="1" source="29" target="2">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="356" y="164" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="29" value="セッションが切れたら&lt;div&gt;再ログイン&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="450" y="120" width="140" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="30" value="Extends" style="edgeStyle=none;html=1;" edge="1" parent="1" source="11" target="10">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="444" y="436" as="sourcePoint"/>
+                        <mxPoint x="346" y="454" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
