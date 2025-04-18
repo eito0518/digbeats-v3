@@ -20,7 +20,14 @@
 
 - 説明：codeVerifier と code を送信する（Cookie に sessionId が返る）
 - 認証：Cookie(sessionId)
-- レスポンス：
+- リクエスト：
+
+```json
+{
+    codeVerifier: ABCDEF,
+    code: ABCDEF,
+}
+```
 
 ### GET /api/users/following
 
@@ -29,12 +36,15 @@
 - レスポンス：
 
 ```json
-{
+[
+  {
     name: travis sccott,
     avatar_url: https:~,
     public_favorites_count: 123,
-    permalink_ural: https:~,
-}
+    permalink_url: https:~,
+  },
+  ...
+]
 ```
 
 ### GET /api/artists/?name=travis+scott
@@ -44,12 +54,15 @@
 - レスポンス：
 
 ```json
-{
+[
+  {
     name: travis sccott,
     avatar_url: https:~,
     public_favorites_count: 123,
     permalink_ural: https:~,
-}
+  },
+  ...
+]
 ```
 
 ### PUT /api/users/following/:artists_id
