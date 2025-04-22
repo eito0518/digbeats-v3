@@ -11,11 +11,15 @@ export class AuthorizeUserUseCase {
   async run(code: string, codeVerifier: string) {
     // アクセストークンを取得
     const token = await this._soundCloudApi.GetToken(code, codeVerifier);
+
+    // SoundCloud の /me エンドポイントでユーザー情報取得
+
+    // DB にてユーザー存在チェック
+
+    // 存在しなければ新規登録
+
     // セッションIDを発行
     const sessionId = uuidv4();
-    // はじめてのログインだったらDBにuserIdを作成
-
-    // ２回目以降のログインだったら,userIdを探す
 
     // redisに保存
     const sessionData = {
@@ -28,6 +32,6 @@ export class AuthorizeUserUseCase {
   
     await this._sessionRepository.save(sessionId, sessionData);
 
-    // セッションIDをCookieに保存
+    // セッション ID を Cookie にセットしフロントへ返却
   }
 }
