@@ -9,8 +9,8 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import https from "https";
 import fs from "fs";
-import { asyncHandler } from "./asyncHandler";
-import { errorHandler } from "./errorHandler";
+import { asyncHandler } from "./middleware/asyncHandler";
+import { errorHandler } from "./middleware/errorHandler";
 
 dotenv.config({ path: ".env.local" });
 dotenv.config();
