@@ -1,16 +1,14 @@
+import {
+  TokenRepository,
+  GetTokenResponse,
+} from "../../domain/interfaces/tokenRepository";
 import url from "url";
 import { config } from "../../config/config";
 import axios from "axios";
 
-interface GetTokenResponse {
-  accessToken: string;
-  refreshToken: string;
-  expiresIn: string;
-}
-
-export class SoundCloudApi {
+export class TokenSoundCloudRepository implements TokenRepository {
   // アクセストークンを取得
-  async GetToken(
+  async getToken(
     code: string,
     codeVerifier: string
   ): Promise<GetTokenResponse> {
