@@ -14,6 +14,7 @@ export const config = {
   clientId: getEnv("CLIENT_ID"),
   clientSecret: getEnv("CLIENT_SECRET"),
   redirectUri: getEnv("REDIRECT_URI"),
+  soundcloudApiBaseUrl: getEnv("SOUNDCLOUD_API_BASE_URL"),
   // Session
   sessionTTL: 60 * 60 * 24 * 2, // ２日間（秒）
 };

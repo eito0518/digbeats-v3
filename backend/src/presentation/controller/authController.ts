@@ -1,13 +1,13 @@
 import { AuthorizeUserUseCase } from "../../application/usecase/authorizeUserUseCase";
-import { SoundCloudApi } from "../../infrastructure/api/soundCloudApi";
-import { RedisSessionRepository } from "../../infrastructure/repositories/redisSessionRepository";
+import { TokenSoundCloudRepository } from "../../infrastructure/api/tokenSoundCloudRepository";
+import { UserSoundCloudRepository } from "../../infrastructure/api/userSoundCloudRepository";
+import { SessionRedisRepository } from "../../infrastructure/redis/sessionRedisRepository";
 
 // 依存注入
-const soundCloudApi = new SoundCloudApi();
-const redisSessionRepository = new RedisSessionRepository();
 const authorizeUserUseCase = new AuthorizeUserUseCase(
-  soundCloudApi,
-  redisSessionRepository
+  new TokenSoundCloudRepository(),
+  new UserSoundCloudRepository(),
+  new SessionRedisRepository()
 );
 
 export const authController = async (req, res) => {

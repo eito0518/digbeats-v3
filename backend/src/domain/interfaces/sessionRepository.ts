@@ -1,5 +1,5 @@
 // session にどんなデータを保存するか定義
-export interface sessionData {
+export interface SessionData {
   userId: number;
   accessToken: string;
   refreshToken: string;
@@ -9,5 +9,5 @@ export interface sessionData {
 
 //　実装クラスでどんなメソッドを実装するか定義
 export interface SessionRepository {
-  save(sessionId: string, sessionData: sessionData): Promise<void>;
+  save(sessionId: string, sessionData: SessionData): Promise<void>;
 }
