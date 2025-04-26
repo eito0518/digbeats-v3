@@ -15,9 +15,9 @@ export class TokenSoundCloudRepository implements TokenRepository {
     const tokenUrl = "https://secure.soundcloud.com/oauth/token";
     const params = new url.URLSearchParams();
     params.append("grant_type", "authorization_code");
-    params.append("client_id", config.clientId);
-    params.append("client_secret", config.clientSecret);
-    params.append("redirect_uri", config.redirectUri);
+    params.append("client_id", config.CLIENT_ID);
+    params.append("client_secret", config.CLIENT_SECRET);
+    params.append("redirect_uri", config.REDIRECT_URI);
     params.append("code_verifier", codeVerifier);
     params.append("code", code);
 

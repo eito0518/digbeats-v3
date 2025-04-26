@@ -14,7 +14,7 @@ export class SessionRedisRepository implements SessionRepository {
       `session: ${sessionId}`,
       JSON.stringify(sessionData),
       "EX",
-      config.sessionTTL
+      config.SESSION_TTL
     );
   }
 }
