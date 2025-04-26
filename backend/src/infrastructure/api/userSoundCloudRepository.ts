@@ -8,7 +8,7 @@ import axios from "axios";
 export class UserSoundCloudRepository implements UserApiRepository {
   // ユーザー情報を取得
   async getUser(accessToken: string): Promise<GetUserResponse> {
-    const endPoint = `${config.soundcloudApiBaseUrl}/me`;
+    const endPoint = `${config.API_BASE_URL}/me`;
     const headers = {
       accept: "application/json; charset=utf-8",
       "Content-Type": "application/json; charset=utf-8",

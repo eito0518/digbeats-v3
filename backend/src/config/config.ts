@@ -10,11 +10,20 @@ function getEnv(key: string): string {
 }
 
 export const config = {
+  // MySQL
+  DB_HOST: getEnv("MYSQL_HOST"),
+  DB_USER: getEnv("MYSQL_USER"),
+  DB_PASSWORD: getEnv("MYSQL_PASSWORD"),
+  DB_NAME: getEnv("MYSQL_NAME"),
+  DB_PORT: Number(getEnv("MYSQL_PORT")),
+  // Redis
+  REDIS_HOST: getEnv("REDIS_HOST"),
+  REDIS_PORT: Number(getEnv("REDIS_PORT")),
   // SoundCloud
-  clientId: getEnv("CLIENT_ID"),
-  clientSecret: getEnv("CLIENT_SECRET"),
-  redirectUri: getEnv("REDIRECT_URI"),
-  soundcloudApiBaseUrl: getEnv("SOUNDCLOUD_API_BASE_URL"),
+  CLIENT_ID: getEnv("CLIENT_ID"),
+  CLIENT_SECRET: getEnv("CLIENT_SECRET"),
+  REDIRECT_URI: getEnv("REDIRECT_URI"),
+  API_BASE_URL: getEnv("SOUNDCLOUD_API_BASE_URL"),
   // Session
-  sessionTTL: 60 * 60 * 24 * 2, // ２日間（秒）
+  SESSION_TTL: 60 * 60 * 24 * 2, // ２日間（秒）
 };
