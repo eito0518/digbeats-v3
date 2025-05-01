@@ -1,13 +1,11 @@
-import {
-  UserApiRepository,
-  GetUserResponse,
-} from "../../domain/interfaces/userApiRepository";
+import { UserApiRepository } from "../../domain/interfaces/userApiRepository";
+import { UserInfo } from "../../domain/valueObjects/userInfo";
 import { config } from "../../config/config";
 import axios from "axios";
 
 export class UserSoundCloudRepository implements UserApiRepository {
   // ユーザー情報を取得
-  async getUser(accessToken: string): Promise<GetUserResponse> {
+  async fetchUser(accessToken: string): Promise<UserInfo> {
     const endPoint = `${config.API_BASE_URL}/me`;
     const headers = {
       accept: "application/json; charset=utf-8",
@@ -18,16 +16,16 @@ export class UserSoundCloudRepository implements UserApiRepository {
     try {
       const response = await axios.get(endPoint, { headers: headers });
 
-      return {
-        name: response.data.username,
-        soundCloudUserId: response.data.id,
-        avatarUrl: response.data.avatar_url,
-        publicFavoritesCount: response.data.public_favorites_count,
-        followingsCount: response.data.followings_count,
-      };
+      return new UserInfo(
+        response.data.id,
+        response.data.username,
+        response.data.avatar_url,
+        response.data.public_favorites_count,
+        response.data.followings_count
+      );
     } catch (error) {
-      console.error("getUser request failed:", error);
-      throw new Error("getUser request failed");
+      console.error("fetchUser request failed:", error);
+      throw new Error("FetchUser request failed");
     }
   }
 }
