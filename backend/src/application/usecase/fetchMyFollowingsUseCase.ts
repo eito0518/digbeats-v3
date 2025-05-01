@@ -1,4 +1,4 @@
-import { TokenApplicationService } from "../applicationSercice/tokenApplicationService";
+import { TokenApplicationService } from "../applicationSercices/tokenApplicationService";
 
 export class FetchMyFollowingsUseCase {
   constructor(

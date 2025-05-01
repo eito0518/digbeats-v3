@@ -1,16 +1,12 @@
-import {
-  UserDbRepository,
-  FindUserByExternalIdResponse,
-  CreateUserResponse,
-} from "../../domain/interfaces/userDbRepository";
+import { UserDbRepository } from "../../domain/interfaces/userDbRepository";
 import { MysqlClient } from "./mysqlClient";
 import mysql from "mysql2/promise";
 
 export class UserMysqlRepository implements UserDbRepository {
   // ユーザー情報を取得
-  async findUserByExternalId(
-    soundCloudUserId: string
-  ): Promise<FindUserByExternalIdResponse | undefined> {
+  async findUserIdByExternalId(
+    soundCloudUserId: number
+  ): Promise<number | undefined> {
     try {
       const [userSelectResults] = await MysqlClient.execute<
         mysql.RowDataPacket[]
@@ -18,15 +14,13 @@ export class UserMysqlRepository implements UserDbRepository {
         soundCloudUserId,
       ]);
 
-      // ユーザーが未登録であれば undefined を返す
+      // ユーザーが未登録ならば undefined を返す
       if (!userSelectResults) {
         return undefined;
       }
 
-      // ユーザーが登録済みであれば userId を返す
-      return {
-        userId: userSelectResults[0].id,
-      };
+      // ユーザーが登録済みならば userId を返す
+      return userSelectResults[0].id;
     } catch (error) {
       console.error("FindUserByExternalId request failed:", error);
       throw new Error("findUserByExternalId request failed");
@@ -34,7 +28,7 @@ export class UserMysqlRepository implements UserDbRepository {
   }
 
   // ユーザーを新規登録
-  async createUser(soundCloudUserId: string): Promise<CreateUserResponse> {
+  async createUser(soundCloudUserId: number): Promise<number> {
     try {
       const [userInsertResults] =
         await MysqlClient.execute<mysql.ResultSetHeader>(
@@ -42,9 +36,8 @@ export class UserMysqlRepository implements UserDbRepository {
           [soundCloudUserId]
         );
 
-      return {
-        userId: userInsertResults.insertId,
-      };
+      // 登録した userId　を返す
+      return userInsertResults.insertId;
     } catch (error) {
       console.error("CreateUser request failed:", error);
       throw new Error("createUser request failed");
