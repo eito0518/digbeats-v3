@@ -1,11 +1,5 @@
-export interface GetUserResponse {
-  name: string;
-  soundCloudUserId: string;
-  avatarUrl: string;
-  publicFavoritesCount: number;
-  followingsCount: number;
-}
+import { UserInfo } from "../valueObjects/userInfo";
 
 export interface UserApiRepository {
-  getUser(accessToken: string): Promise<GetUserResponse>;
+  fetchUser(accessToken: string): Promise<UserInfo>;
 }

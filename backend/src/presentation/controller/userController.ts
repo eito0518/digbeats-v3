@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { FetchMyFollowingsUseCase } from "../../application/usecase/fetchMyFollowingsUseCase";
-import { TokenApplicationService } from "../../application/applicationSercice/tokenApplicationService";
+import { TokenApplicationService } from "../../application/applicationSercices/tokenApplicationService";
 import { SessionRedisRepository } from "../../infrastructure/redis/sessionRedisRepository";
 import { TokenSoundCloudRepository } from "../../infrastructure/api/tokenSoundCloudRepository";
 
