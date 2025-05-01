@@ -1,9 +1,6 @@
-export interface GetTokenResponse {
-  accessToken: string;
-  refreshToken: string;
-  expiresIn: string;
-}
+import { Token } from "../valueObjects/token";
 
 export interface TokenRepository {
-  getToken(code: string, codeVerifier: string): Promise<GetTokenResponse>;
+  getToken(code: string, codeVerifier: string): Promise<Token>;
+  refresh(refreshToken: string): Promise<Token>;
 }
