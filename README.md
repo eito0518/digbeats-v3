@@ -48,7 +48,7 @@ API ポリシー変更による Spotify API の一部エンドポイントが利
 - 3. トークンを用いて、SoundCloud API エンドポイントから「フォロー中アーティスト取得」
 - 4. SoundCloud API エンドポイントから「フォロー中アーティストの like 曲を取得」
 
----
+<br>
 
 ### ☑️ 設計ドキュメントの作成 と Docker 開発環境構築（✅ 実装済み）
 
@@ -64,7 +64,7 @@ API ポリシー変更による Spotify API の一部エンドポイントが利
 
 [`reset.ddl`](db/reset.ddl)
 
----
+<br>
 
 ### ☑️ レイヤードアーキテクチャをベースにしたアプリ本体の実装
 
@@ -80,6 +80,7 @@ API ポリシー変更による Spotify API の一部エンドポイントが利
 
 - `code` と `code_verifier` は漏洩リスクを最小限にするため、フロントエンドが短時間だけ保持
 
+<br>
 
 #### 🔘 トークン取得 と セッション生成（✅ 実装済み）
 
@@ -98,6 +99,8 @@ API ポリシー変更による Spotify API の一部エンドポイントが利
 - Presentation 層が Infrastructure 層 に依存しないよう Interface を導入
 - 外部 API 由来と DB 由来の ユーザー情報を区別し、 ユーザー情報用の Interface を２つ用意、それぞれデータを取得した後、使いやすい `User` Entity の形で正規化して保持
 - `Session` と `Token` ValueObject を導入して、保存されるデータ型を定義
+
+<br>
 
 #### 🔘 トークン・セッション管理（✅ 実装済み）
 
