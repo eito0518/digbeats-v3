@@ -48,6 +48,8 @@ API ポリシー変更による Spotify API の一部エンドポイントが利
 - 3. トークンを用いて、SoundCloud API エンドポイントから「フォロー中アーティスト取得」
 - 4. SoundCloud API エンドポイントから「フォロー中アーティストの like 曲を取得」
 
+---
+
 ### 設計ドキュメントの作成 と Docker 開発環境構築（✅ 実装済み）
 
 ユースケース図・概念図・ER 図に基づき設計を整理し、`openapi.yaml` や `auth-flow.md` で詳細設計も記述しました。
@@ -62,9 +64,11 @@ API ポリシー変更による Spotify API の一部エンドポイントが利
 
 [`reset.ddl`](db/reset.ddl)
 
+---
+
 ### レイヤードアーキテクチャをベースにしたアプリ本体の実装
 
-#### SoundCloud OAuth2.1 (PKCE) による 認可フロー（✅ 実装済み）
+#### - SoundCloud OAuth2.1 (PKCE) による 認可フロー（✅ 実装済み）
 
 [`login.tsx`](frontend/src/login.tsx)
 [`callback.tsx`](frontend/src/callback.tsx)
@@ -72,11 +76,11 @@ API ポリシー変更による Spotify API の一部エンドポイントが利
 - フロントエンドで `code_verifier`と`state` を生成し、`sessionStorage` に一時保存
 - 認可成功時に、取得した `code` と `code_verifier` をバックエンドに送信
 
-**工夫した点**
+< 工夫した点 >
 
 - `code` と `code_verifier` は漏洩リスクを最小限にするため、フロントエンドが短時間だけ保持
 
-####　 トークン取得 と セッション生成（✅ 実装済み）
+#### - トークン取得 と セッション生成（✅ 実装済み）
 
 [`authRouter.ts`](backend/src/presentation/router/authRouter.ts)
 
@@ -87,14 +91,14 @@ API ポリシー変更による Spotify API の一部エンドポイントが利
 - TTL を設定した上で、Redis に `{ access_token, accessTokenExpiresAt, refresh_token }` を保存
 - クライアントには Cookie 経由 で `sessionId` を返却
 
-**工夫した点**
+< 工夫した点 >
 
 - セッション ID を除き、トークンは一切フロントに渡さず、全てバックエンドで管理
 - Presentation 層が Infrastructure 層 に依存しないよう Interface を導入
 - 外部 API 由来と DB 由来の ユーザー情報を区別し、 ユーザー情報用の Interface を２つ用意、それぞれデータを取得した後、使いやすい `User` Entity の形で正規化して保持
 - `Session` と `Token` ValueObject を導入して、保存されるデータ型を定義
 
-#### トークン・セッション管理（✅ 実装済み）
+#### - トークン・セッション管理（✅ 実装済み）
 
 SoundCloud API と通信するにあたり、アクセストークンの有効期限チェックと、必要に応じたリフレッシュを ApplicationService に切り出しました。
 
@@ -103,8 +107,8 @@ SoundCloud API と通信するにあたり、アクセストークンの有効�
 - Cookie から `sessionId` を取得
 - Redis から `session` を復元し、期限を検証
 - `accessToken`　が期限切れの場合は `refreshToken` で更新
-
-**工夫した点**
+  ➤
+  < 工夫した点 >
 
 - トークン管理のロジック ApplicationService に切り出し、再利用できるようにした
 - `Token` ValueObject を導入して、返却されるデータ型を定義
