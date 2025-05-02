@@ -37,7 +37,7 @@ SoundCloud は、アーティストが「Like」した楽曲が公開されて�
 
 ## 実装計画 と 進捗 (2025/05/02 時点)
 
-### SoundCloud API 動作確認用デモの実装（✅ 実装済み）
+### ☑️ SoundCloud API 動作確認用デモの実装（✅ 実装済み）
 
 API ポリシー変更による Spotify API の一部エンドポイントが利用できなかった経験から、まずは API 検証用の最小構成を実装しました。
 
@@ -50,7 +50,7 @@ API ポリシー変更による Spotify API の一部エンドポイントが利
 
 ---
 
-### 設計ドキュメントの作成 と Docker 開発環境構築（✅ 実装済み）
+### ☑️ 設計ドキュメントの作成 と Docker 開発環境構築（✅ 実装済み）
 
 ユースケース図・概念図・ER 図に基づき設計を整理し、`openapi.yaml` や `auth-flow.md` で詳細設計も記述しました。
 
@@ -66,9 +66,9 @@ API ポリシー変更による Spotify API の一部エンドポイントが利
 
 ---
 
-### レイヤードアーキテクチャをベースにしたアプリ本体の実装
+### ☑️ レイヤードアーキテクチャをベースにしたアプリ本体の実装
 
-#### - SoundCloud OAuth2.1 (PKCE) による 認可フロー（✅ 実装済み）
+#### 🔘 SoundCloud OAuth2.1 (PKCE) による 認可フロー（✅ 実装済み）
 
 [`login.tsx`](frontend/src/login.tsx)
 [`callback.tsx`](frontend/src/callback.tsx)
@@ -80,7 +80,7 @@ API ポリシー変更による Spotify API の一部エンドポイントが利
 
 - `code` と `code_verifier` は漏洩リスクを最小限にするため、フロントエンドが短時間だけ保持
 
-#### - トークン取得 と セッション生成（✅ 実装済み）
+#### 🔘 トークン取得 と セッション生成（✅ 実装済み）
 
 [`authRouter.ts`](backend/src/presentation/router/authRouter.ts)
 
@@ -98,7 +98,7 @@ API ポリシー変更による Spotify API の一部エンドポイントが利
 - 外部 API 由来と DB 由来の ユーザー情報を区別し、 ユーザー情報用の Interface を２つ用意、それぞれデータを取得した後、使いやすい `User` Entity の形で正規化して保持
 - `Session` と `Token` ValueObject を導入して、保存されるデータ型を定義
 
-#### - トークン・セッション管理（✅ 実装済み）
+#### 🔘 トークン・セッション管理（✅ 実装済み）
 
 SoundCloud API と通信するにあたり、アクセストークンの有効期限チェックと、必要に応じたリフレッシュを ApplicationService に切り出しました。
 
