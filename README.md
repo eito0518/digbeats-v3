@@ -19,6 +19,8 @@
 また SoundCloud API の導入にあたっては、OAuth2.1（PKCE）によるユーザー認証が必要だったため、Redis と Cookie を用いたセッション管理に挑戦しました。
 過去にコードが煩雑化し、機能追加が困難になった経験をふまえ、今回は設計ドキュメントを作成し、レイヤードアーキテクチャをベースに責務分離を徹底した、スケーラブルなアプリケーション設計を心がけました。
 
+<br>
+
 ---
 
 ## 技術スタック
@@ -32,6 +34,8 @@ SoundCloud は、アーティストが「Like」した楽曲が公開されて�
 | バックエンド   | Express(Node + TypeScript) + SoundCloud API |
 | データベース   | MySQL                                       |
 | セッション管理 | Redis + Cookie                              |
+
+<br>
 
 ---
 
@@ -47,6 +51,8 @@ API ポリシー変更による Spotify API の一部エンドポイントが利
 - 2. Redis + Cookie によるセッション管理
 - 3. トークンを用いて、SoundCloud API エンドポイントから「フォロー中アーティスト取得」
 - 4. SoundCloud API エンドポイントから「フォロー中アーティストの like 曲を取得」
+ 
+<br>
 
 ---
 
@@ -63,6 +69,8 @@ API ポリシー変更による Spotify API の一部エンドポイントが利
 開発環境には Docker を用い、MySQL / Redis を構築。ER 図をもとに開発用の DDL も整備しました。
 
 [`reset.ddl`](db/reset.ddl)
+
+<br>
 
 ---
 
