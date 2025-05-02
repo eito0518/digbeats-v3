@@ -1,121 +1,110 @@
-# 🎧 DigBeats-v3 - Demo 版 開発まとめ
+# DigBeats-v3
 
-## 🧠 概要
+## 概要
 
-**DigBeats-v3** は、SoundCloud API を用いて「自分がフォローしているユーザーが 'いいね' した楽曲」をもとに、レコメンド体験を提供する Web アプリです。
+### どんなアプリ？
 
-Spotify ベースだった v1、Last.fm/KKBOX ベースの v2 に続き、v3 では SoundCloud + OAuth2.1 + PKCE + Redis + Cookie セッション構成に挑戦。**実践的なセキュリティ・API 設計・セッション管理の練習**を重視して構築しました。
+**DigBeats-v3** は SoundCloud API を用いて、 フォロー中のアーティスト が「like」した楽曲から、新たな音楽に出会える 楽曲レコメンド Web アプリです。
 
----
+このレコメンド方法は、音楽好きがよく行う「お気に入りのユーザー(アーティスト)が実際に聞いている曲を聴いてみる」という方法を参考にしたものです。この手法を効率的に、簡単に再現することを目指しています。
 
-## 🚀 技術スタック
+### SoundCloud とは？
 
-| 分類           | 技術構成                             |
-| -------------- | ------------------------------------ |
-| フロントエンド | Vite + React + TypeScript            |
-| バックエンド   | Express + TypeScript                 |
-| セッション管理 | Redis + Cookie（HTTP Only + Secure） |
-| セキュア通信   | HTTPS（mkcert + localhost 証明書）   |
+「SoundCloud」は、誰でも自作の楽曲を公開できる音楽共有プラットフォームです。日本では知名度が高くないものの、海外では多くの著名アーティスト（例：Billie Eilish、Post Malone、Lil Tecca など）を輩出しています。
 
----
+### 技術的な開発動機
 
-## ✅ 実装済み機能まとめ
+以前は Spotify API を用いて v1 を開発していましたが、API ポリシーの変更によりレコメンド機能が利用できなくなりました。そこで代替案として、新たなレコメンド方式を考案し、今回の実装に採用しました。
 
-### 🔐 SoundCloud OAuth2.1 + PKCE 構成
-
-- フロントで `code_verifier`・`state` を生成し、`sessionStorage` に一時保存
-- 認可後、取得した `code` と `code_verifier` をバックエンドに送信
-- バックエンドで access_token / refresh_token を取得し、Redis にセキュアに保存
-- `code_verifier` の漏洩リスクと仕様上の制限についても検討し、フロントに短時間だけ保持する構成に
+また SoundCloud API の導入にあたっては、OAuth2.1（PKCE）によるユーザー認証が必要だったため、Redis と Cookie を用いたセッション管理に挑戦しました。
+過去にコードが煩雑化し、機能追加が困難になった経験をふまえ、今回は設計ドキュメントを作成し、レイヤードアーキテクチャをベースに責務分離を徹底した、スケーラブルなアプリケーション設計を心がけました。
 
 ---
 
-### 🧩 セッション管理とトークン保存（Redis + Cookie）
+## 技術スタック
 
-- 認証成功時に UUID ベースの `sessionId` を発行
-- Redis に `{ access_token, refresh_token, accessTokenExpiresAt }` をまとめて保存
-- クライアントには HTTP Only + Secure 属性付き Cookie で `sessionId` を返却
-- フロントでは `withCredentials: true` を指定して Cookie を利用
-- TTL の設定：
-  - `refresh_token`: SoundCloud 仕様に準拠し、TTL = 172800 秒（2 日間）
-  - `access_token`: レスポンスの `expires_in` に +60 秒の安全バッファをつけて管理
-- セッション ID を除き、トークンは一切フロントに渡さない設計
+SoundCloud は、アーティストが「Like」した楽曲が公開されており、ユーザー数・楽曲数も豊富なため、本アプリの中核技術として採用しました。
+また、TypeScript によって型の安全性を担保し、開発段階からバグの混入を防止しています。さらに、Redis を用いた高速なセッション管理を導入し、パフォーマンスとセキュリティの両立を図っています。
 
----
-
-### 🌐 HTTPS 開発環境構築
-
-- `mkcert` により自己署名証明書（`localhost.pem`, `localhost-key.pem`）を作成
-- `vite.config.ts` / `express` 両方で HTTPS 対応
-- Chrome 警告（自己証明書による）は「localhost にアクセスする」で回避
+| 分類           | 技術構成                                    |
+| -------------- | ------------------------------------------- |
+| フロントエンド | React(Vite + TypeScript)                    |
+| バックエンド   | Express(Node + TypeScript) + SoundCloud API |
+| データベース   | MySQL                                       |
+| セッション管理 | Redis + Cookie                              |
 
 ---
 
-### 👨‍💻 バックエンド API 実装
+## 実装計画 と 進捗 (2025/05/02 時点)
 
-- `POST /api/auth/exchange`: 認可コードを使ってトークンを取得し、Redis に保存、セッション ID を Cookie で返却
-- `GET /api/me/followings`: フォロー中アーティストの取得（SoundCloud API）
-- `GET /api/users/:artistId/likes/tracks`: 各アーティストの「いいね曲」を 1 曲取得
+### SoundCloud API 動作確認用デモの実装（✅ 実装済み）
 
----
+API ポリシー変更による Spotify API の一部エンドポイントが利用できなかった経験から、まずは API 検証用の最小構成を実装しました。
 
-## 🧭 実装予定 / 設計中の機能
+[`demo.ts`](backend/src/demo.ts)
 
-### 🗂 レコメンド履歴保存（DB）【設計済み・未実装】
+- 1. SoundCloud OAuth2.1 (PKCE) による認証
+- 2. Redis + Cookie によるセッション管理
+- 3. トークンを用いて、SoundCloud API エンドポイントから「フォロー中アーティスト取得」
+- 4. SoundCloud API エンドポイントから「フォロー中アーティストの like 曲を取得」
 
-- **目的**：
+### 設計ドキュメントの作成 と Docker 開発環境構築（✅ 実装済み）
 
-  - おすすめ結果をあとから振り返れるように保存
-  - DB 設計やポリシー遵守の練習も兼ねる
+ユースケース図・概念図・ER 図に基づき設計を整理し、`openapi.yaml` や `auth-flow.md` で詳細設計も記述しました。
 
-- **保存対象（設計方針）**：
+[`usecase-diagram.drawio`](docs/usecase-diagram.drawio)
+[`conceptual-diagram.drawio`](docs/conceptual-diagram.drawio)
+[`er-diagram.drawio`](docs/er-diagram.drawio)
+[`openapi.yaml`](docs/openapi.yaml)
+[`auth-flow.md`](docs/auth-flow.md)
 
-  - `track_id`, `title`, `url`, `recommended_at`
-  - 公開されているメタ情報に限定
-  - 「誰が like したか」は保存しない設計でプライバシーにも配慮
+開発環境には Docker を用い、MySQL / Redis を構築。ER 図をもとに開発用の DDL も整備しました。
 
-- **公開範囲**：
-  - 自分 or 私から許可されたユーザー　だけが閲覧可能な非公開設計
-  - 商用利用しないため、SoundCloud の開発者ポリシーにも準拠
+[`reset.ddl`](db/reset.ddl)
 
----
+### レイヤードアーキテクチャをベースにしたアプリ本体の実装
 
-### 🎨 TailwindCSS による UI 構築【未導入】
+#### SoundCloud OAuth2.1 (PKCE) による 認可フロー（✅ 実装済み）
 
-- TailwindCSS を導入予定（現在は未使用）
-- 初期構成・不要ファイルの削除は完了済み（`App.css`, `vite.svg`など）
+[`login.tsx`](frontend/src/login.tsx)
+[`callback.tsx`](frontend/src/callback.tsx)
 
----
+- フロントエンドで `code_verifier`と`state` を生成し、`sessionStorage` に一時保存
+- 認可成功時に、取得した `code` と `code_verifier` をバックエンドに送信
 
-### 🎵 おすすめ楽曲のランダム表示【未実装】
+**工夫した点**
 
-- 複数の「いいね曲」からランダムで 曲を選んで表示予定
+- `code` と `code_verifier` は漏洩リスクを最小限にするため、フロントエンドが短時間だけ保持
 
----
+####　 トークン取得 と セッション生成（✅ 実装済み）
 
-## 📌 現在の動作確認ポイント
+[`authRouter.ts`](backend/src/presentation/router/authRouter.ts)
 
-- ✅ SoundCloud OAuth2.1 認証 → セッション保存 → sessionId を Cookie で返却
-- ✅ HTTPS 開発環境でフロント・バックとも通信成功
-- ✅ フォロー中アーティスト取得（/api/me/followings）
-- ✅ 一部アーティストの like 曲取得（/api/users/:artistId/likes/tracks）
+- バックエンドで `code` と `code_verifier` を用いてトークン (`access_token`, `expires_in`, `refresh_token` など) を取得
+- トークンを使用して SoundCloud 上のユーザー情報を取得
+- 新規 or 既存ユーザーを判別し、必要に応じて データベース に登録
+- UUID ベースの `sessionId` を発行
+- TTL を設定した上で、Redis に `{ access_token, accessTokenExpiresAt, refresh_token }` を保存
+- クライアントには Cookie 経由 で `sessionId` を返却
 
----
+**工夫した点**
 
-## 🧭 今後の予定
+- セッション ID を除き、トークンは一切フロントに渡さず、全てバックエンドで管理
+- Presentation 層が Infrastructure 層 に依存しないよう Interface を導入
+- 外部 API 由来と DB 由来の ユーザー情報を区別し、 ユーザー情報用の Interface を２つ用意、それぞれデータを取得した後、使いやすい `User` Entity の形で正規化して保持
+- `Session` と `Token` ValueObject を導入して、保存されるデータ型を定義
 
-- レコメンド履歴保存機能（MySQL または PostgreSQL）
-- `/api/me/recommendations` API の実装
-- おすすめ曲のランダム抽出＆表示処理
-- UI のスタイル整備（TailwindCSS 導入）
-- Like 機能の SoundCloud API 連携
+#### トークン・セッション管理（✅ 実装済み）
 
----
+SoundCloud API と通信するにあたり、アクセストークンの有効期限チェックと、必要に応じたリフレッシュを ApplicationService に切り出しました。
 
-## 👤 開発者向け補足メモ
+[`tokenApplicationService.ts`](backend/src/application/applicationService/tokenApplicationService.ts)
 
-- クライアントでは `sessionStorage` に `sessionId` を一時的に保持
-- セッション ID は HTTP Only + Secure 属性付き Cookie でやり取り
-- コールバック URL の都合上、フロントとバックエンドはどちらも HTTPS（localhost:3000 / 4000）で統一済み
+- Cookie から `sessionId` を取得
+- Redis から `session` を復元し、期限を検証
+- `accessToken`　が期限切れの場合は `refreshToken` で更新
 
----
+**工夫した点**
+
+- トークン管理のロジック ApplicationService に切り出し、再利用できるようにした
+- `Token` ValueObject を導入して、返却されるデータ型を定義
