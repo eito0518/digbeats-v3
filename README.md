@@ -80,6 +80,7 @@ API ポリシー変更による Spotify API の一部エンドポイントが利
 
 - `code` と `code_verifier` は漏洩リスクを最小限にするため、フロントエンドが短時間だけ保持
 
+
 #### 🔘 トークン取得 と セッション生成（✅ 実装済み）
 
 [`authRouter.ts`](backend/src/presentation/router/authRouter.ts)
@@ -100,6 +101,7 @@ API ポリシー変更による Spotify API の一部エンドポイントが利
 
 #### 🔘 トークン・セッション管理（✅ 実装済み）
 
+
 SoundCloud API と通信するにあたり、アクセストークンの有効期限チェックと、必要に応じたリフレッシュを ApplicationService に切り出しました。
 
 [`tokenApplicationService.ts`](backend/src/application/applicationService/tokenApplicationService.ts)
@@ -107,7 +109,7 @@ SoundCloud API と通信するにあたり、アクセストークンの有効�
 - Cookie から `sessionId` を取得
 - Redis から `session` を復元し、期限を検証
 - `accessToken`　が期限切れの場合は `refreshToken` で更新
-  ➤
+
   < 工夫した点 >
 
 - トークン管理のロジック ApplicationService に切り出し、再利用できるようにした
