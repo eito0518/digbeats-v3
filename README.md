@@ -39,7 +39,7 @@ SoundCloud は、アーティストが「Like」した楽曲が公開されて�
 
 ---
 
-## 実装計画 と 進捗 (2025/05/02 時点)
+## 実装計画 と 進捗 (2025/05/05 時点)
 
 ### ☑️ SoundCloud API 動作確認用デモの実装（✅ 実装済み）
 
@@ -47,11 +47,11 @@ API ポリシー変更による Spotify API の一部エンドポイントが利
 
 [`demo.ts`](backend/src/demo.ts)
 
-- 1. SoundCloud OAuth2.1 (PKCE) による認証
-- 2. Redis + Cookie によるセッション管理
-- 3. トークンを用いて、SoundCloud API エンドポイントから「フォロー中アーティスト取得」
-- 4. SoundCloud API エンドポイントから「フォロー中アーティストの like 曲を取得」
- 
+- SoundCloud OAuth2.1 (PKCE) による認証
+- Redis + Cookie によるセッション管理
+- トークンを用いて、SoundCloud API エンドポイントから「フォロー中アーティスト取得」
+- SoundCloud API エンドポイントから「フォロー中アーティストの like 曲を取得」
+
 <br>
 
 ---
@@ -105,13 +105,13 @@ API ポリシー変更による Spotify API の一部エンドポイントが利
 
 - セッション ID を除き、トークンは一切フロントに渡さず、全てバックエンドで管理
 - Presentation 層が Infrastructure 層 に依存しないよう Interface を導入
-- 外部 API 由来と DB 由来の ユーザー情報を区別し、 ユーザー情報用の Interface を２つ用意、それぞれデータを取得した後、使いやすい `User` Entity の形で正規化して保持
+- 外部 API 由来と DB 由来の ユーザー情報を区別し、 ユーザー情報用の Interface を２つ用意、情報の取得のみが必要な場合は`UserInfo` VO をそのまま返却する
+- 今後、ユーザーの状態管理が必要な場合は、外部・内部それぞれデータを取得した後、使いやすい `User` Entity の形で正規化して使用する
 - `Session` と `Token` ValueObject を導入して、保存されるデータ型を定義
 
 <br>
 
 #### 🔘 トークン・セッション管理（✅ 実装済み）
-
 
 SoundCloud API と通信するにあたり、アクセストークンの有効期限チェックと、必要に応じたリフレッシュを ApplicationService に切り出しました。
 
@@ -121,7 +121,54 @@ SoundCloud API と通信するにあたり、アクセストークンの有効�
 - Redis から `session` を復元し、期限を検証
 - `accessToken`　が期限切れの場合は `refreshToken` で更新
 
-  < 工夫した点 >
+< 工夫した点 >
 
 - トークン管理のロジック ApplicationService に切り出し、再利用できるようにした
 - `Token` ValueObject を導入して、返却されるデータ型を定義
+
+<br>
+
+#### 🔘 フォロー中のアーティストを取得するエンドポイント（✅ 実装済み）
+
+ホーム画面でフォロー中のアーティストを確認できるように、フォロー中のアーティストを取得するエンドポイントを実装しました。
+
+[`userRouter.ts`](backend/src/presentation/router/userRouter.ts)
+
+- セッション ID からユーザーを特定し、ユーザーごとに SoundCloud API を通じてフォロー中のアーティスト一覧を取得
+- アーティスト情報は `ArtistInfo` ValueObject として定義
+- ユーザー情報 と同様に、外部 API 由来と DB 由来の アーティスト情報を区別し、情報の取得のみが必要な場合は`ArtistInfo` VO をそのまま返却する
+- 今後、アーティストの状態管理が必要な場合は、アーティスト情報用の Interface を２つ用意し、外部・内部それぞれデータを取得した後、使いやすい `Artist` Entity の形で正規化して使用する
+
+< 工夫した点 >
+
+- `Artist` Entity の形では使用せず、soundcloudArtistId をキーに `ArtistInfo` ValueObject として一時的に取得
+
+<br>
+
+#### 🔘 アーティストを検索するエンドポイント（✅ 実装済み）
+
+ホーム画面でアーティストを検索して、フォローできるように、アーティストを検索するエンドポイントを実装しました。
+
+[`artistRouter.ts`](backend/src/presentation/router/artistRouter.ts)
+
+- クエリ文字列からアーティスト名を受け取り、SoundCloud API 通じてアーティストを検索
+- 検索結果アーティストを最大 5 件まで取得し、`ArtistInfo` VO を返却
+
+< 工夫した点 >
+
+- クエリ文字列のバリデーションを Controller で実装
+- ユーザー情報の取得のみが必要な場合なので、`ArtistInfo` VO をそのまま返却
+
+<br>
+
+#### 🔘 アーティストをフォローするエンドポイント（✅ 実装済み）
+
+ホーム画面でアーティストを検索して、フォローできるように、アーティストをフォローするエンドポイントを実装しました。
+
+[`userRouter.ts`](backend/src/presentation/router/userRouter.ts)
+
+- パラメータから `soundcloudArtistId` を受け取り、SoundCloud API 通じてアーティストをフォロー
+
+< 工夫した点 >
+
+- `soundcloudArtistId` のバリデーション と Number 型への変換を Controller で実装
