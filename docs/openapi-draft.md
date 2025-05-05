@@ -38,7 +38,7 @@
 ```json
 [
   {
-    externalUserId: 12345
+    soundcloudArtistId: 12345
     name: Travis Sccott,
     avatarUrl: https:~,
     publicFavoritesCount: 123,
@@ -57,7 +57,7 @@
 ```json
 [
   {
-    externalUserId: 12345
+    soundcloudArtistId: 12345
     name: Travis Sccott,
     avatarUrl: https:~,
     publicFavoritesCount: 123,
@@ -67,7 +67,7 @@
 ]
 ```
 
-### PUT /api/users/followings/:artistId
+### PUT /api/users/followings/:soundcloudArtistId
 
 - 説明：SoundCloud でアーティストをフォローする
 - 認証：Cookie(sessionId)
