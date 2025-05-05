@@ -14,13 +14,10 @@ export class ArtistController {
       return;
     }
 
-    const decodedArtistName = decodeURIComponent(artistNameRaw);
+    const artistName = decodeURIComponent(artistNameRaw);
 
     // ユースケース
-    const artists = await this._searchArtistsUseCase.run(
-      sessionId,
-      decodedArtistName
-    );
+    const artists = await this._searchArtistsUseCase.run(sessionId, artistName);
 
     // レスポンス
     res
