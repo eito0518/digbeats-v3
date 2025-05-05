@@ -4,7 +4,14 @@ import { userController } from "../di/userController.di";
 
 export const userRouter = Router();
 
+// フォロー中のアーティストを取得するエンドポイント
 userRouter.get(
-  "/api/users/following",
-  asyncHandler(userController.getMyFollowings)
+  "/api/users/followings",
+  asyncHandler(userController.fetchMyFollowings)
+);
+
+// アーティストをフォローするエンドポイント
+userRouter.put(
+  "/api/users/followings/:soundcloudArtistId",
+  asyncHandler(userController.followArtist)
 );

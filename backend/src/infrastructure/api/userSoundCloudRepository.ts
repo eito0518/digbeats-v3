@@ -8,6 +8,7 @@ export class UserSoundCloudRepository implements UserApiRepository {
   // ユーザー情報を取得
   async fetchUser(accessToken: string): Promise<UserInfo> {
     const endPoint = `${config.API_BASE_URL}/me`;
+
     const headers = {
       accept: "application/json; charset=utf-8",
       Authorization: accessToken,
@@ -29,9 +30,10 @@ export class UserSoundCloudRepository implements UserApiRepository {
     }
   }
 
-  // アーティスト情報を取得
+  // フォロー中のアーティスト情報を取得
   async fetchFollowings(accessToken: string): Promise<Array<ArtistInfo>> {
     const endPoint = `${config.API_BASE_URL}/me/followings`;
+
     const headers = {
       accept: "application/json; charset=utf-8",
       Authorization: accessToken,
@@ -53,6 +55,26 @@ export class UserSoundCloudRepository implements UserApiRepository {
     } catch (error) {
       console.error("fetchFollowings request failed:", error);
       throw new Error("FetchFollowings request failed");
+    }
+  }
+
+  // アーティストをフォローする
+  async followArtist(
+    accessToken: string,
+    soundcloudArtistId: number
+  ): Promise<void> {
+    const endPoint = `${config.API_BASE_URL}/me/followings/${soundcloudArtistId}`;
+
+    const headers = {
+      accept: "application/json; charset=utf-8",
+      Authorization: accessToken,
+    };
+
+    try {
+      await axios.put(endPoint, { headers: headers });
+    } catch (error) {
+      console.error("followingArtist request failed:", error);
+      throw new Error("FollowingArtist request failed");
     }
   }
 }
