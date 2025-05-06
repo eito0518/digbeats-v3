@@ -75,19 +75,24 @@
 ### GET /api/recommendations
 
 - 説明：楽曲レコメンドを取得する
+- 注意：ユーザー情報の再配信は API ポリシー違反のため、レコメンドされた Track の出典がわからないようにする（最低５人以上はフォローさせる）
 - 認証：Cookie(sessionId)
 - レスポンス：
 
 ```json
 [
-  { // SoundCloud APIで曲を再生する場合 (APIポリシーに注意)
-    trackTitle: FE!N,
+  {
+    title: FE!N,
     artworkUrl: https:~,
-    trackPermalinkUrl: https:~,
-    artistName: Travis Sccott,
-    avatarUrl: https:~,
-    artistPermalinkUrl: https:~,
-    // ウィジェットで曲を再生する場合
+    permalinkUrl: https:~,
+    artist: {
+      name: Travis Sccott,
+      avatarUrl: https:~,
+      permalinkUrl: https:~,
+    }
+    // SoundCloud APIで曲を再生する場合 (再生APIのURLを保存することはAPIポリシー違反のため、レコメンド直後の表示のみに使用)
+    streamUrl: https:~,
+    // ウィジェットで曲を再生する場合　（APIポリシーに注意して、trackIdと再生ウィジェットのみDB保存、レコメンド履歴はこちらを使用）
     widgetUrl: https:~,
   },
   ...
@@ -106,7 +111,7 @@
     recommended_at: "2025-04-18T10:00:00Z",
     tracks: [
       {
-      // ウィジェットで曲を再生する場合
+      // Track情報をそれぞれフェッチするのは、通信回数が多いため、情報表示・再生共にウィジェットを利用する
       widgetUrl: https:~,
       }
     ]
