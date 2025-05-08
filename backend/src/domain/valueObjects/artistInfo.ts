@@ -6,4 +6,8 @@ export class ArtistInfo {
     private readonly _publicFavoritesCount: number,
     private readonly _permalinkUrl: string
   ) {}
+
+  get publicFavoritesCount() {
+    return this._publicFavoritesCount;
+  }
 }
