@@ -80,23 +80,27 @@
 - レスポンス：
 
 ```json
-[
-  {
-    title: FE!N,
-    artworkUrl: https:~,
-    permalinkUrl: https:~,
-    artist: {
-      name: Travis Sccott,
-      avatarUrl: https:~,
+{
+  recomendationId: 12345(内部のID),
+  tracks: [
+    {
+      id: 12345(内部のID),
+      title: FE!N,
+      artworkUrl: https:~,
       permalinkUrl: https:~,
-    }
-    // SoundCloud APIで曲を再生する場合 (再生APIのURLを保存することはAPIポリシー違反のため、レコメンド直後の表示のみに使用)
-    streamUrl: https:~,
-    // ウィジェットで曲を再生する場合　（APIポリシーに注意して、trackIdと再生ウィジェットのみDB保存、レコメンド履歴はこちらを使用）
-    widgetUrl: https:~,
-  },
-  ...
-]
+      artist: {
+        name: Travis Sccott,
+        avatarUrl: https:~,
+        permalinkUrl: https:~,
+      },
+      // SoundCloud APIで曲を再生する場合 (再生APIのURLを保存することはAPIポリシー違反のため、レコメンド直後の表示のみに使用)
+      streamUrl: https:~,
+      // ウィジェットで曲を再生する場合　（APIポリシーに注意して、trackIdと再生ウィジェットのみDB保存、レコメンド履歴はこちらを使用）
+      widgetUrl: https:~,
+    },
+    ...
+  ]
+}
 ```
 
 ### GET /api/recommendations/historys
@@ -108,14 +112,34 @@
 ```json
 [
   {
+    recommendationId: 12345(内部のID),
     recommended_at: "2025-04-18T10:00:00Z",
     tracks: [
       {
-      // Track情報をそれぞれフェッチするのは、通信回数が多いため、情報表示・再生共にウィジェットを利用する
-      widgetUrl: https:~,
-      }
+        // Track情報をそれぞれフェッチするのは、通信回数が多いため、情報表示・再生共にウィジェットを利用する
+        trackId: 12345 (内部のID)
+        widgetUrl: https:~,
+      },
+      ...
     ]
   },
   ...
 ]
+```
+
+### POST /api/recommendations/:recommendationId/likes
+
+- 説明：楽曲レコメンド画面 or 履歴画面 での いいね（内部＆外部）を更新する
+- 認証：Cookie(sessionId)
+- リクエスト：
+
+```json
+{
+  "likes": {
+    // 結果的に変更があったものだけを送る
+    "789(内部のtrackId)": true,
+    "790(内部のtrackId)": false,
+    ...
+  }
+}
 ```
