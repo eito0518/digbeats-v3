@@ -3,7 +3,7 @@ export class UserInfo {
     private readonly _externalUserId: number,
     private readonly _name: string,
     private readonly _avatarUrl: string,
-    private readonly _publicFavoritesCount: number,
+    private readonly _likedTracksCount: number,
     private readonly _followingsCount: number
   ) {}
 
