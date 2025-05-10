@@ -3,11 +3,15 @@ export class ArtistInfo {
     private readonly _externalUserId: number,
     private readonly _name: string,
     private readonly _avatarUrl: string,
-    private readonly _publicFavoritesCount: number,
+    private readonly _likedTracksCount: number,
     private readonly _permalinkUrl: string
   ) {}
 
-  get publicFavoritesCount() {
-    return this._publicFavoritesCount;
+  get externalUserId() {
+    return this._externalUserId;
+  }
+
+  get likedTracksCount() {
+    return this._likedTracksCount;
   }
 }

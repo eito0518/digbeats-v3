@@ -14,7 +14,7 @@ CREATE TABLE artists (
     name VARCHAR(255) NOT NULL,
     soundcloud_artist_id BIGINT NOT NULL,
     avatar_url VARCHAR(512) NOT NULL,
-    public_favorites_count INT NOT NULL,
+    liked_track_count INT NOT NULL,
     permalink_url VARCHAR(512) NOT NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

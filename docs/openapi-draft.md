@@ -41,7 +41,7 @@
     soundcloudArtistId: 12345
     name: Travis Sccott,
     avatarUrl: https:~,
-    publicFavoritesCount: 123,
+    likedTracksCount: 123,
     permalinkUrl: https:~,
   },
   ...
@@ -60,7 +60,7 @@
     soundcloudArtistId: 12345
     name: Travis Sccott,
     avatarUrl: https:~,
-    publicFavoritesCount: 123,
+    likedTracksCount: 123,
     permalinkUrl: https:~,
   },
   ...

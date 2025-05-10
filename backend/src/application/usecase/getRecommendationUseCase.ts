@@ -2,6 +2,8 @@ import { TokenApplicationService } from "../applicationSercices/tokenApplication
 import { UserApiRepository } from "../../domain/interfaces/userApiRepository";
 import { RecommendationDomainService } from "../../domain/domainServices/recommendationDomainService";
 import { Followings } from "../../domain/valueObjects/followings";
+import { TrackInfo } from "../../domain/valueObjects/trackInfo";
+import { RecommendationApplicationService } from "../applicationSercices/recommendationApplicationService";
 
 export class GetRecommendationUseCase {
   constructor(
@@ -30,25 +32,15 @@ export class GetRecommendationUseCase {
     const sourceArtist =
       this._recommendationDomainService.pickSourceArtist(followings);
 
-    ////////　ここまで実装完了///////
-
     // 選ばれたアーティストから いいね楽曲　をランダムに　10曲選び、取得
-    let tracks: TrackInfo[];
-    // ソースが仮想アーティストの場合
-    if (sourceArtist.isVirtual()) {
-      tracks =
-        await this._recommendationApplicationService.pickAndFetchTracksFromVirtualArtist(
-          sourceArtist,
-          10 // limit
-        );
-    } else {
-      // ソースが通常アーティストの場合
-      tracks =
-        await this._recommendationApplicationService.pickAndFetchTracksFromRegularArtist(
-          sourceArtist,
-          10 // limit
-        );
-    }
+    const tracks =
+      await this._recommendationApplicationService.fetchAndPickLikedTracks(
+        validToken.accessToken,
+        sourceArtist,
+        10
+      );
+
+    ////////　ここまで実装完了///////
 
     // 取得した楽曲からレコメンド作成 （Recommendation エンティティに変換（レコメンドIDなども付与））
     const recommendation =
