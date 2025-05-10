@@ -44,7 +44,7 @@ paths:
                     avatarUrl:
                       type: string
                       format: uri
-                    publicFavoritesCount:
+                    likedTracksCount:
                       type: integer
                     permalinkUrl:
                       type: string
@@ -74,7 +74,7 @@ paths:
                     avatarUrl:
                       type: string
                       format: uri
-                    publicFavoritesCount:
+                    likedTracksCount:
                       type: integer
                     permalinkUrl:
                       type: string
