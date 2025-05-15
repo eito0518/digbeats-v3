@@ -8,4 +8,16 @@ export class TrackInfo {
     private readonly _permalinkUrl: string,
     private readonly _artist: ArtistInfo
   ) {}
+
+  get externalTrackId() {
+    return this._externalTrackId;
+  }
+
+  get permalinkUrl() {
+    return this._permalinkUrl;
+  }
+
+  get artist() {
+    return this._artist;
+  }
 }
