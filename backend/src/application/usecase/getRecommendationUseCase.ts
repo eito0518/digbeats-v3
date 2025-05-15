@@ -1,9 +1,10 @@
 import { TokenApplicationService } from "../applicationSercices/tokenApplicationService";
 import { UserApiRepository } from "../../domain/interfaces/userApiRepository";
 import { RecommendationDomainService } from "../../domain/domainServices/recommendationDomainService";
-import { Followings } from "../../domain/valueObjects/followings";
-import { TrackInfo } from "../../domain/valueObjects/trackInfo";
 import { RecommendationApplicationService } from "../applicationSercices/recommendationApplicationService";
+import { RecommendationDbRepository } from "../../domain/interfaces/recommendationDbRepository";
+import { Followings } from "../../domain/valueObjects/followings";
+import { Recommendation } from "../../domain/entities/recommendation";
 
 export class GetRecommendationUseCase {
   constructor(
@@ -40,16 +41,17 @@ export class GetRecommendationUseCase {
         10
       );
 
-    ////////　ここまで実装完了///////
+    // 取得した楽曲からレコメンドを作成
+    const userId = await this._tokenApplicationService.getUserId(sessionId);
+    const recommendation = new Recommendation(userId, tracks);
 
-    // 取得した楽曲からレコメンド作成 （Recommendation エンティティに変換（レコメンドIDなども付与））
-    const recommendation =
-      this._recommendationDomainService.createRecommendation(tracks); // Recommendationの構築が複雑であればFactoryを導入する
+    // レコメンドをDBに保存 (レコメンドIDを付与)
+    const recommendationEntity =
+      await this._recommendationDbRepository.saveAndReturnWithId(
+        recommendation
+      );
 
-    // レコメンド結果をDBに保存
-    await this._recommendationDbRepository.save(recommendation);
-
-    // レコメンド結果をコントローラーに返す
-    return recommendation; // DTOしてコントローラーに返す
+    // レコメンドをコントローラーに返す
+    return recommendationEntity;
   }
 }
