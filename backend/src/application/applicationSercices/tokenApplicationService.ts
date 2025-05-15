@@ -39,4 +39,20 @@ export class TokenApplicationService {
     // 有効なトークンを返す
     return session.token;
   }
+
+  // ユーザーIDを取得
+  async getUserId(sessionId: string): Promise<number> {
+    // sessionId がなければ再ログインを要求
+    if (!sessionId) throw new Error("REAUTH_REQUIRED");
+
+    // セッションを取得
+    const session = await this._sessionRepository.get(sessionId);
+
+    // セッションが期限切れならば再ログインを要求
+    if (!session) {
+      throw new Error("REAUTH_REQUIRED");
+    }
+
+    return session.userId;
+  }
 }

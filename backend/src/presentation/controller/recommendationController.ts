@@ -1,7 +1,10 @@
+import { GetRecommendationUseCase } from "../../application/usecase/getRecommendationUseCase";
 import { Request, Response } from "express";
 
 export class RecommendationController {
-  constructor() {}
+  constructor(
+    private readonly _getRecommendationUseCase: GetRecommendationUseCase
+  ) {}
 
   // レコメンドを取得する
   async getRecommendations(req: Request, res: Response): Promise<void> {
@@ -9,6 +12,7 @@ export class RecommendationController {
     const sessionId = req.cookies.sessionId;
 
     // ユースケース
+    const recommendation = await this._getRecommendationUseCase.run(sessionId);
 
     // レスポンス
     res
@@ -18,6 +22,6 @@ export class RecommendationController {
         sameSite: "none", // TODO：　時間があればCSRF対策　で　csurfを導入する
       })
       .status(200)
-      .json({});
+      .json({ recommendation: recommendation });
   }
 }
