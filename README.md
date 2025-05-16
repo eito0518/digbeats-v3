@@ -4,7 +4,7 @@
 
 ### どんなアプリ？
 
-**DigBeats-v3** は SoundCloud API を用いて、 フォロー中のアーティスト が「like」した楽曲から、新たな音楽に出会える 楽曲レコメンド Web アプリです。
+DigBeats-v3 は SoundCloud API を用いて、 フォロー中のアーティスト が「like」した楽曲から、新たな音楽に出会える 楽曲レコメンド Web アプリです。
 
 このレコメンド方法は、音楽好きがよく行う「お気に入りのユーザー(アーティスト)が実際に聞いている曲を聴いてみる」という方法を参考にしたものです。この手法を効率的に、簡単に再現することを目指しています。
 
@@ -39,13 +39,13 @@ SoundCloud は、アーティストが「Like」した楽曲が公開されて�
 
 ---
 
-## 実装計画 と 進捗 (2025/05/05 時点)
+## 実装計画 と 進捗 (2025/05/16 時点)
 
 ### ☑️ SoundCloud API 動作確認用デモの実装（✅ 実装済み）
 
 API ポリシー変更による Spotify API の一部エンドポイントが利用できなかった経験から、まずは API 検証用の最小構成を実装しました。
 
-[`demo.ts`](backend/src/demo.ts)
+["操作確認用デモのコード"](backend/src/demo.ts)
 
 - SoundCloud OAuth2.1 (PKCE) による認証
 - Redis + Cookie によるセッション管理
@@ -56,19 +56,14 @@ API ポリシー変更による Spotify API の一部エンドポイントが利
 
 ---
 
-### ☑️ 設計ドキュメントの作成 と Docker 開発環境構築（✅ 実装済み）
+### ☑️ 設計ドキュメントの作成 と Docker 開発環境構築（🔄 更新中 2025/05/16 時点）
 
-ユースケース図・概念図・ER 図に基づき設計を整理し、`openapi.yaml` や `auth-flow.md` で詳細設計も記述しました。
+ユースケース図・概念図・ER 図を作成し、アプリケーションの設計を行いました。
+実装で["アプリ全体の流れ"](docs/overall-flow.md) 、 ["認証の流れ"](docs/auth-flow.md) 、 ["レコメンドアルゴリズム"](docs/recommendations-flow.md) で詳細設計を行いながら実装を進めています。
 
-[`usecase-diagram.drawio`](docs/usecase-diagram.drawio)
-[`conceptual-diagram.drawio`](docs/conceptual-diagram.drawio)
-[`er-diagram.drawio`](docs/er-diagram.drawio)
-[`openapi.yaml`](docs/openapi.yaml)
-[`auth-flow.md`](docs/auth-flow.md)
+**全て完成後、各ドキュメントのスクリーンショットを貼る予定**
 
-開発環境には Docker を用い、MySQL / Redis を構築。ER 図をもとに開発用の DDL も整備しました。
-
-[`reset.ddl`](db/reset.ddl)
+Docker を用いて MySQL / Redis の開発環境を構築しました。ER 図をもとに開発用の DDL も整備しました。
 
 <br>
 
@@ -76,99 +71,163 @@ API ポリシー変更による Spotify API の一部エンドポイントが利
 
 ### ☑️ レイヤードアーキテクチャをベースにしたアプリ本体の実装
 
-#### 🔘 SoundCloud OAuth2.1 (PKCE) による 認可フロー（✅ 実装済み）
+#### 🔘 認証フロー(SoundCloud OAuth2.1 (PKCE))の実装（✅ 実装済み）
 
-[`login.tsx`](frontend/src/login.tsx)
-[`callback.tsx`](frontend/src/callback.tsx)
+["認証フロー"](docs/auth-flow.md)で設計した認証フローに従って、SoundCloud OAuth2.1 (PKCE) を実装しました。
 
-- フロントエンドで `code_verifier`と`state` を生成し、`sessionStorage` に一時保存
-- 認可成功時に、取得した `code` と `code_verifier` をバックエンドに送信
+- PKCE に基づきフロントエンドで `codeVerifier`, `codeChallenge`, そして `state` を生成し、`sessionStorage` に一時保存
+- 認可成功時に、コールバックで取得した `code` と `codeVerifier` をバックエンドに送信
 
-< 工夫した点 >
-
-- `code` と `code_verifier` は漏洩リスクを最小限にするため、フロントエンドが短時間だけ保持
-
-<br>
-
-#### 🔘 トークン取得 と セッション生成（✅ 実装済み）
-
-[`authRouter.ts`](backend/src/presentation/router/authRouter.ts)
-
-- バックエンドで `code` と `code_verifier` を用いてトークン (`access_token`, `expires_in`, `refresh_token` など) を取得
-- トークンを使用して SoundCloud 上のユーザー情報を取得
-- 新規 or 既存ユーザーを判別し、必要に応じて データベース に登録
-- UUID ベースの `sessionId` を発行
-- TTL を設定した上で、Redis に `{ access_token, accessTokenExpiresAt, refresh_token }` を保存
-- クライアントには Cookie 経由 で `sessionId` を返却
+< code >
+["ログイン画面"](frontend/src/login.tsx)
+["認可 URL を生成するロジック"](frontend/src/generateAuthorizationUrl.tsx)
+["PKCE を生成するロジック"](frontend/src/generatePkce.ts)
+["認可後のコールバック処理"](frontend/src/callback.tsx)
 
 < 工夫した点 >
 
-- セッション ID を除き、トークンは一切フロントに渡さず、全てバックエンドで管理
-- Presentation 層が Infrastructure 層 に依存しないよう Interface を導入
-- 外部 API 由来と DB 由来の ユーザー情報を区別し、 ユーザー情報用の Interface を２つ用意、情報の取得のみが必要な場合は`UserInfo` VO をそのまま返却する
-- 今後、ユーザーの状態管理が必要な場合は、外部・内部それぞれデータを取得した後、使いやすい `User` Entity の形で正規化して使用する
-- `Session` と `Token` ValueObject を導入して、保存されるデータ型を定義
+- `code` と `codeVerifier` は漏洩リスクを最小限にするため、フロントエンドが短時間だけ保持する設計にした。
 
 <br>
 
-#### 🔘 トークン・セッション管理（✅ 実装済み）
+#### 🔘 認証フロー(トークン取得 と セッション生成)の実装（✅ 実装済み）
 
-SoundCloud API と通信するにあたり、アクセストークンの有効期限チェックと、必要に応じたリフレッシュを ApplicationService に切り出しました。
+["認証フロー"](docs/auth-flow.md)で設計した認証フローに従って、トークン取得 と セッション生成ロジックを実装しました。
 
-[`tokenApplicationService.ts`](backend/src/application/applicationService/tokenApplicationService.ts)
+- バックエンドで `code` と `codeVerifier` を用いてトークン (`accessToken`, `expiresIn`, `refreshToken`) を取得
+- トークンを使って SoundCloud の /me エンドポイントでユーザー情報(soundcloudUserId)取得
+- DB にユーザーが既に登録されているか確認
+  - 存在しなければ新規登録
+- `sessionId` を発行
+- セッション期限付きで トークン と `soundcloudUserId` を Redis に保存
+- Cookie をセットし、`sessionId` をフロントエンドに返却
+
+< code >
+["認証ユースケース"](backend/src/application/usecase/authorizeUserUseCase.ts)
+["トークンを取得"](backend/src/infrastructure/api/tokenSoundCloudRepository.ts)
+["外部ユーザー情報を取得"](backend/src/infrastructure/api/userSoundCloudRepository.ts)
+["DB ユーザー情報を取得"](backend/src/infrastructure/db/userMysqlRepository.ts)
+["セッションを保存"](backend/src/infrastructure/redis/sessionRedisRepository.ts)
+
+< 工夫した点 >
+
+- トークンはフロントに渡さず、セッションを使って全てバックエンドで管理する設計にした。
+- アプリケーション層が インフラストラクチャ層 に依存しないように、ドメイン層に**インターフェース**(["userApiRepository.ts"](backend/src/domain/interfaces/userApiRepository.ts), ["userDbRepository.ts"](backend/src/domain/interfaces/userDbRepository.ts))を導入した。
+- 取得したデータを統一的に扱うために**ValueObject**(["UserInfo.ts"](backend/src/domain/valueObjects/userInfo.ts), ["Token.ts"](backend/src/domain/valueObjects/token.ts), ["Session,ts"](backend/src/domain/valueObjects/session.ts))を導入した。
+
+<br>
+
+#### 🔘 トークン・セッション管理の実装（✅ 実装済み）
+
+SoundCloud API と通信に必要な、アクセストークンの有効期限チェックと、必要に応じたトークンリフレッシュを ApplicationService["tokenApplicationService.ts"](backend/src/application/applicationSercices/tokenApplicationService.ts) に切り出して実装しました。
 
 - Cookie から `sessionId` を取得
-- Redis から `session` を復元し、期限を検証
-- `accessToken`　が期限切れの場合は `refreshToken` で更新
+- Redis から `session` を復元し、`accessToken` を検証
+- `accessToken` が期限切れの場合は `refreshToken` で更新
+- 有効なトークンを返却(セッションが取得できなければ再ログインを要求)
+
+< code >
+["トークン・セッション管理"](backend/src/application/applicationSercices/tokenApplicationService.ts)
 
 < 工夫した点 >
 
-- トークン管理のロジック ApplicationService に切り出し、再利用できるようにした
-- `Token` ValueObject を導入して、返却されるデータ型を定義
+- トークン・セッション管理ロジックを ["tokenApplicationService.ts"](backend/src/application/applicationSercices/tokenApplicationService.ts) に切り出し、再利用できるようにした。
 
 <br>
 
-#### 🔘 フォロー中のアーティストを取得するエンドポイント（✅ 実装済み）
+#### 🔘 フォロー中のアーティストを取得するエンドポイントの実装（✅ 実装済み）
 
 ホーム画面でフォロー中のアーティストを確認できるように、フォロー中のアーティストを取得するエンドポイントを実装しました。
 
-[`userRouter.ts`](backend/src/presentation/router/userRouter.ts)
+- セッション ID からユーザーを特定し、SoundCloud API でフォロー中のアーティストを取得
 
-- セッション ID からユーザーを特定し、ユーザーごとに SoundCloud API を通じてフォロー中のアーティスト一覧を取得
-- アーティスト情報は `ArtistInfo` ValueObject として定義
-- ユーザー情報 と同様に、外部 API 由来と DB 由来の アーティスト情報を区別し、情報の取得のみが必要な場合は`ArtistInfo` VO をそのまま返却する
-- 今後、アーティストの状態管理が必要な場合は、アーティスト情報用の Interface を２つ用意し、外部・内部それぞれデータを取得した後、使いやすい `Artist` Entity の形で正規化して使用する
+< code >
+["ユースケース"](backend/src/application/usecase/fetchMyFollowingsUseCase.ts)
+["フォロー中のアーティスト情報を取得"](backend/src/infrastructure/api/userSoundCloudRepository.ts)
 
 < 工夫した点 >
 
-- `Artist` Entity の形では使用せず、soundcloudArtistId をキーに `ArtistInfo` ValueObject として一時的に取得
+- 取得したデータを統一的に扱うために**ValueObject**(["ArtistInfo"](backend/src/domain/valueObjects/artistInfo.ts))を導入した。
 
 <br>
 
-#### 🔘 アーティストを検索するエンドポイント（✅ 実装済み）
+#### 🔘 アーティストを検索するエンドポイントの実装（✅ 実装済み）
 
-ホーム画面でアーティストを検索して、フォローできるように、アーティストを検索するエンドポイントを実装しました。
-
-[`artistRouter.ts`](backend/src/presentation/router/artistRouter.ts)
+ホーム画面でアーティストを検索し、フォローできるように、アーティストを検索するエンドポイントを実装しました。
 
 - クエリ文字列からアーティスト名を受け取り、SoundCloud API 通じてアーティストを検索
 - 検索結果アーティストを最大 5 件まで取得し、`ArtistInfo` VO を返却
 
+< code >
+["ユースケース"](backend/src/application/usecase/searchArtistsUseCase.ts)
+["アーティストを検索"](backend/src/infrastructure/api/artistSoundCloudRepository.ts)
+
 < 工夫した点 >
 
-- クエリ文字列のバリデーションを Controller で実装
-- ユーザー情報の取得のみが必要な場合なので、`ArtistInfo` VO をそのまま返却
+- クエリ文字列のバリデーションを ["artistController.ts"](backend/src/presentation/controller/artistController.ts) で実装しました。
 
 <br>
 
-#### 🔘 アーティストをフォローするエンドポイント（✅ 実装済み）
+#### 🔘 アーティストをフォローするエンドポイントの実装（✅ 実装済み）
 
 ホーム画面でアーティストを検索して、フォローできるように、アーティストをフォローするエンドポイントを実装しました。
 
-[`userRouter.ts`](backend/src/presentation/router/userRouter.ts)
+- パラメータから `soundcloudArtistId` を受け取り、SoundCloud API でアーティストをフォロー
 
-- パラメータから `soundcloudArtistId` を受け取り、SoundCloud API 通じてアーティストをフォロー
+< code >
+["ユースケース"](backend/src/application/usecase/followArtistUseCase.ts)
+["アーティストをフォロー"](backend/src/infrastructure/api/userSoundCloudRepository.ts)
 
 < 工夫した点 >
 
-- `soundcloudArtistId` のバリデーション と Number 型への変換を Controller で実装
+- `soundcloudArtistId` のバリデーション と Number 型への変換を ["userController.ts"](backend/src/presentation/controller/userController.ts) で実装しました。
+
+<br>
+
+#### 🔘 レコメンド機能のコアロジックの実装（✅ 実装済み）
+
+フォロー中の SoundCloud アーティスト が「Like した楽曲」をもとに、楽曲レコメンドを生成するというこのアプリケーションのコアとなるロジックを実装しました。
+**[`レコメンドアルゴリズム`](docs/recommendations-flow.md)で設計したレコメンドロジックに沿って実装を行いました。**(詳しくはこちらをご覧ください)
+
+- フォロー中のアーティストからレコメンドのソースとなるアーティストを選ぶ
+- 選ばれたアーティストから いいね楽曲 をランダムに 10 曲選び、データを取得
+- 取得したいいね楽曲からレコメンドを作成
+
+< code >
+["レコメンドユースケース"](backend/src/application/usecase/getRecommendationUseCase.ts)
+["フォロー中のアーティストを取得"](backend/src/infrastructure/api/userSoundCloudRepository.ts)
+["ソースとなるアーティストをランダムに選ぶアルゴリズム"](backend/src/domain/domainServices/recommendationDomainService.ts)
+["仮想アーティストを生成するロジック"](backend/src/domain/factories/virtualArtistFactory.ts)
+["いいね楽曲をランダムに選んで取得するアルゴリズム"](backend/src/application/applicationSercices/recommendationApplicationService.ts)
+
+< 工夫した点 >
+
+- 取得したデータを統一的に扱うために**ValueObject**(["Followings"](backend/src/domain/valueObjects/followings.ts), ["RegularArtist"](backend/src/domain/valueObjects/regularArtist.ts), ["VirtualArtist"](backend/src/domain/valueObjects/virtualArtist.ts))を導入した。
+- レコメンドのソースとなるアーティストは、通常アーティスト と 仮想アーティスト(いいね楽曲数が少ない複数のアーティストを束ねた) があり、それぞれ処理が異なるため、[モデル(SourceArtist)](backend/src/domain/models/sourceArtist.ts) を定義し、アプリケーション層での処理を共通化できるようにした。
+- ValueObject にメソッドを持たせたり、複雑なロジックはサービスに切り出すなどして、可読性を高め、継続的な開発ができるようにした。
+- それぞれの責務をどれくらい分けて実装するか、意識して実装を行った。
+- ランダム性・API の処理速度・音楽ディグ体験のバランスを取るために、フェッチ対象のアーティスト数と取得楽曲数の設計を慎重に調整した。
+
+<br>
+
+#### 🔘 レコメンド結果の DB 保存処理の実装（✅ 実装済み）
+
+レコメンド結果とそれに関連するデータを**トランザクション**を活用して DB に保存する処理を実装しました。
+
+- レコメンドエンティティを生成
+- レコメンド結果と関連データをトランザクションを活用して保存（内部 ID を発行）
+- レコメンドエンティティに ID を付与
+
+< code >
+["レコメンドユースケース"](backend/src/application/usecase/getRecommendationUseCase.ts)
+[レコメンド結果を保存(トランザクション)](backend/src/infrastructure/db/recommendationMySQLRepository.ts)
+["関連するアーティストを保存"](backend/src/infrastructure/db/artistMysqlRepository.ts)
+["関連する楽曲を保存"](backend/src/infrastructure/db/tracksMysqlRepository.ts)
+
+< 工夫した点 >
+
+- レコメンドを意味のあるまとまりとして扱うために**Entity**(["Recomendation"](backend/src/domain/entities/recommendation.ts))を導入した。
+- (["Recomendation"](backend/src/domain/entities/recommendation.ts))エンティティは ID を持たない状態で生成し、保存後に ID を付与（後から一意性を確定）
+- 保存対象が多テーブルにまたがるため、トランザクションで一括処理を行った。
+- 重複登録を防ぎつつ、整合性を保ったデータ保存ができるように注意した。
+- レコメンド結果と楽曲は多対多の関係なので、中間テーブルを用いて関係を適切に表現した。

@@ -1,13 +1,13 @@
-## 一連のアクション
+## 全体の流れ
 
-### ログイン
+### ログイン画面
 
 - フロントで codeVerifier + codeChallemge, state 生成
 - codeChallemge, state を含めた認可 URL を生成し、SoundCloud ログイン画面にリダイレクト
 - コールバックで code, state を受け取り、state を検証
 - 検証 OK であれば、バックエンドに codeVerifier, state を送信し、sessionId を受け取る。(ローカルの code, codeVerifier, state を削除)
 
-### ホーム
+### ホーム画面
 
 - フォロ中のアーティスト一覧が見れる
 - アーティストを検索して、フォローできる
