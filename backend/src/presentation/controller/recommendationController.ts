@@ -1,11 +1,11 @@
 import { GetRecommendationUseCase } from "../../application/usecase/getRecommendationUseCase";
-import { GetRecommendationHistorysUseCase } from "../../application/usecase/getRecommendationHistorysUseCase";
+import { GetHistorysUseCase } from "../../application/usecase/getHistorysUseCase";
 import { Request, Response } from "express";
 
 export class RecommendationController {
   constructor(
     private readonly _getRecommendationUseCase: GetRecommendationUseCase,
-    private readonly _getRecommendationHistorysUseCase: GetRecommendationHistorysUseCase
+    private readonly _getHistorysUseCase: GetHistorysUseCase
   ) {}
 
   // レコメンドを取得する
@@ -33,9 +33,7 @@ export class RecommendationController {
     const sessionId = req.cookies.sessionId;
 
     // ユースケース
-    const historys = await this._getRecommendationHistorysUseCase.run(
-      sessionId
-    );
+    const historys = await this._getHistorysUseCase.run(sessionId);
 
     // レスポンス
     res
