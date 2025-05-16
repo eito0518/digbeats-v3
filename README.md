@@ -130,7 +130,7 @@ SoundCloud API と通信に必要な、アクセストークンの有効期限�
 
 < 実装した主なコード >
 
-- [`トークン・セッション管理`](backend/src/application/applicationSercices/tokenApplicationService.ts)
+- [`トークン・セッションを管理`](backend/src/application/applicationSercices/tokenApplicationService.ts)
 
 < 工夫した点 >
 
@@ -202,7 +202,7 @@ SoundCloud API と通信に必要な、アクセストークンの有効期限�
 
 < 実装した主なコード >
 
-- [`レコメンドユースケース`](backend/src/application/usecase/getRecommendationUseCase.ts)
+- [`レコメンド取得ユースケース`](backend/src/application/usecase/getRecommendationUseCase.ts)
 - [`フォロー中のアーティストを取得`](backend/src/infrastructure/api/userSoundCloudRepository.ts)
 - [`ソースとなるアーティストをランダムに選ぶアルゴリズム`](backend/src/domain/domainServices/recommendationDomainService.ts)
 - [`仮想アーティストを生成するロジック`](backend/src/domain/factories/virtualArtistFactory.ts)
@@ -227,7 +227,7 @@ SoundCloud API と通信に必要な、アクセストークンの有効期限�
 
 < 実装した主なコード >
 
-- [`レコメンドユースケース`](backend/src/application/usecase/getRecommendationUseCase.ts)
+- [`レコメンド取得ユースケース`](backend/src/application/usecase/getRecommendationUseCase.ts)
 - [`レコメンド結果を保存(トランザクション)`](backend/src/infrastructure/db/recommendationMySQLRepository.ts)
 - [`関連するアーティストを保存`](backend/src/infrastructure/db/artistMysqlRepository.ts)
 - [`関連する楽曲を保存`](backend/src/infrastructure/db/tracksMysqlRepository.ts)
@@ -239,3 +239,24 @@ SoundCloud API と通信に必要な、アクセストークンの有効期限�
 - 保存対象が多テーブルにまたがるため、トランザクションで一括処理を行った。
 - 重複登録を防ぎつつ、整合性を保ったデータ保存ができるように注意した。
 - レコメンド結果と楽曲は多対多の関係なので、中間テーブルを用いて関係を適切に表現した。
+
+<br>
+
+#### 🔘 レコメンド履歴を取得するエンドポイントの実装（✅ 実装済み）
+
+レコメンド履歴を表示するためのエンドポイントを実装しました。
+
+- `recommendations` テーブルに `recommendations_tracks` (中間テーブル) と `tracks` テーブルを結合し、過去のレコメンド情報と各楽曲の表示に必要な情報を一括で取得
+- `recommendationId` ごとにレコメンド履歴を構造化し、フロントエンドに返却
+
+< 実装した主なコード >
+
+- [`履歴取得ユースケース`](backend/src/application/usecase/getHistorysUseCase.ts)
+- [`レコメンド履歴を取得`](backend/src/infrastructure/db/historyMysqlRepository.ts)
+
+< 工夫した点 >
+
+- 複数テーブルを結合することで、必要な情報を一度に取得し、DB へのアクセス回数を最小限に抑えてパフォーマンスを向上させた。
+- 「過去のレコメンド」と「それに紐づく楽曲群」を意味のあるまとまりとして扱うために、 **Entity** ([`recommendationRecord`](backend/src/domain/entities/recommendationRecord.ts), [`recordedTrack`](backend/src/domain/entities/recordedTrack.ts)) を導入した。
+- 楽曲単位の「いいね状態（wasLiked）」を中間テーブルで管理し、履歴表示時にその情報を使用する設計とした。
+- SoundCloud 上の現在の「いいね状態」は確認せず、「レコメンド生成時にユーザーがいいねしたかどうか」のログを記録する設計とすることで、SoundCloud と DB の整合性を気にしないシンプルな構成にした。
