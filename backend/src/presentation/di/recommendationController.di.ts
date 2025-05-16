@@ -24,5 +24,6 @@ export const recommendationController = new RecommendationController(
       new ArtistMysqlRepository(),
       new TrackMysqlRepository()
     )
-  )
+  ),
+  new GetRecommendationHistorysUseCase()
 );
