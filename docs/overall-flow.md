@@ -87,7 +87,7 @@
       id: 12345(内部のID),
       title: FE!N,
       artworkUrl: https:~,
-      permalinkUrl: https:~,
+      permalinkUrl: https:~, // ウィジェット再生で使用
       artist: {
         name: Travis Sccott,
         avatarUrl: https:~,
@@ -95,8 +95,7 @@
       },
       // SoundCloud APIで曲を再生する場合 (再生APIのURLを保存することはAPIポリシー違反のため、レコメンド直後の表示のみに使用)
       streamUrl: https:~,
-      // ウィジェットで曲を再生する場合　（APIポリシーに注意して、trackIdと再生ウィジェットのみDB保存、レコメンド履歴はこちらを使用）
-      widgetUrl: https:~,
+      // ウィジェットで曲を再生する場合は　（APIポリシーに注意して、trackIdとpermalinkUrlのみDB保存、レコメンド履歴はこちらを使用）
     },
     ...
   ]
@@ -106,6 +105,7 @@
 ### GET /api/recommendations/historys
 
 - 説明：楽曲レコメンド履歴を取得する
+- 注意：履歴画面でのいいねの状態表示は DB の `wasLiked` のみを見る。SoundCloud 上の現状（今も like 中かどうか）は確認しない。画面上では「当時いいねしました」などの履歴表示のみ可能
 - 認証：Cookie(sessionId)
 - レスポンス：
 
@@ -113,12 +113,12 @@
 [
   {
     recommendationId: 12345(内部のID),
-    recommended_at: "2025-04-18T10:00:00Z",
+    recommendedAt: "2025-04-18T10:00:00Z",
     tracks: [
       {
         // Track情報をそれぞれフェッチするのは、通信回数が多いため、情報表示・再生共にウィジェットを利用する
         trackId: 12345 (内部のID)
-        widgetUrl: https:~,
+        permalinkUrl: https:~,
       },
       ...
     ]
@@ -129,7 +129,8 @@
 
 ### POST /api/recommendations/:recommendationId/likes
 
-- 説明：楽曲レコメンド画面 or 履歴画面 での いいね（内部＆外部）を更新する
+- 説明：レコメンド生成画面での「いいね操作」を SoundCloud に即時反映しつつ、アプリ内 DB にも「当時の反応ログ（wasLiked）」として記録する
+- 対象画面：レコメンド生成画面（履歴画面では操作不可）
 - 認証：Cookie(sessionId)
 - リクエスト：
 
