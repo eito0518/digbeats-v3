@@ -83,7 +83,7 @@ Docker を用いて MySQL / Redis の開発環境を構築しました。ER 図�
 - [`ログイン画面`](frontend/src/login.tsx)
 - [`認可 URL を生成するロジック`](frontend/src/generateAuthorizationUrl.tsx)
 - [`PKCE を生成するロジック`](frontend/src/generatePkce.ts)
-- [`認可後のコールバック処理](frontend/src/callback.tsx)
+- [`認可後のコールバック処理`](frontend/src/callback.tsx)
 
 < 工夫した点 >
 
