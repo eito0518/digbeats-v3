@@ -1,5 +1,5 @@
 import { Recommendation } from "../entities/recommendation";
 
-export interface RecommendationDbRepository {
+export interface RecommendationRepository {
   saveAndReturnWithId(recommendation: Recommendation): Promise<Recommendation>;
 }

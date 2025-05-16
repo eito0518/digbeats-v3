@@ -1,13 +1,11 @@
-import { RecommendationDbRepository } from "../../domain/interfaces/recommendationDbRepository";
+import { RecommendationRepository } from "../../domain/interfaces/recommendationDbRepository";
 import { ArtistMysqlRepository } from "./artistMysqlRepository";
 import { TrackMysqlRepository } from "./tracksMysqlRepository";
 import { Recommendation } from "../../domain/entities/recommendation";
 import { MysqlClient } from "./mysqlClient";
 import mysql from "mysql2/promise";
 
-export class RecommendationMySQLRepository
-  implements RecommendationDbRepository
-{
+export class RecommendationMySQLRepository implements RecommendationRepository {
   constructor(
     private readonly _artistMysqlRepository: ArtistMysqlRepository,
     private readonly _trackMysqlRepository: TrackMysqlRepository
@@ -54,11 +52,11 @@ export class RecommendationMySQLRepository
       // レコメンドIDを取得
       const recommendationId = recommendationInsertResults.insertId;
 
-      // 中間テーブルを保存
+      // 中間テーブルに保存
       await Promise.all(
         trackIds.map(async (trackId) => {
           await transactionConn.execute<mysql.ResultSetHeader>(
-            "INSERT INTO recommendations_tracks (recommendations_id, tracks_id, liked) VALUES (?, ?, false)",
+            "INSERT INTO recommendations_tracks (recommendations_id, tracks_id, was_liked) VALUES (?, ?, false)",
             [recommendationId, trackId]
           );
         })
