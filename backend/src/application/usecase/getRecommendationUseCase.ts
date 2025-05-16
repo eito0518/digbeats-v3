@@ -2,7 +2,7 @@ import { TokenApplicationService } from "../applicationSercices/tokenApplication
 import { UserApiRepository } from "../../domain/interfaces/userApiRepository";
 import { RecommendationDomainService } from "../../domain/domainServices/recommendationDomainService";
 import { RecommendationApplicationService } from "../applicationSercices/recommendationApplicationService";
-import { RecommendationDbRepository } from "../../domain/interfaces/recommendationDbRepository";
+import { RecommendationRepository } from "../../domain/interfaces/recommendationDbRepository";
 import { Followings } from "../../domain/valueObjects/followings";
 import { Recommendation } from "../../domain/entities/recommendation";
 
@@ -12,7 +12,7 @@ export class GetRecommendationUseCase {
     private readonly _userApiRepository: UserApiRepository,
     private readonly _recommendationDomainService: RecommendationDomainService,
     private readonly _recommendationApplicationService: RecommendationApplicationService,
-    private readonly _recommendationDbRepository: RecommendationDbRepository
+    private readonly _recommendationDbRepository: RecommendationRepository
   ) {}
 
   async run(sessionId: string) {

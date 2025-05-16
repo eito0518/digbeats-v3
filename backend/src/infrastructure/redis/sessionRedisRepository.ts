@@ -17,11 +17,12 @@ export class SessionRedisRepository implements SessionRepository {
   }
 
   //　セッションを取得
-  async get(sessionId: string): Promise<Session | null> {
+  async get(sessionId: string): Promise<Session> {
     const rawSession = await redis.get(`session: ${sessionId}`);
-    // セッションがなければnullを返す
+
+    // セッションがなければ再ログインを要求
     if (!rawSession) {
-      return null;
+      throw new Error("REAUTH_REQUIRED");
     }
 
     return Session.fromJSON(rawSession);

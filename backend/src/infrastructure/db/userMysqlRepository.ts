@@ -3,15 +3,15 @@ import { MysqlClient } from "./mysqlClient";
 import mysql from "mysql2/promise";
 
 export class UserMysqlRepository implements UserDbRepository {
-  // ユーザー情報を取得
+  // 外部IDからユーザーIDを取得
   async findUserIdByExternalId(
-    soundCloudUserId: number
+    soundcloudUserId: number
   ): Promise<number | undefined> {
     try {
       const [userSelectResults] = await MysqlClient.execute<
         mysql.RowDataPacket[]
       >("SELECT id FROM users WHERE soundcloud_user_id = ?", [
-        soundCloudUserId,
+        soundcloudUserId,
       ]);
 
       // ユーザーが未登録ならば undefined を返す

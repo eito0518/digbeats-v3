@@ -10,6 +10,8 @@ import { TrackSoundCloudRepository } from "../../infrastructure/api/trackSoundCl
 import { RecommendationMySQLRepository } from "../../infrastructure/db/recommendationMySQLRepository";
 import { ArtistMysqlRepository } from "../../infrastructure/db/artistMysqlRepository";
 import { TrackMysqlRepository } from "../../infrastructure/db/tracksMysqlRepository";
+import { GetHistorysUseCase } from "../../application/usecase/getHistorysUseCase";
+import { HistoryMysqlRepository } from "../../infrastructure/db/historyMysqlRepository";
 
 export const recommendationController = new RecommendationController(
   new GetRecommendationUseCase(
@@ -25,5 +27,8 @@ export const recommendationController = new RecommendationController(
       new TrackMysqlRepository()
     )
   ),
-  new GetRecommendationHistorysUseCase()
+  new GetHistorysUseCase(
+    new SessionRedisRepository(),
+    new HistoryMysqlRepository()
+  )
 );

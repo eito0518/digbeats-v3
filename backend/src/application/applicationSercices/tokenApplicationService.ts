@@ -17,11 +17,6 @@ export class TokenApplicationService {
     // セッションを取得
     const session = await this._sessionRepository.get(sessionId);
 
-    // セッションが期限切れならば再ログインを要求
-    if (!session) {
-      throw new Error("REAUTH_REQUIRED");
-    }
-
     let token = session.token;
 
     // アクセストークンが期限切れならば
