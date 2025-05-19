@@ -136,11 +136,7 @@
 
 ```json
 {
-  "likes": {
-    // 結果的に変更があったものだけを送る
-    "789(内部のtrackId)": true,
-    "790(内部のtrackId)": false,
-    ...
-  }
+    // いいねされたものだけを送る（falseからtrue）
+  "likes": [789(内部のtrackId), 790(内部のtrackId), ....]
 }
 ```

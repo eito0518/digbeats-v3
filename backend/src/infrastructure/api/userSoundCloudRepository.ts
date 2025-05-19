@@ -11,7 +11,7 @@ export class UserSoundCloudRepository implements UserApiRepository {
 
     const headers = {
       accept: "application/json; charset=utf-8",
-      Authorization: accessToken,
+      Authorization: `OAuth ${accessToken}`,
     };
 
     try {
@@ -36,7 +36,7 @@ export class UserSoundCloudRepository implements UserApiRepository {
 
     const headers = {
       accept: "application/json; charset=utf-8",
-      Authorization: accessToken,
+      Authorization: `OAuth ${accessToken}`,
     };
 
     try {
@@ -67,7 +67,7 @@ export class UserSoundCloudRepository implements UserApiRepository {
 
     const headers = {
       accept: "application/json; charset=utf-8",
-      Authorization: accessToken,
+      Authorization: `OAuth ${accessToken}`,
     };
 
     try {
