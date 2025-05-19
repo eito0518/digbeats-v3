@@ -15,3 +15,9 @@ recommendationRouter.get(
   "/api/recommendations/historys",
   asyncHandler(recommendationController.getHistorys)
 );
+
+// レコメンド楽曲にいいねをするエンドポイント
+recommendationRouter.post(
+  "/api/recommendations/:recommendationId/likes",
+  asyncHandler(recommendationController.likeTracks)
+);

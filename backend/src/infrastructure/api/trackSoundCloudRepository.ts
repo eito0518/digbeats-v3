@@ -14,7 +14,7 @@ export class TrackSoundCloudRepository {
 
     const headers = {
       accept: "application/json; charset=utf-8",
-      Authorization: accessToken,
+      Authorization: `OAuth ${accessToken}`,
     };
 
     const initialParams = {
