@@ -1,10 +1,10 @@
 import { SessionRepository } from "../../domain/interfaces/sessionRepository";
-import { HistoryRepository } from "../../domain/interfaces/historyRepository";
+import { HistoryDbRepository } from "../../domain/interfaces/historyDbRepository";
 
 export class GetHistorysUseCase {
   constructor(
     private readonly _sessionRepository: SessionRepository,
-    private readonly _historyRepository: HistoryRepository
+    private readonly _historyDbRepository: HistoryDbRepository
   ) {}
 
   async run(sessionId: string) {
@@ -15,7 +15,7 @@ export class GetHistorysUseCase {
     const userId = session.userId;
 
     // レコメンド履歴を取得
-    const historys = await this._historyRepository.get(userId, 20);
+    const historys = await this._historyDbRepository.get(userId, 20);
 
     // レコメンド履歴をコントローラーに返す
     return historys;

@@ -1,10 +1,10 @@
-import { HistoryRepository } from "../../domain/interfaces/historyRepository";
+import { HistoryDbRepository } from "../../domain/interfaces/historyDbRepository";
 import { RecommendationRecord } from "../../domain/entities/recommendationRecord";
 import { MysqlClient } from "./mysqlClient";
 import mysql from "mysql2/promise";
 import { RecordedTrack } from "../../domain/entities/recordedTrack";
 
-export class HistoryMysqlRepository implements HistoryRepository {
+export class HistoryMysqlRepository implements HistoryDbRepository {
   // レコメンド履歴を取得
   async get(userId: number, limit: number): Promise<RecommendationRecord[]> {
     try {

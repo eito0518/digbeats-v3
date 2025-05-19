@@ -13,7 +13,7 @@ export class ArtistSoundCloudRepository implements ArtistApiRepository {
 
     const headers = {
       accept: "application/json; charset=utf-8",
-      Authorization: accessToken,
+      Authorization: `OAuth ${accessToken}`,
     };
 
     const params = {
