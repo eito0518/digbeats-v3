@@ -260,3 +260,23 @@ SoundCloud API と通信に必要な、アクセストークンの有効期限�
 - 「過去のレコメンド」と「それに紐づく楽曲群」を意味のあるまとまりとして扱うために、 **Entity** ([`recommendationRecord`](backend/src/domain/entities/recommendationRecord.ts), [`recordedTrack`](backend/src/domain/entities/recordedTrack.ts)) を導入した。
 - 楽曲単位の「いいね状態（wasLiked）」を中間テーブルで管理し、履歴表示時にその情報を使用する設計とした。
 - SoundCloud 上の現在の「いいね状態」は確認せず、「レコメンド生成時にユーザーがいいねしたかどうか」のログを記録する設計とすることで、SoundCloud と DB の整合性を気にしないシンプルな構成にした。
+
+<br>
+
+#### 🔘 レコメンド楽曲にいいねをする処理の実装（✅ 実装済み）
+
+レコメンド生成画面で、ユーザーが「いいね」操作を行えるように、レコメンド楽曲の外部状態（SoundCloud）とアプリ内 DB を更新するエンドポイントを実装しました。
+
+- SoundCloud API に対して「いいね」を即時反映
+- 同時に、`recommendations_tracks` テーブルの `was_liked` を `true` に更新し、「当時のユーザー反応ログ」として保存
+
+< 実装した主なコード >
+
+- [`いいねするユースケース`](backend/src/application/usecase/likeTracksUseCase.ts)
+- [`SoundCloudトラックIDを取得`](backend/src/infrastructure/db/tracksMysqlRepository.ts)
+- [`SoundCloudにいいねを反映`](backend/src/infrastructure/api/likeSoundCloudRepository.ts)
+- [`いいねログをDBに記録`](backend/src/infrastructure/db/likeMysqlRepository.ts)
+
+< 工夫した点 >
+
+- SoundCloud 上の状態とアプリ内 DB の状態は同期しない設計とし、履歴画面では「表示のみ」を許可する構成にした
