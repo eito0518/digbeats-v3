@@ -286,3 +286,27 @@ SoundCloud API と通信に必要な、アクセストークンの有効期限�
 ---
 
 ### ☑️ フロントエンド：　アプリ本体の実装　（🔄 実装中）
+
+#### 🔘 ログイン画面・コールバック画面の UI 実装（✅ 実装済み）
+
+Tailwind CSS を導入し、ログイン画面およびコールバック画面をモバイル・PC 両対応のレスポンシブ UI で実装しました。  
+OAuth 認証フローでは、デモ実装で作成済みの [`generateAuthorizationUrl`](frontend/src/auth/generateAuthorizationUrl.ts), [`generatePkce`](frontend/src/auth/generatePkce.ts), [`Callback`](frontend/src/pages/callback.tsx) を再利用しています。
+
+- ログイン画面では [`generateAuthorizationUrl`](frontend/src/auth/generateAuthorizationUrl.ts) によって認可 URL を生成し、SoundCloud OAuth 認証画面へリダイレクト
+- コールバック画面では [`callback.tsx`](frontend/src/pages/callback.tsx) にて `state` を検証し、正当なリクエストであることを確認後、バックエンドへ `code` + `codeVerifier` を送信しセッションを取得
+- ログイン中の状態を示すローディングスピナー UI を Tailwind CSS で実装
+- 認証完了後、トップページ（`/`）へ自動遷移
+
+< 実装した主なコード >
+
+- [`ログイン画面`](frontend/src/pages/login.tsx)
+- [`OAuth 認可 URL を生成`](frontend/src/auth/generateAuthorizationUrl.ts)
+- [`PKCE を生成`](frontend/src/auth/generatePkce.ts)
+- [`コールバック処理(画面)`](frontend/src/pages/callback.tsx)
+
+< 工夫した点 >
+
+- ログイン画面マウント時に、前回の残留 `state` や `codeVerifier` を削除することで、認可処理の整合性を保つ設計にした。
+- 「アカウント作成」「ログイン」ボタンを UI 上で分け、動作は同じでも UX を向上させた。
+- コールバック後に認証情報をバックエンドに送信した後、`sessionStorage` を削除することでセキュリティ向上させた。
+- ログイン処理中に操作されないよう、コールバック画面にローディング UI を表示した。
