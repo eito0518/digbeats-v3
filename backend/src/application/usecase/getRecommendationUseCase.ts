@@ -1,7 +1,7 @@
-import { TokenApplicationService } from "../applicationSercices/tokenApplicationService";
+import { TokenApplicationService } from "../applicationServices/tokenApplicationService";
 import { UserApiRepository } from "../../domain/interfaces/userApiRepository";
 import { RecommendationDomainService } from "../../domain/domainServices/recommendationDomainService";
-import { RecommendationApplicationService } from "../applicationSercices/recommendationApplicationService";
+import { RecommendationApplicationService } from "../applicationServices/recommendationApplicationService";
 import { RecommendationRepository } from "../../domain/interfaces/recommendationDbRepository";
 import { Followings } from "../../domain/valueObjects/followings";
 import { Recommendation } from "../../domain/entities/recommendation";
