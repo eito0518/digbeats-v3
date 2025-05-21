@@ -10,9 +10,9 @@ export const Login = () => {
   }, []);
 
   const handleLogin = async () => {
-    // ログイン用URL生成
+    // OAuth認証URL生成
     const authorizationUrl = await generateAuthorizationUrl();
-    // ログインページにリダイレクト
+    // OAuth認証画面にリダイレクト
     window.location.href = authorizationUrl;
   };
 
