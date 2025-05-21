@@ -112,13 +112,10 @@ app.post(
 app.get(
   "/api/me/followings",
   asyncHandler(async (req, res) => {
-    console.log("🔵 /api/me/followings HIT"); /////////////
-
     // sessionIdでユーザーを認識
     const returnedSessionId = req.cookies.sessionId;
     // バリデーション
     if (!returnedSessionId) {
-      console.log("❌ No sessionId found"); /////////////
       return res.status(401).json({ message: "SessionId not found" });
     }
 
@@ -132,8 +129,6 @@ app.get(
         code: "REAUTH_REQUIRED",
       });
     }
-
-    console.log("✅ Session found:"); /////////////
 
     // アクセストークンが生きてない場合はリフレッシュトークンで更新
     const { accessToken, refreshToken, accessTokenExpiresAt } =
@@ -303,8 +298,6 @@ app.get(
         }
       );
 
-      console.log("✅ track取得成功:");
-
       const tracks = response.data.map((track: any) => ({
         id: track.id,
         title: track.title,
@@ -315,7 +308,6 @@ app.get(
         tracks: tracks,
       });
     } catch (error: any) {
-      console.error("❌ track取得失敗:", error.response?.data || error.message);
       return res.status(404).json({
         message: "Not found following users",
       });

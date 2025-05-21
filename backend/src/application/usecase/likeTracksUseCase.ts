@@ -1,4 +1,4 @@
-import { TokenApplicationService } from "../applicationSercices/tokenApplicationService";
+import { TokenApplicationService } from "../applicationServices/tokenApplicationService";
 import { TrackDbRepository } from "../../domain/interfaces/trackDbRepository";
 import { LikeApiRepository } from "../../domain/interfaces/likeApiRepository";
 import { LikeDbRepository } from "../../domain/interfaces/likeDbRepository";

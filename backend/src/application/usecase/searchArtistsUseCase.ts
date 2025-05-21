@@ -1,4 +1,4 @@
-import { TokenApplicationService } from "../applicationSercices/tokenApplicationService";
+import { TokenApplicationService } from "../applicationServices/tokenApplicationService";
 import { ArtistApiRepository } from "../../domain/interfaces/artistApiRepository";
 
 export class SearchArtistsUseCase {
