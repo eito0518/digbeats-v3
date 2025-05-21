@@ -1,5 +1,5 @@
 import { UserApiRepository } from "../../domain/interfaces/userApiRepository";
-import { TokenApplicationService } from "../applicationSercices/tokenApplicationService";
+import { TokenApplicationService } from "../applicationServices/tokenApplicationService";
 
 export class FollowArtistUseCase {
   constructor(
