@@ -25,11 +25,15 @@ export const Callback = () => {
         throw new Error("Required information is missing");
       }
 
+      // セッションストレージから認証情報を削除
+      sessionStorage.removeItem("codeVerifier");
+      sessionStorage.removeItem("state");
+
       try {
         // バックエンドに code + code_verifier を送信し、 Cookieで sessionId を自動取得
         const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
         await axios.post(
-          `${API_BASE_URL}/api/auth/exchange`,
+          `${API_BASE_URL}/api/auth/authorize`,
           {
             code: code,
             codeVerifier: codeVerifier,
@@ -39,10 +43,10 @@ export const Callback = () => {
           }
         );
 
-        // ルートディレクトリにリダイレクト
+        // ホーム画面にリダイレクト
         navigate("/");
       } catch (error) {
-        console.error("ログイン失敗", error);
+        console.error("failed to login ", error);
         alert("ログインに失敗しました。もう一度お試しください。");
         throw new Error("Failed to login");
       }

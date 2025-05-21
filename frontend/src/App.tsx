@@ -1,9 +1,9 @@
 import { Routes, Route } from "react-router-dom";
-import { Login } from "./login";
-import { Callback } from "./callback";
-import { Home } from "./Home";
+import { Login } from "./pages/login";
+import { Callback } from "./pages/callback";
+import { Home } from "./pages/Home";
 
-function App() {
+export function App() {
   return (
     <>
       <Routes>
@@ -15,5 +15,3 @@ function App() {
     </>
   );
 }
-
-export default App;
