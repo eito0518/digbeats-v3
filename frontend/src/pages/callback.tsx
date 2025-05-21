@@ -55,5 +55,16 @@ export const Callback = () => {
     handleAuthorizationCallback();
   }, []); // SoundCloudからのコールバック時に実行
 
-  return <p>ログイン処理中です...</p>;
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-black text-white px-4">
+      <div className="flex flex-col items-center">
+        {/* ローディングスピナー */}
+        <div className="w-12 h-12 border-[6px] border-white border-t-transparent rounded-full animate-spin" />
+        {/* メッセージ */}
+        <p className="text-sm font-semibold text-gray-300 mt-6">
+          Logging in...
+        </p>
+      </div>
+    </div>
+  );
 };
