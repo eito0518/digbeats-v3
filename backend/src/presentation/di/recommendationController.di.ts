@@ -1,11 +1,11 @@
 import { RecommendationController } from "../controller/recommendationController";
 import { GetRecommendationUseCase } from "../../application/usecase/getRecommendationUseCase";
-import { TokenApplicationService } from "../../application/applicationSercices/tokenApplicationService";
+import { TokenApplicationService } from "../../application/applicationServices/tokenApplicationService";
 import { SessionRedisRepository } from "../../infrastructure/redis/sessionRedisRepository";
 import { TokenSoundCloudRepository } from "../../infrastructure/api/tokenSoundCloudRepository";
 import { UserSoundCloudRepository } from "../../infrastructure/api/userSoundCloudRepository";
 import { RecommendationDomainService } from "../../domain/domainServices/recommendationDomainService";
-import { RecommendationApplicationService } from "../../application/applicationSercices/recommendationApplicationService";
+import { RecommendationApplicationService } from "../../application/applicationServices/recommendationApplicationService";
 import { TrackSoundCloudRepository } from "../../infrastructure/api/trackSoundCloudRepository";
 import { RecommendationMySQLRepository } from "../../infrastructure/db/recommendationMySQLRepository";
 import { ArtistMysqlRepository } from "../../infrastructure/db/artistMysqlRepository";

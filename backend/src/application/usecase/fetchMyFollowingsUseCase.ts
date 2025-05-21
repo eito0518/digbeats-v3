@@ -1,4 +1,4 @@
-import { TokenApplicationService } from "../applicationSercices/tokenApplicationService";
+import { TokenApplicationService } from "../applicationServices/tokenApplicationService";
 import { UserApiRepository } from "../../domain/interfaces/userApiRepository";
 
 export class FetchMyFollowingsUseCase {
