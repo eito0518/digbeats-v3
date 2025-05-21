@@ -1,4 +1,4 @@
-import { Tracks } from "./Tracks";
+import { Tracks } from "../pages/Tracks";
 export const Home = () => {
   return (
     <>
