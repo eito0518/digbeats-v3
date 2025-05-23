@@ -93,12 +93,35 @@
         avatarUrl: https:~,
         permalinkUrl: https:~,
       },
-      // SoundCloud APIで曲を再生する場合 (再生APIのURLを保存することはAPIポリシー違反のため、レコメンド直後の表示のみに使用)
-      streamUrl: https:~,
-      // ウィジェットで曲を再生する場合は　（APIポリシーに注意して、trackIdとpermalinkUrlのみDB保存、レコメンド履歴はこちらを使用）
+      wasLiked: true
     },
     ...
   ]
+}
+```
+
+### GET /api/recommendations/today
+
+- 説明：「今日のレコメンド」を１つ取得する
+- 認証：Cookie(sessionId)
+- レスポンス：
+
+```json
+{
+  recomendationId: 12345(内部の ID),
+  tracks: [
+    {
+      id: 12345(内部の ID),
+      title: FE!N,
+      artworkUrl: https:~,
+      permalinkUrl: https:~, // ウィジェット再生で使用
+      artist: {
+        name: Travis Sccott,
+        avatarUrl: https:~,
+        permalinkUrl: https:~,
+      },
+      wasLiked: true
+    }]
 }
 ```
 
