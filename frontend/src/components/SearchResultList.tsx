@@ -3,9 +3,14 @@ import { Artist } from "../types/artistType";
 type Props = {
   searchResults: Artist[];
   onFollow: (soundcloudArtistId: number) => void;
+  onUnfollow: (soundcloudArtistId: number) => void;
 };
 
-export const SearchResultList = ({ searchResults, onFollow }: Props) => {
+export const SearchResultList = ({
+  searchResults,
+  onFollow,
+  onUnfollow,
+}: Props) => {
   return (
     // アーティスト検索結果
     <div className="mt-4 space-y-4 px-4">
@@ -27,16 +32,21 @@ export const SearchResultList = ({ searchResults, onFollow }: Props) => {
           </div>
           {/* フォローボタン */}
           <button
-            onClick={() => onFollow(artist.soundcloudArtistId)}
+            onClick={
+              () =>
+                artist.isFollowing
+                  ? onUnfollow(artist.soundcloudArtistId) // フォロー解除
+                  : onFollow(artist.soundcloudArtistId) // フォローする
+            }
             className={`px-4 py-2 rounded-full text-sm font-semibold transition 
               ${
                 artist.isFollowing
-                  ? "bg-orange-400 text-white"
-                  : "border border-white text-white"
+                  ? "bg-orange-400 text-white" // フォロー済み
+                  : "border border-white text-white" // 未フォロー
               } 
             `}
           >
-            Follow
+            {artist.isFollowing ? "Following" : "Follow"}
           </button>
         </div>
       ))}

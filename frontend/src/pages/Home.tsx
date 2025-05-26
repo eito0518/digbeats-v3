@@ -22,7 +22,13 @@ export const Home = () => {
 
   const {
     searchState: { searchQuery, searchResults },
-    actions: { setSearchQuery, setSearchResults, handleSearch, handleFollow },
+    actions: {
+      setSearchQuery,
+      setSearchResults,
+      handleSearch,
+      handleFollow,
+      handleUnfollow,
+    },
   } = useSearch();
 
   // 「まだ今日のレコメンドが無い」 かつ 「生成されたレコメンドがある」　場合に保存できる
@@ -51,6 +57,7 @@ export const Home = () => {
         <SearchResultList
           searchResults={searchResults}
           onFollow={handleFollow}
+          onUnfollow={handleUnfollow}
         />
       ) : (
         <>
