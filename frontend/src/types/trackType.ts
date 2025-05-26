@@ -8,10 +8,5 @@ export type Track = {
     avatarUrl: string;
     permalinkUrl: string;
   };
-  streamUrl: string;
-};
-
-export type RecommendationResponse = {
-  recommendationId: number;
-  tracks: Track[];
+  wasLiked: boolean;
 };
