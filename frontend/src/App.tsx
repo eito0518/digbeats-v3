@@ -1,6 +1,6 @@
 import { Routes, Route } from "react-router-dom";
-import { Login } from "./pages/login";
-import { Callback } from "./pages/callback";
+import { Login } from "./pages/Login";
+import { Callback } from "./pages/Callback";
 import { Home } from "./pages/Home";
 
 export function App() {
