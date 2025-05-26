@@ -74,6 +74,11 @@
 - 説明：SoundCloud でアーティストをフォローする
 - 認証：Cookie(sessionId)
 
+### DELETE /api/users/followings/:soundcloudArtistId
+
+- 説明：SoundCloud でアーティストのフォローを解除する
+- 認証：Cookie(sessionId)
+
 ### GET /api/recommendations
 
 - 説明：楽曲レコメンドを取得する
