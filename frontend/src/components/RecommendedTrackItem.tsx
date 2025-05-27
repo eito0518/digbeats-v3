@@ -2,27 +2,25 @@ import { Track } from "../types/trackType";
 import IconButton from "@mui/material/IconButton";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import StarIcon from "@mui/icons-material/Star";
-import StarBorderIcon from "@mui/icons-material/StarBorder";
 
 type Props = {
   track: Track;
-  isSaved: boolean;
+  recommendationId: number;
   isLiked: boolean;
   isExpanded: boolean;
-  onToggleLike: (id: number) => void;
-  onToggleExpand: (id: number) => void;
+  onToggleLike: (trackId: number, recommendationId: number) => void;
+  onToggleExpand: (trackId: number) => void;
 };
 
 export const RecommendedTrackItem = ({
   track,
-  isSaved,
+  recommendationId,
   isLiked, // いいねされているか
   isExpanded, // 展開されているか
   onToggleLike,
   onToggleExpand,
 }: Props) => {
-  // レコメンドされたトラック
+  // レコメンドされたトラックを表示
   return (
     <li
       className={`flex flex-col bg-neutral-900 rounded-xl px-4 py-3 gap-2 transition-all duration-300 ${
@@ -47,27 +45,19 @@ export const RecommendedTrackItem = ({
         </div>
         {/* いいねボタン */}
         <IconButton
-          disabled={isSaved} // 保存済みの場合、ボタンは無効化
           onClick={(e) => {
             e.stopPropagation(); // 親のonClickの発火を防ぐ
-            onToggleLike(track.id);
+            onToggleLike(track.id, recommendationId);
           }}
         >
-          {isSaved ? (
-            //　保存済み（DBから取得）の場合
-            track.wasLiked ? ( // wasLikedで判定
-              <StarIcon sx={{ color: "orange" }} />
-            ) : (
-              <StarBorderIcon sx={{ color: "gray" }} />
-            )
-          ) : // 今生成されたレコメンドの場合
-          isLiked ? ( // isLikedで判定
+          {isLiked ? (
             <FavoriteIcon sx={{ color: "orange" }} />
           ) : (
             <FavoriteBorderIcon sx={{ color: "white" }} />
           )}
         </IconButton>
       </div>
+
       {/* 展開中のウィジェット */}
       {isExpanded && (
         <div className="w-full mt-4">
