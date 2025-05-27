@@ -1,25 +1,17 @@
 import { useState } from "react";
-import { useRecommendation } from "../hooks/useRecommendation";
 import { useSearch } from "../hooks/useSearch";
+import { useRecommendation } from "../hooks/useRecommendation";
+import { useLike } from "../hooks/useLike";
+import { useTrack } from "../hooks/useTrack";
 import { HeaderBar } from "../components/HeaderBar";
 import { RecommendationButtons } from "../components/RecommendationButtons";
-import { RecommendedTrackList } from "../components/RecommendedTrackList";
 import { SearchResultList } from "../components/SearchResultList";
+import { RecommendationList } from "../components/RecommendationList";
 
 export const Home = () => {
-  const [isSearching, setIsSearching] = useState(false); // 検索モード
-
-  const {
-    recommendationState: {
-      recommendation,
-      isSaved,
-      generateCount,
-      likedTrackIds,
-      expandedTrackId,
-    },
-    actions: { handleGenerate, handleSave, toggleLike, toggleExpand },
-  } = useRecommendation();
-
+  // 画面切り替え用のHooks
+  const [isSearching, setIsSearching] = useState(false);
+  // アーティスト検索画面のHooks
   const {
     searchState: { searchQuery, searchResults },
     actions: {
@@ -30,54 +22,67 @@ export const Home = () => {
       handleUnfollow,
     },
   } = useSearch();
-
-  // 「まだ今日のレコメンドが無い」 かつ 「生成されたレコメンドがある」　場合に保存できる
-  const canSave = !isSaved && recommendation !== null;
+  // レコメンド画面のHooks
+  const { recommendations, todaysGenerateCount, animatedId, handleGenerate } =
+    useRecommendation();
+  const { likedTrackIds, toggleLike } = useLike();
+  const { expandedTrackId, toggleExpand } = useTrack();
 
   return (
     <div className="min-h-screen bg-black text-white">
       {/* ロゴ ＋ 検索バー ＋ プロフィールアイコン */}
       <HeaderBar
-        // モード切り替え
         isSearching={isSearching}
-        onSearchFocus={() => setIsSearching(true)}
+        onSearchFocus={() => setIsSearching(true)} // 検索画面に切り替え
         onSearchCancel={() => {
-          setIsSearching(false);
+          setIsSearching(false); // レコメンド画面に切り替え
           setSearchQuery(""); // クエリをクリア
           setSearchResults([]); // 検索結果もクリア
         }}
-        // 検索機能
         searchQuery={searchQuery}
-        onSearchQueryChange={setSearchQuery} // 通知されたら、検索クエリを変更
-        onSearchSubmit={handleSearch} // 通知されたら、検索処理
+        onSearchQueryChange={setSearchQuery} // 検索クエリを変更
+        onSearchSubmit={handleSearch} // 検索処理
       />
 
-      {/* アーティスト検索結果 */}
+      {/* 状態変数によってホーム画面を切り替え */}
       {isSearching ? (
+        // アーティスト検索画面
         <SearchResultList
           searchResults={searchResults}
           onFollow={handleFollow}
           onUnfollow={handleUnfollow}
         />
       ) : (
+        // レコメンド画面
         <>
           {/* レコメンドボタン */}
-          <RecommendationButtons
-            generateCount={generateCount}
-            onGenerate={handleGenerate}
-            onSave={handleSave}
-            canSave={canSave}
-          />
+          {todaysGenerateCount < 3 ? (
+            <RecommendationButtons
+              todaysGenerateCount={todaysGenerateCount}
+              onGenerate={handleGenerate}
+            />
+          ) : (
+            <div className="text-center text-gray-400 mt-16 mb-12">
+              <p>That’s all for today’s recommendations.</p>
+              <p>See you again tomorrow!</p>
+            </div>
+          )}
 
-          {/* 「レコメンド生成結果」 or 「今日のレコメンド」 を表示 */}
-          <RecommendedTrackList
-            tracks={recommendation?.tracks || []} // mapで使うため、track　が　undefined　の場合は　[] を渡す
-            isSaved={isSaved}
-            likedTrackIds={likedTrackIds}
-            expandedTrackId={expandedTrackId}
-            onToggleLike={toggleLike}
-            onToggleExpand={toggleExpand}
-          />
+          {/* 今日のレコメンド */}
+          {recommendations.length === 0 ? (
+            <div className="text-center text-gray-400 mt-12">
+              <p>You haven’t generated any recommendations today.</p>
+            </div>
+          ) : (
+            <RecommendationList
+              recommendations={recommendations}
+              animatedId={animatedId}
+              likedTrackIds={likedTrackIds}
+              expandedTrackId={expandedTrackId}
+              onToggleLike={toggleLike}
+              onToggleExpand={toggleExpand}
+            />
+          )}
         </>
       )}
     </div>
