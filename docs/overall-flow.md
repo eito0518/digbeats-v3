@@ -9,10 +9,15 @@
 
 ### ホーム画面
 
-- フォロ中のアーティスト一覧が見れる
-- アーティストを検索して、フォローできる
-- レコメンドを取得できる
-- レコメンド履歴が見れる
+- アーティストを検索できる（アーティストをフォロー・解除できる）
+- レコメンドを取得できる（楽曲をいいね・解除できる）
+- 「今日のレコメンド」が見れる（楽曲をいいね・解除できる）
+
+### プロフィール画面
+
+- ユーザーのプロフィールが見れる
+- フォロ中のアーティスト一覧が見れる（アーティストをフォロー・解除できる）
+- レコメンド履歴が見れる（楽曲をいいね・解除できる）
 
 ##　 API 設計
 
@@ -24,8 +29,8 @@
 
 ```json
 {
-    codeVerifier: ABCDEF,
-    code: ABCDEF,
+  "codeVerifier": "ABCDEF",
+  "code": "ABCDEF"
 }
 ```
 
@@ -38,14 +43,14 @@
 ```json
 [
   {
-    soundcloudArtistId: 12345
-    name: Travis Sccott,
-    avatarUrl: https:~,
-    likedTracksCount: 123,
-    permalinkUrl: https:~,
-    isFollowing: true
-  },
-  ...
+    "soundcloudArtistId": 12345,
+    "name": "Travis Sccott",
+    "avatarUrl": "https:~",
+    "permalinkUrl": "https:~",
+    "likedTracksCount": 123,
+    "isFollowing": true
+  }
+  // ...
 ]
 ```
 
@@ -58,51 +63,54 @@
 ```json
 [
   {
-    soundcloudArtistId: 12345
-    name: Travis Sccott,
-    avatarUrl: https:~,
-    likedTracksCount: 123,
-    permalinkUrl: https:~,
-    isFollowing: false
-  },
-  ...
+    "soundcloudArtistId": 12345,
+    "name": "Travis Sccott",
+    "avatarUrl": "https:~",
+    "permalinkUrl": "https:~",
+    "likedTracksCount": 123,
+    "isFollowing": false
+  }
+  // ...
 ]
 ```
 
 ### PUT /api/users/followings/:soundcloudArtistId
 
 - 説明：SoundCloud でアーティストをフォローする
+- 注意：ボタン連打の対策をする
 - 認証：Cookie(sessionId)
 
 ### DELETE /api/users/followings/:soundcloudArtistId
 
 - 説明：SoundCloud でアーティストのフォローを解除する
+- 注意：ボタン連打の対策をする
 - 認証：Cookie(sessionId)
 
 ### GET /api/recommendations
 
 - 説明：楽曲レコメンドを取得する
-- 注意：ユーザー情報の再配信は API ポリシー違反のため、レコメンドされた Track の出典がわからないようにする（最低５人以上はフォローさせる）
+- 注意：ユーザー情報の再配信は API ポリシー違反のため、レコメンドの出典がわからないようにする（最低５人以上はフォローさせる）
 - 認証：Cookie(sessionId)
 - レスポンス：
 
 ```json
 {
   recomendationId: 12345(内部のID),
+  "recommendedAt": "2025-04-18T10:00:00Z",
   tracks: [
     {
-      id: 12345(内部のID),
-      title: FE!N,
-      artworkUrl: https:~,
-      permalinkUrl: https:~, // ウィジェット再生で使用
-      artist: {
-        name: Travis Sccott,
-        avatarUrl: https:~,
-        permalinkUrl: https:~,
-      },
-      wasLiked: true
+      "id": 12345(内部のID),
+      "title": "FE!N",
+      "artworkUrl": "https:~",
+      "permalinkUrl": "https:~", // ウィジェット再生で使用
+      "wasLiked": false,
+      "artist": {
+        "name": "Travis Sccott",
+        "avatarUrl": "https:~",
+        "permalinkUrl": "https:~",
+      }
     },
-    ...
+    // ...
   ]
 }
 ```
@@ -117,22 +125,25 @@
 {
   recommendations: [
     {
-      recomendationId: 12345(内部の ID),
-      tracks: [
+      "recomendationId": 12345(内部のID),
+      "recommendedAt": "2025-04-18T10:00:00Z",
+      "tracks": [
         {
-          id: 12345(内部の ID),
-          title: FE!N,
-          artworkUrl: https:~,
-          permalinkUrl: https:~, // ウィジェット再生で使用
-          artist: {
-            name: Travis Sccott,
-            avatarUrl: https:~,
-            permalinkUrl: https:~,
+          "id": 12345(内部の ID),
+          "title": "FE!N",
+          "artworkUrl": "https:~",
+          "permalinkUrl": "https:~", // ウィジェット再生で使用
+          "wasLiked": true,
+          "artist": {
+            "name": "Travis Sccott",
+            "avatarUrl": "https:~",
+            "permalinkUrl": "https:~",
           },
-          wasLiked: true
-        }]
+        },
+        // ...
+        ]
     },
-    ...
+    // ...
   ]
 }
 ```
@@ -140,38 +151,57 @@
 ### GET /api/recommendations/historys
 
 - 説明：楽曲レコメンド履歴を取得する
-- 注意：履歴画面でのいいねの状態表示は DB の `wasLiked` のみを見る。SoundCloud 上の現状（今も like 中かどうか）は確認しない。画面上では「当時いいねしました」などの履歴表示のみ可能
+- 注意：履歴画面でのいいねの状態表示は DB の `wasLiked` のみを見る。SoundCloud 上の現状（今も like 中かどうか）は確認しない。
 - 認証：Cookie(sessionId)
 - レスポンス：
 
 ```json
 [
   {
-    recommendationId: 12345(内部のID),
-    recommendedAt: "2025-04-18T10:00:00Z",
-    tracks: [
-      {
-        // Track情報をそれぞれフェッチするのは、通信回数が多いため、情報表示・再生共にウィジェットを利用する
-        trackId: 12345 (内部のID)
-        permalinkUrl: https:~,
-      },
-      ...
-    ]
+    "recommendationId": 12345(内部のID),
+    "recommendedAt": "2025-04-18T10:00:00Z",
+    "tracks": [
+        {
+          "id": 12345(内部の ID),
+          "title": "FE!N",
+          "artworkUrl": "https:~",
+          "permalinkUrl": "https:~", // ウィジェット再生で使用
+          "wasLiked": true,
+          "artist": {
+            "name": "Travis Sccott",
+            "avatarUrl": "https:~",
+            "permalinkUrl": "https:~",
+          },
+        },
+        // ...
+        ]
   },
-  ...
+  // ...
 ]
 ```
 
-### POST /api/recommendations/:recommendationId/likes
+### POST /api/likes/tracks
 
-- 説明：レコメンド生成画面での「いいね操作」を SoundCloud に即時反映しつつ、アプリ内 DB にも「当時の反応ログ（wasLiked）」として記録する
-- 対象画面：レコメンド生成画面（履歴画面では操作不可）
+- 説明：楽曲のいいねを SoundCloud と DB に反映する
+- 注意：ボタン連打の対策をする
 - 認証：Cookie(sessionId)
 - リクエスト：
 
 ```json
 {
-    // いいねされたものだけを送る（falseからtrue）
-  "likes": [789(内部のtrackId), 790(内部のtrackId), ....]
+  "trackId": 789(内部のtrackId)
+}
+```
+
+### DELETE /api/likes/tracks
+
+- 説明：楽曲のいいね解除を SoundCloud と DB に反映する
+- 注意：ボタン連打の対策をする
+- 認証：Cookie(sessionId)
+- リクエスト：
+
+```json
+{
+  "trackId": 789(内部のtrackId)
 }
 ```
