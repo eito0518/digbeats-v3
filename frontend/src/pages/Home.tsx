@@ -1,27 +1,21 @@
 import { useState } from "react";
 import { useSearch } from "../hooks/useSearch";
+import { useFollow } from "../hooks/useFollow";
 import { useRecommendation } from "../hooks/useRecommendation";
 import { useLike } from "../hooks/useLike";
 import { useTrack } from "../hooks/useTrack";
 import { HeaderBar } from "../components/HeaderBar";
 import { RecommendationButtons } from "../components/RecommendationButtons";
-import { SearchResultList } from "../components/SearchResultList";
+import { ArtistList } from "../components/artistList";
 import { RecommendationList } from "../components/RecommendationList";
 
 export const Home = () => {
   // 画面切り替え用のHooks
   const [isSearching, setIsSearching] = useState(false);
   // アーティスト検索画面のHooks
-  const {
-    searchState: { searchQuery, searchResults },
-    actions: {
-      setSearchQuery,
-      setSearchResults,
-      handleSearch,
-      handleFollow,
-      handleUnfollow,
-    },
-  } = useSearch();
+  const { artists, searchQuery, setArtists, setSearchQuery, handleSearch } =
+    useSearch();
+  const { followedSoundCloudArtistIds, toggleFollow } = useFollow();
   // レコメンド画面のHooks
   const { recommendations, todaysGenerateCount, animatedId, handleGenerate } =
     useRecommendation();
@@ -37,7 +31,7 @@ export const Home = () => {
         onSearchCancel={() => {
           setIsSearching(false); // レコメンド画面に切り替え
           setSearchQuery(""); // クエリをクリア
-          setSearchResults([]); // 検索結果もクリア
+          setArtists([]); // 検索結果もクリア
         }}
         searchQuery={searchQuery}
         onSearchQueryChange={setSearchQuery} // 検索クエリを変更
@@ -47,10 +41,10 @@ export const Home = () => {
       {/* 状態変数によってホーム画面を切り替え */}
       {isSearching ? (
         // アーティスト検索画面
-        <SearchResultList
-          searchResults={searchResults}
-          onFollow={handleFollow}
-          onUnfollow={handleUnfollow}
+        <ArtistList
+          artists={artists}
+          followedSoundCloudArtistIds={followedSoundCloudArtistIds}
+          onToggleFollow={toggleFollow}
         />
       ) : (
         // レコメンド画面
