@@ -39,7 +39,7 @@ SoundCloud は、アーティストが「Like」した楽曲が公開されて�
 
 ---
 
-## 実装計画 と 進捗 (2025/05/19 時点)
+## 実装ログ(進捗) (2025/05/19 時点)
 
 ### ☑️ SoundCloud API 動作確認用デモの実装（✅ 実装済み）
 
@@ -285,7 +285,7 @@ SoundCloud API と通信に必要な、アクセストークンの有効期限�
 
 ---
 
-### ☑️ フロントエンド：　アプリ本体の実装　（🔄 実装中）
+### ☑️ フロントエンド：　アプリ本体の実装（🔄 実装中）
 
 #### 🔘 ログイン画面・コールバック画面の UI 実装（✅ 実装済み）
 
@@ -310,3 +310,92 @@ OAuth 認証フローでは、デモ実装で作成済みの [`generateAuthoriza
 - 「アカウント作成」「ログイン」ボタンを UI 上で分け、動作は同じでも UX を向上させた。
 - コールバック後に認証情報をバックエンドに送信した後、`sessionStorage` を削除することでセキュリティ向上させた。
 - ログイン処理中に操作されないよう、コールバック画面にローディング UI を表示した。
+
+<br>
+
+#### 🔘 ホーム画面（レコメンド画面）の実装（✅ 実装済み）
+
+ホーム画面では、ユーザーが最大 3 回までレコメンドを生成し、その中から 1 件を「今日のレコメンド」として保存できます。保存済みの状態では、翌日まで同じレコメンドが表示され、再生成はできません。画面上では楽曲の再生、いいね（保存前のみ）が可能です。
+
+- 「今日のレコメンド」を[`useRecommendation`](frontend/src/hooks/useRecommendation.ts)の`fetchTodayRecommendation`で取得
+  - 今日のレコメンドが既に DB に保存されている場合　`isSaved` を `true` とし、フェッチした「今日のレコメンド」を表示する
+  - 今日のレコメンドがまだ DB に保存されていない場合 `isSaved` を `false` とする
+- `isSaved = false` の場合はレコメンドを生成可能
+  - レコメンドボタンが押されると、[`useRecommendation`](frontend/src/hooks/useRecommendation.ts)の`handleGenerate`でレコメンドが生成される
+  - ２回までリフレッシュ可能(計３回生成可能)で、[`useRecommendation`](frontend/src/hooks/useRecommendation.ts)の`todaysGenerateCount`で生成回数を管理する
+  - 生成回数に応じて、「Genarate Recommendation」ボタンが「Refresh」ボタンやメッセージに切り替わる
+  - 生成された直後のレコメンド画面では、[`useRecommendation`](frontend/src/hooks/useRecommendation.ts)の`toggleLike`で楽曲のいいねが可能
+- 生成されたレコメンドで気に入るものがあれば「Save」ボタンで「今日のレコメンド」として DB に保存可能
+  - 「Save」ボタンが押されると、[`useRecommendation`](frontend/src/hooks/useRecommendation.ts)の`handleSave`で DB にレコメンドが保存される
+  - レコメンドが保存されるとき、同時に「いいね」を保存する（`wasLiked`ログとして DB に保存し、書き換えることはできない）
+  - `isSaved` を `true` とし、生成した「今日のレコメンド」を表示する
+- 「今日のレコメンド」画面では、楽曲の再生と「いいねログ」の確認が可能
+
+< 実装した主なコード >
+
+- [`ホーム画面（レコメンド画面）`](frontend/src/pages/Home.tsx)
+- [`レコメンドに関するHooks(useRecommendation)`](frontend/src/hooks/useRecommendation.ts)
+- [`レコメンドボタンのコンポーネント`](frontend/src/components/RecommendationButtons.tsx)
+- [`レコメンドされたトラックの一覧表示のコンポーネント`](frontend/src/components/RecommendedTrackList.tsx)
+- [`レコメンドされたトラック表示のコンポーネント`](frontend/src/components/RecommendedTrackItem.tsx)
+
+< 工夫した点 >
+
+- 外部の SoundCloud API との通信量を最小限に抑えるため、「いいね」状態は SoundCloud 側と同期せず、アプリ内の DB にのみ保存
+- いいねを保存するタイミングは、「今日のレコメンド」としてレコメンドを保存するタイミングと統一した
+- リフレッシュ機能で質の高いレコメンドが生成される確率を高めた
+
+<br>
+
+#### 🔘 問題点を解決するためホーム画面（レコメンド画面）の設計を大幅に変更（✅ 実装済み）
+
+< 問題点 >
+
+- レコメンド生成時に DB に保存する設計であり、保存する時にレコメンドに対して ID が付与されるため、ユーザーの操作によってレコメンドを保存する設計にしてしまうと、リスト表示のための`key`が存在しないケースが発生する。
+- また、全てのレコメンドが DB に保存されるため、「今日のレコメンド」として表示したいものだけを抽出するのが困難になる。
+
+< 変更点 >
+
+- リフレッシュ機能は廃止し、「1 日最大 3 回までレコメンドを生成可能」とし、それら全てを「今日のレコメンド」として表示する設計に変更した。
+- `isSaved` と `recommendation` で状態管理していた設計を廃止し、`recommendations` 配列に最大 3 件まで保存する形に変更した。
+- 「いいね状態」「トラックの展開状態」「今日のレコメンド状態」がすべて[`useRecommendation`](frontend/src/hooks/useRecommendation.ts)に集中していたため、それぞれの責務に応じて以下のフックに分離：
+  - [`useLike`](frontend/src/hooks/useLike.ts)
+  - [`useTrack`](frontend/src/hooks/useTrack.ts)
+  - [`useRecommendation`](frontend/src/hooks/useRecommendation.ts)
+- 「今日のレコメンド」が最大 3 件表示されるようになったため、一覧表示用に[`RecommendationList`](frontend/src/components/RecommendationList.tsx)コンポーネントを新規作成し、再利用可能にした。
+- 直近で追加されたレコメンドをユーザーに視覚的に伝えるため、[`useRecommendation`](frontend/src/hooks/useRecommendation.ts)の`animatedId`と`setAnimatedId`でアニメーションを追加した。
+- いいね状態の管理方法を変更：
+  - レコメンド取得時のレスポンス `wasLiked` を用いた管理を廃止した。
+  - フロントエンドでのいいね状態は、常に SoundCloud 上の情報を参照する。
+  - ただし、ユーザーがアプリ上で行った「いいね／いいね解除」の操作は、 SoundCloud API に即時反映し、加えて、アプリ内ログとして `isLikedInApp` に記録する。
+    ※ただし、このログは SoundCloud 本体で行われた状態変更とは同期させず、ユーザーがアプリ上で行った操作のみを反映させる
+
+<br>
+
+#### 🔘 ホーム画面（アーティスト検索画面）の実装（✅ 実装済み）
+
+ホーム画面の検索バーから遷移できる検索画面では、SoundCloud アーティスト名で検索し、該当するアーティストをフォロー・解除することできます。フォロー状態は 外部の SoundCloud に即時に反映されます。
+
+- ホーム画面の検索バーをクリックすると、[`Home`](frontend/src/pages/Home.tsx)の画面切り替え用の Hooks である`isSearching = true`になり、ホーム画面が検索モードに変化する
+- [`HeaderBar`](frontend/src/components/HeaderBar.tsx)の`onSearchQueryChange`や`onSearchSubmit`によって、検索バーの`value`が変わったこと、登録されたことが通知される
+- アクション通知を受け取ると、その通知の種類に応じて[`useSearch`](frontend/src/hooks/useSearch.ts)の`setSearchQuery`や`handleSearch`によって処理が行われ、検索結果が`artists`に格納される
+- 検索結果は[`ArtistList`](frontend/src/components/artistList.tsx)によって一覧表示される
+- 検索結果に表示されたアーティストに対し、「フォロー」ボタンでフォロー・解除ができる
+  - [`Home`](frontend/src/pages/Home.tsx)画面マウント時に`useEffect`によって[`useFollow`](frontend/src/hooks/useFollow.ts)の`fetchFollowedIds`が発火し、SoundCloud でのフォロー状態をフロントエンドに取得する
+  - 「フォロー」ボタンが押されると、[`useFollow`](frontend/src/hooks/useFollow.ts)の`toggleFollow`でバックエンドを通して SoundCloud にフォロー状態が保存され、フロントエンドの`followedSoundCloudArtistIds`も書き換えられる
+
+< 実装した主なコード >
+
+- [`ホーム画面（アーティスト検索画面）`](frontend/src/pages/Home.tsx)
+- [`検索に関するHooks(useSearch)`](frontend/src/hooks/useSearch.ts)
+- [`ヘッダー（検索バー）`](frontend/src/components/HeaderBar.tsx)
+- [`アーティストフォローに関するHooks(useFollow)`](frontend/src/hooks/useFollow.ts)
+- [`アーティスト一覧表示のコンポーネント`](frontend/src/components/artistList.tsx)
+
+< 工夫した点 >
+
+- アーティストの検索結果を表示するコンポーネントを[`ArtistList`](frontend/src/components/artistList.tsx)として分離して再利用可能にした
+- フォロー状態もいいね状態と同様に[`useFollow`](frontend/src/hooks/useFollow.ts)の`toggleFollow`でトグル形式で管理し、状態管理が容易な設計にした
+- [`useFollow`](frontend/src/hooks/useFollow.ts)の`useEffect`でホーム画面マウント時に SoundCloud のフォロー状態をフェッチすることで、データの整合性が崩れないようにした
+
+<br>

@@ -1,8 +1,23 @@
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export const useLike = () => {
   const [likedTrackIds, setLikedTrackIds] = useState<number[]>([]);
+
+  useEffect(() => {
+    const fetchLikedIds = async () => {
+      try {
+        const response = await axios.get("/api/users/likes", {
+          withCredentials: true,
+        });
+        setLikedTrackIds(response.data.soundcloudTrackIds);
+      } catch (err) {
+        console.error("Failed to fetch liked tracks", err);
+      }
+    };
+
+    fetchLikedIds();
+  }, []);
 
   // いいね状態を切り替えてバックエンドにも反映
   const toggleLike = async (trackId: number, recommendationId: number) => {
@@ -11,7 +26,7 @@ export const useLike = () => {
     try {
       if (isCurrentlyLiked) {
         // いいね解除
-        await axios.delete("/api/likes", {
+        await axios.delete("/api/users/likes", {
           data: { trackId, recommendationId },
           withCredentials: true,
         });
@@ -19,7 +34,7 @@ export const useLike = () => {
       } else {
         // いいね登録
         await axios.post(
-          `/api/likes`,
+          `/api/users/likes`,
           { trackId, recommendationId },
           { withCredentials: true }
         );

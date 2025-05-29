@@ -4,5 +4,4 @@ export type Artist = {
   avatarUrl: string;
   permalinkUrl: string;
   likedTracksCount: number;
-  isFollowing: boolean;
 };
