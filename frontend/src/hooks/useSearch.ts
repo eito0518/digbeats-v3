@@ -12,7 +12,7 @@ export const useSearch = () => {
 
     try {
       const response = await axios.get(
-        `/api/artists?artistName=${searchQuery}`
+        `/api/artists/search?artistName=${searchQuery}`
       );
       setArtists(response.data);
     } catch (error) {
