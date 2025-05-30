@@ -399,3 +399,29 @@ OAuth 認証フローでは、デモ実装で作成済みの [`generateAuthoriza
 - [`useFollow`](frontend/src/hooks/useFollow.ts)の`useEffect`でホーム画面マウント時に SoundCloud のフォロー状態をフェッチすることで、データの整合性が崩れないようにした
 
 <br>
+
+#### 🔘 プロフィール画面の実装（✅ 実装済み）
+
+プロフィールページを追加し、ユーザー情報、フォロー中アーティスト、およびレコメンド履歴をシングルページで表示・操作できるようにしました。
+
+- [`ホーム画面`](frontend/src/pages/Home.tsx)の[`HeaderBar`](frontend/src/components/HeaderBar.tsx)にあるプロフィールアイコンをクリックすると、[`プロフィールページ`](frontend/src/pages/Profile.tsx)に遷移する
+- [`プロフィール画面`](frontend/src/pages/Profile.tsx)ではユーザー情報(基本情報、レコメンド数、フォロー数)・[`フォロー中のアーティスト一覧`](frontend/src/components/artistList.tsx)・[`レコメンド履歴`](frontend/src/components/HistoryList.tsx)を見ることができる
+  - フォロー数をクリックすると、[`フォロー中のアーティスト一覧画面`](frontend/src/components/artistList.tsx)に遷移し、アーティストの確認とフォロー操作ができる
+  - [`レコメンド履歴`](frontend/src/components/HistoryList.tsx)はレコメンド生成日時によって表示されており、レコメンドをクリックすると、展開して[`レコメンド楽曲の一覧`](frontend/src/components/RecommendedTrackList.tsx)を見ることができる
+    - [`レコメンド楽曲の一覧`](frontend/src/components/RecommendedTrackList.tsx)では、「今日のレコメンド」と同様にいいね操作ができる
+
+< 実装した主なコード >
+
+- [`ホーム画面`](frontend/src/pages/Home.tsx)
+- [`プロフィールアイコン`](frontend/src/components/HeaderBar.tsx)
+- [`プロフィール画面`](frontend/src/pages/Profile.tsx)
+- [`フォロー中のアーティスト一覧`](frontend/src/components/artistList.tsx)
+- [`レコメンド履歴`](frontend/src/components/HistoryList.tsx)
+- [`アーティストフォローに関するHooks(useFollow)`](frontend/src/hooks/useFollow.ts)
+- [`レコメンド履歴に関するHooks(useHistory)`](frontend/src/hooks/useHistory.ts)
+- [`ユーザー基本情報に関するHooks(useUser)`](frontend/src/hooks/useUser.ts)
+
+< 工夫した点 >
+
+- 共通コンポーネント（[`ArtistList`](frontend/src/components/artistList.tsx), [`RecommendedTrackList`](frontend/src/components/RecommendedTrackList.tsx)）を再利用した
+- [`useFollow`](frontend/src/hooks/useFollow.ts), [`useHistory`](frontend/src/hooks/useHistory.ts), [`useUser`](frontend/src/hooks/useUser.ts)などの既存 Hooks を調整し、活用することで、ロジックの重複を避けつつ状態管理をシンプルに実装した
