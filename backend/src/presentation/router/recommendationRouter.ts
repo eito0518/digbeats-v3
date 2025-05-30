@@ -12,7 +12,7 @@ recommendationRouter.get(
 
 // レコメンド履歴を取得するエンドポイント
 recommendationRouter.get(
-  "/api/recommendations/historys",
+  "/api/recommendations/histories",
   asyncHandler(recommendationController.getHistorys)
 );
 

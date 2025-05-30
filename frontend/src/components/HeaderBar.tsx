@@ -1,4 +1,7 @@
+import { useNavigate } from "react-router-dom";
+import { useUser } from "../hooks/useUser";
 import logo from "../assets/digbeats-logo-transparent.png";
+import { Avatar } from "@mui/material";
 
 type Props = {
   isSearching: boolean;
@@ -17,6 +20,9 @@ export const HeaderBar = ({
   onSearchQueryChange,
   onSearchSubmit,
 }: Props) => {
+  const navigate = useNavigate();
+  const { user } = useUser();
+
   return (
     // ロゴ ＋ 検索バー ＋ プロフィールアイコン
     <div className="flex items-center justify-between w-full max-w-screen-xl mx-auto px-4 pt-6">
@@ -49,8 +55,12 @@ export const HeaderBar = ({
           </button>
         ) : (
           // プロフィールアイコン
-          <button className="w-10 h-10 bg-neutral-900 rounded-full flex items-center justify-center aspect-square">
-            👤
+          <button onClick={() => navigate("/profile")}>
+            <Avatar
+              src={user?.avatarUrl} // 画像が設定されてなければ MUI のイニシャルアバター
+              alt={user?.name}
+              sx={{ width: 40, height: 40 }}
+            />
           </button>
         )}
       </div>

@@ -4,7 +4,7 @@ export const useTrack = () => {
   const [expandedTrackId, setExpandedTrackId] = useState<number | null>(null); // 展開するのは１つだけ
 
   // 展開するトラックを切り替え
-  const toggleExpand = (trackId: number) => {
+  const toggleExpandTrack = (trackId: number) => {
     setExpandedTrackId(
       (previous: number | null) =>
         previous === trackId
@@ -15,6 +15,6 @@ export const useTrack = () => {
 
   return {
     expandedTrackId,
-    toggleExpand,
+    toggleExpandTrack,
   };
 };

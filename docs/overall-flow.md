@@ -34,6 +34,22 @@
 }
 ```
 
+### GET /api/users
+
+- 説明： 自身のプロフィール情報を SoundCloud で取得する
+- 認証：Cookie(sessionId)
+- レスポンス：
+
+```json
+{
+  "user": {
+    "name": "User1",
+    "avatarUrl": "https:~",
+    "permalinkUrl": "https:~"
+  }
+}
+```
+
 ### GET /api/users/followings
 
 - 説明： フォロ中のアーティストを SoundCloud で取得する
@@ -41,35 +57,39 @@
 - レスポンス：
 
 ```json
-[
-  {
-    "soundcloudArtistId": 12345,
-    "name": "Travis Sccott",
-    "avatarUrl": "https:~",
-    "permalinkUrl": "https:~",
-    "likedTracksCount": 123
-  }
-  // ...
-]
+{
+  "artists": [
+    {
+      "soundcloudArtistId": 12345,
+      "name": "Travis Sccott",
+      "avatarUrl": "https:~",
+      "permalinkUrl": "https:~",
+      "likedTracksCount": 123
+    }
+    // ...
+  ]
+}
 ```
 
-### GET /api/artists/`?artistName=Travis+Scott`
+### GET /api/artists/search`?artistName=Travis+Scott`
 
 - 説明：アーティストを SoundCloud で検索する
 - 認証：Cookie(sessionId)
 - レスポンス：
 
 ```json
-[
-  {
-    "soundcloudArtistId": 12345,
-    "name": "Travis Sccott",
-    "avatarUrl": "https:~",
-    "permalinkUrl": "https:~",
-    "likedTracksCount": 123
-  }
-  // ...
-]
+{
+  "artists": [
+    {
+      "soundcloudArtistId": 12345,
+      "name": "Travis Sccott",
+      "avatarUrl": "https:~",
+      "permalinkUrl": "https:~",
+      "likedTracksCount": 123
+    }
+    // ...
+  ]
+}
 ```
 
 ### POST /api/users/followings
@@ -107,22 +127,24 @@
 
 ```json
 {
-  recomendationId: 12345(内部のID),
-  "recommendedAt": "2025-04-18T10:00:00Z",
-  tracks: [
-    {
-      "id": 12345(内部のID),
-      "title": "FE!N",
-      "artworkUrl": "https:~",
-      "permalinkUrl": "https:~", // ウィジェット再生で使用
-      "artist": {
-        "name": "Travis Sccott",
-        "avatarUrl": "https:~",
-        "permalinkUrl": "https:~",
-      }
-    },
-    // ...
-  ]
+  "recommendation": {
+    "recommendationId": 12345(内部のID),
+    "recommendedAt": "2025-04-18T10:00:00Z",
+    "tracks": [
+      {
+        "id": 12345(内部のID),
+        "title": "FE!N",
+        "artworkUrl": "https:~",
+        "permalinkUrl": "https:~", // ウィジェット再生で使用
+        "artist": {
+          "name": "Travis Sccott",
+          "avatarUrl": "https:~",
+          "permalinkUrl": "https:~",
+        }
+      },
+      // ...
+    ]
+  }
 }
 ```
 
@@ -134,9 +156,9 @@
 
 ```json
 {
-  recommendations: [
+  "recommendations": [
     {
-      "recomendationId": 12345(内部のID),
+      "recommendationId": 12345(内部のID),
       "recommendedAt": "2025-04-18T10:00:00Z",
       "tracks": [
         {
@@ -158,18 +180,19 @@
 }
 ```
 
-### GET /api/recommendations/historys
+### GET /api/recommendations/histories
 
 - 説明：楽曲レコメンド履歴を取得する
 - 認証：Cookie(sessionId)
 - レスポンス：
 
 ```json
-[
-  {
-    "recommendationId": 12345(内部のID),
-    "recommendedAt": "2025-04-18T10:00:00Z",
-    "tracks": [
+{
+  "histories": [
+    {
+      "recommendationId": 12345(内部のID),
+      "recommendedAt": "2025-04-18T10:00:00Z",
+      "tracks": [
         {
           "id": 12345(内部の ID),
           "title": "FE!N",
@@ -183,9 +206,10 @@
         },
         // ...
         ]
-  },
-  // ...
-]
+    },
+    // ...
+  ]
+}
 ```
 
 ### GET /api/users/likes

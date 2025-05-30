@@ -9,7 +9,7 @@ type Props = {
   isLiked: boolean;
   isExpanded: boolean;
   onToggleLike: (trackId: number, recommendationId: number) => void;
-  onToggleExpand: (trackId: number) => void;
+  onToggleExpandTrack: (trackId: number) => void;
 };
 
 export const RecommendedTrackItem = ({
@@ -18,7 +18,7 @@ export const RecommendedTrackItem = ({
   isLiked, // いいねされているか
   isExpanded, // 展開されているか
   onToggleLike,
-  onToggleExpand,
+  onToggleExpandTrack,
 }: Props) => {
   // レコメンドされたトラックを表示
   return (
@@ -30,7 +30,10 @@ export const RecommendedTrackItem = ({
       {/* トラック　（クリックで展開） */}
       <div
         className="flex items-center gap-4 cursor-pointer"
-        onClick={() => onToggleExpand(track.id)}
+        onClick={(e) => {
+          e.stopPropagation(); // 親のonClickの発火を防ぐ
+          onToggleExpandTrack(track.id);
+        }}
       >
         {/* アートワーク */}
         <img
