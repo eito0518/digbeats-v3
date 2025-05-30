@@ -15,9 +15,9 @@ export class GetHistorysUseCase {
     const userId = session.userId;
 
     // レコメンド履歴を取得
-    const historys = await this._historyDbRepository.get(userId, 20);
+    const histories = await this._historyDbRepository.get(userId, 20);
 
     // レコメンド履歴をコントローラーに返す
-    return historys;
+    return histories;
   }
 }

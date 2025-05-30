@@ -1,54 +1,52 @@
 import { useEffect, useState } from "react";
+import { Artist } from "../types/artistType";
 import axios from "axios";
 
 export const useFollow = () => {
-  const [followedSoundCloudArtistIds, setFollowedSoundCloudArtistIds] =
-    useState<number[]>([]);
+  const [followedArtists, setFollowedArtists] = useState<Artist[]>([]);
 
   useEffect(() => {
-    const fetchFollowedIds = async () => {
+    // フォロー中のアーティストを取得
+    const fetchFollowedArtists = async () => {
       try {
         const response = await axios.get("/api/users/followings", {
           withCredentials: true,
         });
-        const soundcloudArtistIds = response.data.map(
-          (artist: any) => artist.soundcloudArtistId
-        );
-        setFollowedSoundCloudArtistIds(soundcloudArtistIds);
-      } catch (err) {
-        console.error("Failed to fetch followed artists", err);
+        setFollowedArtists(response.data.artists);
+      } catch (error) {
+        console.error("Failed to fetch followed artists", error);
       }
     };
 
-    fetchFollowedIds();
+    fetchFollowedArtists();
   }, []);
 
   // フォロー状態を切り替えてバックエンドにも反映
-  const toggleFollow = async (soundcloudArtistId: number) => {
-    const isCurrentlyFollowed =
-      followedSoundCloudArtistIds.includes(soundcloudArtistId);
+  const toggleFollow = async (artist: Artist) => {
+    const isFollowed = followedArtists.some(
+      (a) => a.soundcloudArtistId === artist.soundcloudArtistId
+    );
 
     try {
-      if (isCurrentlyFollowed) {
+      if (isFollowed) {
         // フォロー解除
         await axios.delete("/api/followings", {
-          data: { soundcloudArtistId },
+          data: { soundcloudArtistId: artist.soundcloudArtistId },
           withCredentials: true,
         });
-        setFollowedSoundCloudArtistIds((previous) =>
-          previous.filter((id) => id !== soundcloudArtistId)
+        setFollowedArtists((previous) =>
+          previous.filter(
+            (a) => a.soundcloudArtistId !== artist.soundcloudArtistId
+          )
         );
       } else {
         // フォロー登録
         await axios.post(
           "/api/followings",
-          { soundcloudArtistId },
+          { soundcloudArtistId: artist.soundcloudArtistId },
           { withCredentials: true }
         );
-        setFollowedSoundCloudArtistIds((previous) => [
-          ...previous,
-          soundcloudArtistId,
-        ]);
+        setFollowedArtists((previous) => [...previous, artist]);
       }
     } catch (error) {
       console.error("Failed to toggle like", error);
@@ -57,7 +55,7 @@ export const useFollow = () => {
   };
 
   return {
-    followedSoundCloudArtistIds,
+    followedArtists,
     toggleFollow,
   };
 };

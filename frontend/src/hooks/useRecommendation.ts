@@ -7,8 +7,8 @@ export const useRecommendation = () => {
   const [todaysGenerateCount, setTodaysGenerateCount] = useState(0);
   const [animatedId, setAnimatedId] = useState<number | null>(null);
 
-  // 「今日のレコメンド」 を取得
   useEffect(() => {
+    // 「今日のレコメンド」 を取得
     const fetchTodayRecommendation = async () => {
       try {
         const response = await axios.get("/api/recommendations/today", {

@@ -35,7 +35,7 @@ export class RecommendationController {
     const sessionId = req.cookies.sessionId;
 
     // ユースケース
-    const historys = await this._getHistorysUseCase.run(sessionId);
+    const histories = await this._getHistorysUseCase.run(sessionId);
 
     // レスポンス
     res
@@ -45,7 +45,7 @@ export class RecommendationController {
         sameSite: "none", // TODO：　時間があればCSRF対策　で　csurfを導入する
       })
       .status(200)
-      .json({ historys: historys });
+      .json({ histories: histories });
   }
 
   // レコメンド楽曲にいいねをする
