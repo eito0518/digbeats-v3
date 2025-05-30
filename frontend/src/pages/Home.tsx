@@ -6,7 +6,7 @@ import { useLike } from "../hooks/useLike";
 import { useTrack } from "../hooks/useTrack";
 import { HeaderBar } from "../components/HeaderBar";
 import { RecommendationButtons } from "../components/RecommendationButtons";
-import { ArtistList } from "../components/artistList";
+import { ArtistList } from "../components/ArtistList";
 import { RecommendationList } from "../components/RecommendationList";
 
 export const Home = () => {
@@ -15,12 +15,12 @@ export const Home = () => {
   // アーティスト検索画面のHooks
   const { artists, searchQuery, setArtists, setSearchQuery, handleSearch } =
     useSearch();
-  const { followedSoundCloudArtistIds, toggleFollow } = useFollow();
+  const { followedArtists, toggleFollow } = useFollow();
   // レコメンド画面のHooks
   const { recommendations, todaysGenerateCount, animatedId, handleGenerate } =
     useRecommendation();
   const { likedTrackIds, toggleLike } = useLike();
-  const { expandedTrackId, toggleExpand } = useTrack();
+  const { expandedTrackId, toggleExpandTrack } = useTrack();
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -43,7 +43,7 @@ export const Home = () => {
         // アーティスト検索画面
         <ArtistList
           artists={artists}
-          followedSoundCloudArtistIds={followedSoundCloudArtistIds}
+          followedArtists={followedArtists}
           onToggleFollow={toggleFollow}
         />
       ) : (
@@ -74,7 +74,7 @@ export const Home = () => {
               likedTrackIds={likedTrackIds}
               expandedTrackId={expandedTrackId}
               onToggleLike={toggleLike}
-              onToggleExpand={toggleExpand}
+              onToggleExpandTrack={toggleExpandTrack}
             />
           )}
         </>
