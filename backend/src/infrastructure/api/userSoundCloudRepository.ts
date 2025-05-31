@@ -41,7 +41,7 @@ export class UserSoundCloudRepository implements UserApiRepository {
     };
 
     try {
-      const response = await axios.get(endPoint, { headers: headers });
+      const response = await axios.get(endPoint, { headers });
 
       return response.data.collection.map(
         (following: any) =>
@@ -74,10 +74,32 @@ export class UserSoundCloudRepository implements UserApiRepository {
     };
 
     try {
-      await axios.put(endPoint, { headers: headers });
+      await axios.put(endPoint, { headers });
     } catch (error) {
-      console.error("followingArtist request failed:", error);
-      throw new Error("FollowingArtist request failed");
+      const message = `Failed to follow artist (ID: ${soundcloudArtistId}): unable to communicate with SoundCloud API`;
+      console.error(`[userSoundCloudRepository] ${message}`, error);
+      throw new Error(message);
+    }
+  }
+
+  // アーティストのフォローを解除する
+  async unfollowArtist(
+    accessToken: string,
+    soundcloudArtistId: number
+  ): Promise<void> {
+    const endPoint = `${config.API_BASE_URL}/me/followings/${soundcloudArtistId}`;
+
+    const headers = {
+      accept: "application/json; charset=utf-8",
+      Authorization: `OAuth ${accessToken}`,
+    };
+
+    try {
+      await axios.delete(endPoint, { headers });
+    } catch (error) {
+      const message = `Failed to unfollow artist (ID: ${soundcloudArtistId}): unable to communicate with SoundCloud API`;
+      console.error(`[userSoundCloudRepository] ${message}`, error);
+      throw new Error(message);
     }
   }
 }
