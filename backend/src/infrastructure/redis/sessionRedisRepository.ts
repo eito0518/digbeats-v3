@@ -2,6 +2,7 @@ import Redis from "ioredis";
 import { SessionRepository } from "../../domain/interfaces/sessionRepository";
 import { Session } from "../../domain/valueObjects/session";
 import { config } from "../../config/config";
+import { REAUTH_REQUIRED } from "../../constants/errorCodes";
 
 export class SessionRedisRepository implements SessionRepository {
   constructor(private readonly _redis: Redis) {}
@@ -15,11 +16,9 @@ export class SessionRedisRepository implements SessionRepository {
         config.SESSION_TTL
       );
     } catch (error) {
-      console.error(
-        "[sessionRedisRepository] Failed to save session: Redis write operation failed",
-        error
-      );
-      throw new Error("Failed to save session: Redis write operation failed");
+      const message = "Failed to save session: Redis write operation failed";
+      console.error(`[sessionRedisRepository] ${message}`, error);
+      throw new Error(message);
     }
   }
 
@@ -30,14 +29,14 @@ export class SessionRedisRepository implements SessionRepository {
 
       // セッションがなければ再ログインを要求
       if (rawSession === null) {
-        throw new Error("REAUTH_REQUIRED"); // 再認証の必要を通知
+        throw new Error(REAUTH_REQUIRED); // 再認証を要求
       }
 
       return Session.fromJSON(rawSession);
     } catch (error) {
       const message =
-        error instanceof Error && error.message === "REAUTH_REQUIRED" // エラーメッセージが "REAUTH_REQUIRED" かどうか
-          ? "REAUTH_REQUIRED"
+        error instanceof Error && error.message === REAUTH_REQUIRED // エラーメッセージが "REAUTH_REQUIRED" ならば errorHandler でフロントエンドに通知
+          ? REAUTH_REQUIRED
           : "Failed to fetch session: Redis read operation failed";
       console.error(`[sessionRedisRepository] ${message}`, error);
       throw new Error(message);

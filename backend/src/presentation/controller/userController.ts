@@ -2,7 +2,12 @@ import { Request, Response } from "express";
 import { FetchMyUserInfoUseCase } from "../../application/usecase/fetchMyUserInfoUseCase";
 import { FetchMyFollowingsUseCase } from "../../application/usecase/fetchMyFollowingsUseCase";
 import { FollowArtistUseCase } from "../../application/usecase/followArtistUseCase";
+import {
+  validateSessionId,
+  validateSoundCloudArtistIdParam,
+} from "../utils/validation";
 import { UserPresenter } from "../presenter/userPresenter";
+import { ArtistPresenter } from "../presenter/artistPresenter";
 
 export class UserController {
   constructor(
@@ -15,6 +20,9 @@ export class UserController {
   async fetchMyUserInfo(req: Request, res: Response): Promise<void> {
     // リクエスト
     const sessionId = req.cookies.sessionId;
+
+    // バリデーション
+    if (!validateSessionId(sessionId, res)) return;
 
     // ユースケース
     const user = await this._fetchMyUserInfoUseCase.run(sessionId);
@@ -35,6 +43,9 @@ export class UserController {
     // リクエスト
     const sessionId = req.cookies.sessionId;
 
+    // バリデーション
+    if (!validateSessionId(sessionId, res)) return;
+
     // ユースケース
     const followings = await this._fetchMyFollowingsUseCase.run(sessionId);
 
@@ -46,9 +57,7 @@ export class UserController {
         sameSite: "none", // TODO：　時間があればCSRF対策　で　csurfを導入する
       })
       .status(200)
-      .json({
-        followings: followings,
-      });
+      .json({ artists: ArtistPresenter.toDTOList(followings) });
   }
 
   // アーティストをフォローする
@@ -57,14 +66,13 @@ export class UserController {
     const sessionId = req.cookies.sessionId;
     const soundcloudArtistIdRaw = req.params.soundcloudArtistId;
 
-    if (typeof soundcloudArtistIdRaw !== "string") {
-      res.status(400).json({ error: "Missing 'soundcloudArtistId' parameter" });
-      return;
-    }
-
-    const soundcloudArtistId = Number(
-      decodeURIComponent(soundcloudArtistIdRaw)
+    // バリデーション
+    if (!validateSessionId(sessionId, res)) return;
+    const soundcloudArtistId = validateSoundCloudArtistIdParam(
+      soundcloudArtistIdRaw,
+      res
     );
+    if (soundcloudArtistId === undefined) return;
 
     // ユースケース
     await this._followArtistUseCase.run(sessionId, soundcloudArtistId);
@@ -77,8 +85,6 @@ export class UserController {
         sameSite: "none", // TODO：　時間があればCSRF対策　で　csurfを導入する
       })
       .status(200)
-      .json({
-        message: "Followed artist successfully",
-      });
+      .json({ message: "Followed artist successfully" });
   }
 }

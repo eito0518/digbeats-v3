@@ -5,7 +5,7 @@ import { config } from "../../config/config";
 import axios from "axios";
 
 export class TokenSoundCloudRepository implements TokenRepository {
-  // トークンを取得
+  // トークンを取得する
   async getToken(code: string, codeVerifier: string): Promise<Token> {
     const tokenUrl = "https://secure.soundcloud.com/oauth/token";
     const params = new url.URLSearchParams();
@@ -30,17 +30,14 @@ export class TokenSoundCloudRepository implements TokenRepository {
         response.data.refresh_token
       );
     } catch (error) {
-      console.error(
-        "[tokenSoundCloudRepository] Failed to fetch token: unable to communicate with SoundCloud OAuth server",
-        error
-      );
-      throw new Error(
-        "Failed to fetch token: unable to communicate with SoundCloud OAuth server"
-      );
+      const message =
+        "Failed to fetch token: unable to communicate with SoundCloud OAuth server";
+      console.error(`[tokenSoundCloudRepository] ${message}`, error);
+      throw new Error(message);
     }
   }
 
-  // トークンを更新
+  // トークンを更新する
   async refresh(refreshToken: string): Promise<Token> {
     const tokenUrl = "https://secure.soundcloud.com/oauth/token";
     const params = new url.URLSearchParams();
@@ -63,8 +60,10 @@ export class TokenSoundCloudRepository implements TokenRepository {
         response.data.refresh_token
       );
     } catch (error) {
-      console.error("refresh request failed:", error);
-      throw new Error("Refresh request failed");
+      const message =
+        "Failed to refresh token: unable to communicate with SoundCloud OAuth server";
+      console.error(`[tokenSoundCloudRepository] ${message}`, error);
+      throw new Error(message);
     }
   }
 }

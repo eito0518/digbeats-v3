@@ -49,13 +49,15 @@ export class UserSoundCloudRepository implements UserApiRepository {
             following.id,
             following.name,
             following.avatar_url,
-            following.public_favorites_count,
-            following.permalink_url
+            following.permalink_url,
+            following.public_favorites_count
           )
       );
     } catch (error) {
-      console.error("fetchFollowings request failed:", error);
-      throw new Error("FetchFollowings request failed");
+      const message =
+        "Failed to fetch followings: unable to communicate with SoundCloud API";
+      console.error(`[userSoundCloudRepository] ${message}`, error);
+      throw new Error(message);
     }
   }
 
