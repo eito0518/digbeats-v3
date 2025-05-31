@@ -14,7 +14,13 @@ userRouter.get(
 );
 
 // アーティストをフォローするエンドポイント
-userRouter.put(
-  "/api/users/followings/:soundcloudArtistId",
+userRouter.post(
+  "/api/users/followings",
   asyncHandler(userController.followArtist)
+);
+
+// アーティストをフォロー解除するエンドポイント
+userRouter.delete(
+  "/api/users/followings",
+  asyncHandler(userController.unfollowArtist)
 );

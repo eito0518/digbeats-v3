@@ -26,28 +26,6 @@ export const validateSessionId = (
   return true;
 };
 
-// soundcloudArtistId パラメータの存在チェック と 数値変換
-export const validateSoundCloudArtistIdParam = (
-  soundcloudArtistIdRaw: string,
-  res: Response
-): number | undefined => {
-  if (!soundcloudArtistIdRaw) {
-    res.status(400).json({ error: "Missing 'soundcloudArtistId' parameter" });
-    return;
-  }
-
-  const soundcloudArtistId = Number(decodeURIComponent(soundcloudArtistIdRaw));
-
-  if (Number.isNaN(soundcloudArtistId)) {
-    res
-      .status(400)
-      .json({ error: "'soundcloudArtistId' must be a valid number" });
-    return;
-  }
-
-  return soundcloudArtistId;
-};
-
 // artistName クエリパラメータの存在チェック と 文字変換
 export const validateArtistNameParam = (
   artistNameRaw: unknown,
@@ -61,4 +39,30 @@ export const validateArtistNameParam = (
   }
 
   return decodeURIComponent(artistNameRaw);
+};
+
+// soundcloudArtistId の存在チェック と 数値変換
+export const validateSoundCloudArtistId = (
+  soundCloudArtistIdRaw: unknown,
+  res: Response
+): number | undefined => {
+  // 値が無い場合
+  if (soundCloudArtistIdRaw === undefined || soundCloudArtistIdRaw === null) {
+    res.status(400).json({ error: "Missing 'soundcloudArtistId'" });
+    return;
+  }
+  // 値が不正な数値の場合
+  const soundCloudArtistId = Number(soundCloudArtistIdRaw);
+  if (
+    isNaN(soundCloudArtistId) ||
+    !Number.isInteger(soundCloudArtistId) ||
+    soundCloudArtistId <= 0
+  ) {
+    res
+      .status(400)
+      .json({ error: "'soundcloudArtistId' must be a positive integer" });
+    return;
+  }
+
+  return soundCloudArtistId;
 };

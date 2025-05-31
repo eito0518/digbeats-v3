@@ -1,7 +1,7 @@
 import { TokenApplicationService } from "../applicationServices/tokenApplicationService";
 import { UserApiRepository } from "../../domain/interfaces/userApiRepository";
 
-export class FollowArtistUseCase {
+export class UnfollowArtistUseCase {
   constructor(
     private readonly _tokenApplicationService: TokenApplicationService,
     private readonly _userApiRepository: UserApiRepository
@@ -14,7 +14,7 @@ export class FollowArtistUseCase {
     );
 
     // APIでアーティストをフォロー
-    await this._userApiRepository.followArtist(
+    await this._userApiRepository.unfollowArtist(
       validToken.accessToken,
       soundcloudArtistId
     );

@@ -7,6 +7,7 @@ import { SessionRedisRepository } from "../../infrastructure/redis/sessionRedisR
 import Redis from "ioredis";
 import { TokenSoundCloudRepository } from "../../infrastructure/api/tokenSoundCloudRepository";
 import { UserSoundCloudRepository } from "../../infrastructure/api/userSoundCloudRepository";
+import { UnfollowArtistUseCase } from "../../application/usecase/unfollowArtistUseCase";
 
 export const userController = new UserController(
   new FetchMyUserInfoUseCase(
@@ -24,6 +25,13 @@ export const userController = new UserController(
     new UserSoundCloudRepository()
   ),
   new FollowArtistUseCase(
+    new TokenApplicationService(
+      new SessionRedisRepository(new Redis()),
+      new TokenSoundCloudRepository()
+    ),
+    new UserSoundCloudRepository()
+  ),
+  new UnfollowArtistUseCase(
     new TokenApplicationService(
       new SessionRedisRepository(new Redis()),
       new TokenSoundCloudRepository()

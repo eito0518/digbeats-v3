@@ -2,9 +2,10 @@ import { Request, Response } from "express";
 import { FetchMyUserInfoUseCase } from "../../application/usecase/fetchMyUserInfoUseCase";
 import { FetchMyFollowingsUseCase } from "../../application/usecase/fetchMyFollowingsUseCase";
 import { FollowArtistUseCase } from "../../application/usecase/followArtistUseCase";
+import { UnfollowArtistUseCase } from "../../application/usecase/unfollowArtistUseCase";
 import {
   validateSessionId,
-  validateSoundCloudArtistIdParam,
+  validateSoundCloudArtistId,
 } from "../utils/validation";
 import { UserPresenter } from "../presenter/userPresenter";
 import { ArtistPresenter } from "../presenter/artistPresenter";
@@ -13,7 +14,8 @@ export class UserController {
   constructor(
     private readonly _fetchMyUserInfoUseCase: FetchMyUserInfoUseCase,
     private readonly _fetchMyFollowingsUseCase: FetchMyFollowingsUseCase,
-    private readonly _followArtistUseCase: FollowArtistUseCase
+    private readonly _followArtistUseCase: FollowArtistUseCase,
+    private readonly _unfollowArtistUseCase: UnfollowArtistUseCase
   ) {}
 
   // 自分のユーザー情報を取得する
@@ -64,11 +66,12 @@ export class UserController {
   async followArtist(req: Request, res: Response): Promise<void> {
     // リクエスト
     const sessionId = req.cookies.sessionId;
-    const soundcloudArtistIdRaw = req.params.soundcloudArtistId;
+    const soundcloudArtistIdRaw = req.body.soundcloudArtistId;
 
     // バリデーション
     if (!validateSessionId(sessionId, res)) return;
-    const soundcloudArtistId = validateSoundCloudArtistIdParam(
+
+    const soundcloudArtistId = validateSoundCloudArtistId(
       soundcloudArtistIdRaw,
       res
     );
@@ -86,5 +89,34 @@ export class UserController {
       })
       .status(200)
       .json({ message: "Followed artist successfully" });
+  }
+
+  // アーティストをフォロー解除する
+  async unfollowArtist(req: Request, res: Response): Promise<void> {
+    // リクエスト
+    const sessionId = req.cookies.sessionId;
+    const soundcloudArtistIdRaw = req.body.soundcloudArtistId;
+
+    // バリデーション
+    if (!validateSessionId(sessionId, res)) return;
+
+    const soundcloudArtistId = validateSoundCloudArtistId(
+      soundcloudArtistIdRaw,
+      res
+    );
+    if (soundcloudArtistId === undefined) return;
+
+    // ユースケース
+    await this._unfollowArtistUseCase.run(sessionId, soundcloudArtistId);
+
+    // レスポンス
+    res
+      .cookie("sessionId", sessionId, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "none", // TODO：　時間があればCSRF対策　で　csurfを導入する
+      })
+      .status(200)
+      .json({ message: "unfollowed artist successfully" });
   }
 }
