@@ -1,5 +1,5 @@
-import { SearchArtistsUseCase } from "../../application/usecase/searchArtistsUseCase";
 import { Request, Response } from "express";
+import { SearchArtistsUseCase } from "../../application/usecase/searchArtistsUseCase";
 
 export class ArtistController {
   constructor(private readonly _searchArtistsUseCase: SearchArtistsUseCase) {}

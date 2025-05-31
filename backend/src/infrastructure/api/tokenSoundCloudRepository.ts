@@ -30,8 +30,13 @@ export class TokenSoundCloudRepository implements TokenRepository {
         response.data.refresh_token
       );
     } catch (error) {
-      console.error("token request failed:", error);
-      throw new Error("Token request failed");
+      console.error(
+        "[tokenSoundCloudRepository] Failed to fetch token: unable to communicate with SoundCloud OAuth server",
+        error
+      );
+      throw new Error(
+        "Failed to fetch token: unable to communicate with SoundCloud OAuth server"
+      );
     }
   }
 
