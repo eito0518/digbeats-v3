@@ -33,13 +33,15 @@ export class ArtistSoundCloudRepository implements ArtistApiRepository {
             artist.id,
             artist.name,
             artist.avatar_url,
-            artist.public_favorites_count,
-            artist.permalink_url
+            artist.permalink_url,
+            artist.public_favorites_count
           )
       );
     } catch (error) {
-      console.error("searchArtist request failed:", error);
-      throw new Error("SearchArtist request failed");
+      const message =
+        "Failed to search artists: unable to communicate with SoundCloud API";
+      console.error(`[artistSoundCloudRepository] ${message}`, error);
+      throw new Error(message);
     }
   }
 }
