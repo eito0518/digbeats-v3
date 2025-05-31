@@ -18,7 +18,9 @@ export class AuthorizeUserUseCase {
     const token = await this._tokenRepository.getToken(code, codeVerifier);
 
     // 外部 から ユーザー情報 を取得
-    const userInfo = await this._userApiRepository.fetchUser(token.accessToken);
+    const userInfo = await this._userApiRepository.fetchMyUserInfo(
+      token.accessToken
+    );
 
     // DB から ユーザー を取得
     const findUserIdResult =
