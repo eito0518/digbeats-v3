@@ -5,8 +5,8 @@ import axios from "axios";
 import { ArtistInfo } from "../../domain/valueObjects/artistInfo";
 
 export class UserSoundCloudRepository implements UserApiRepository {
-  // ユーザー情報を取得
-  async fetchUser(accessToken: string): Promise<UserInfo> {
+  // 自分のユーザー情報を取得
+  async fetchMyUserInfo(accessToken: string): Promise<UserInfo> {
     const endPoint = `${config.API_BASE_URL}/me`;
 
     const headers = {
@@ -21,17 +21,13 @@ export class UserSoundCloudRepository implements UserApiRepository {
         response.data.id,
         response.data.username,
         response.data.avatar_url,
-        response.data.public_favorites_count, /// いらない？
-        response.data.followings_count /// いらない？
+        response.data.permalink_url
       );
     } catch (error) {
-      console.error(
-        "[userSoundCloudRepository] Failed to fetch user info: unable to communicate with SoundCloud API",
-        error
-      );
-      throw new Error(
-        "Failed to fetch User info: unable to communicate with SoundCloud API"
-      );
+      const message =
+        "Failed to fetch user info: unable to communicate with SoundCloud API";
+      console.error(`[userSoundCloudRepository] ${message}`, error);
+      throw new Error(message);
     }
   }
 

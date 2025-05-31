@@ -4,6 +4,9 @@ import { userController } from "../di/userController.di";
 
 export const userRouter = Router();
 
+// 自分のユーザー情報を取得するエンドポイント
+userRouter.get("/api/users", asyncHandler(userController.fetchMyUserInfo));
+
 // フォロー中のアーティストを取得するエンドポイント
 userRouter.get(
   "/api/users/followings",
