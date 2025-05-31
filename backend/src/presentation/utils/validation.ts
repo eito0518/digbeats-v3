@@ -47,3 +47,18 @@ export const validateSoundCloudArtistIdParam = (
 
   return soundcloudArtistId;
 };
+
+// artistName クエリパラメータの存在チェック と 文字変換
+export const validateArtistNameParam = (
+  artistNameRaw: unknown,
+  res: Response
+): string | undefined => {
+  if (typeof artistNameRaw !== "string" || artistNameRaw.trim() === "") {
+    res
+      .status(400)
+      .json({ error: "Invalid or missing 'artistName' query parameter" });
+    return;
+  }
+
+  return decodeURIComponent(artistNameRaw);
+};
