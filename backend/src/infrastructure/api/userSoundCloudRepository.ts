@@ -15,18 +15,23 @@ export class UserSoundCloudRepository implements UserApiRepository {
     };
 
     try {
-      const response = await axios.get(endPoint, { headers: headers });
+      const response = await axios.get(endPoint, { headers });
 
       return new UserInfo(
         response.data.id,
         response.data.username,
         response.data.avatar_url,
-        response.data.public_favorites_count,
-        response.data.followings_count
+        response.data.public_favorites_count, /// いらない？
+        response.data.followings_count /// いらない？
       );
     } catch (error) {
-      console.error("fetchUser request failed:", error);
-      throw new Error("FetchUser request failed");
+      console.error(
+        "[userSoundCloudRepository] Failed to fetch user info: unable to communicate with SoundCloud API",
+        error
+      );
+      throw new Error(
+        "Failed to fetch User info: unable to communicate with SoundCloud API"
+      );
     }
   }
 

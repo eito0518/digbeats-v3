@@ -15,15 +15,20 @@ export class UserMysqlRepository implements UserDbRepository {
       ]);
 
       // ユーザーが未登録ならば undefined を返す
-      if (!userSelectResults) {
+      if (userSelectResults.length === 0) {
         return undefined;
       }
 
       // ユーザーが登録済みならば userId を返す
       return userSelectResults[0].id;
     } catch (error) {
-      console.error("FindUserByExternalId request failed:", error);
-      throw new Error("findUserByExternalId request failed");
+      console.error(
+        "[userMysqlRepository] Failed to find user by external ID: unable to access database",
+        error
+      );
+      throw new Error(
+        "Failed to find user by external ID: unable to access database"
+      );
     }
   }
 
@@ -39,8 +44,13 @@ export class UserMysqlRepository implements UserDbRepository {
       // 登録した userId　を返す
       return userInsertResults.insertId;
     } catch (error) {
-      console.error("CreateUser request failed:", error);
-      throw new Error("createUser request failed");
+      console.error(
+        "[userMysqlRepository] Failed to create user: insert operation on users table failed",
+        error
+      );
+      throw new Error(
+        "Failed to create user: insert operation on users table failed"
+      );
     }
   }
 }

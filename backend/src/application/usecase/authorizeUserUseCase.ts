@@ -27,9 +27,10 @@ export class AuthorizeUserUseCase {
       );
 
     // DB に ユーザー が登録されてなければ、新規登録
-    const userId = findUserIdResult
-      ? findUserIdResult
-      : await this._userDbRepository.createUser(userInfo.externalUserId);
+    const userId =
+      findUserIdResult === undefined
+        ? await this._userDbRepository.createUser(userInfo.externalUserId)
+        : findUserIdResult;
 
     // セッションIDを発行
     const sessionId = uuidv4();
