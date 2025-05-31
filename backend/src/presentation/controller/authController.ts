@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { AuthorizeUserUseCase } from "../../application/usecase/authorizeUserUseCase";
+import { validateAuthParams } from "../utils/validation";
 
 export class AuthController {
   constructor(private readonly _authorizeUserUseCase: AuthorizeUserUseCase) {}
@@ -9,8 +10,11 @@ export class AuthController {
     // リクエスト
     const { code, codeVerifier } = req.body;
 
+    // バリデーション
+    if (!validateAuthParams(code, codeVerifier, res)) return;
+
     // ユースケース
-    const sessionId = this._authorizeUserUseCase.run(code, codeVerifier);
+    const sessionId = await this._authorizeUserUseCase.run(code, codeVerifier);
 
     // レスポンス
     res
@@ -21,7 +25,7 @@ export class AuthController {
       })
       .status(200)
       .json({
-        message: "authorize user request succeeded",
+        message: "Authorize user request succeeded",
       });
   }
 }
