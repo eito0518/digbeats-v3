@@ -4,7 +4,7 @@ export class ArtistInfo {
     private readonly _name: string,
     private readonly _avatarUrl: string,
     private readonly _permalinkUrl: string,
-    private readonly _likedTracksCount: number
+    private readonly _likedTracksCount?: number // フェッチ時のみ
   ) {}
 
   get externalUserId() {

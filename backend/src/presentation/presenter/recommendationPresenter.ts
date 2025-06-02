@@ -9,4 +9,12 @@ export class RecommendationPresenter {
       tracks: recommendation.tracks.map((track) => TrackPresenter.toDTO(track)),
     };
   }
+
+  static toDTOList(recommendations: Recommendation[]) {
+    return {
+      recommendations: recommendations.map((recommendation) =>
+        this.toDTO(recommendation)
+      ),
+    };
+  }
 }
