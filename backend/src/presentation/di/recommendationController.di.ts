@@ -16,9 +16,11 @@ import { LikeTracksUseCase } from "../../application/usecase/likeTracksUseCase";
 import { LikeSoundCloudRepository } from "../../infrastructure/api/likeSoundCloudRepository";
 import { LikeMysqlRepository } from "../../infrastructure/db/likeMysqlRepository";
 import Redis from "ioredis";
+import { GetTodayRecommendationsUseCase } from "../../application/usecase/getTodayRecommendationsUseCase";
+import { TodayRecommendationMysqlRepository } from "../../infrastructure/db/todayRecommendationMysqlRepository";
 
 export const recommendationController = new RecommendationController(
-  // レコメンド取得
+  // レコメンドを取得
   new GetRecommendationUseCase(
     new TokenApplicationService(
       new SessionRedisRepository(new Redis()),
@@ -32,7 +34,12 @@ export const recommendationController = new RecommendationController(
       new TrackMysqlRepository()
     )
   ),
-  // レコメンド履歴取得
+  // 「今日のレコメンド」を取得
+  new GetTodayRecommendationsUseCase(
+    new SessionRedisRepository(new Redis()),
+    new TodayRecommendationMysqlRepository()
+  ),
+  // レコメンド履歴を取得
   new GetHistorysUseCase(
     new SessionRedisRepository(new Redis()),
     new HistoryMysqlRepository()

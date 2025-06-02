@@ -1,4 +1,5 @@
 import { GetRecommendationUseCase } from "../../application/usecase/getRecommendationUseCase";
+import { GetTodayRecommendationsUseCase } from "../../application/usecase/getTodayRecommendationsUseCase";
 import { GetHistorysUseCase } from "../../application/usecase/getHistorysUseCase";
 import { LikeTracksUseCase } from "../../application/usecase/likeTracksUseCase";
 import { Request, Response } from "express";
@@ -8,12 +9,13 @@ import { RecommendationPresenter } from "../presenter/recommendationPresenter";
 export class RecommendationController {
   constructor(
     private readonly _getRecommendationUseCase: GetRecommendationUseCase,
+    private readonly _getTodayRecommendationsUseCase: GetTodayRecommendationsUseCase,
     private readonly _getHistorysUseCase: GetHistorysUseCase,
     private readonly _likeTracksUseCase: LikeTracksUseCase
   ) {}
 
   // レコメンドを取得する
-  async getRecommendations(req: Request, res: Response): Promise<void> {
+  async getRecommendation(req: Request, res: Response): Promise<void> {
     // リクエスト
     const sessionId = req.cookies.sessionId;
 
@@ -32,6 +34,30 @@ export class RecommendationController {
       })
       .status(200)
       .json(RecommendationPresenter.toDTO(recommendation));
+  }
+
+  // 「今日のレコメンド」 を取得する
+  async getTodayRecommendations(req: Request, res: Response): Promise<void> {
+    // リクエスト
+    const sessionId = req.cookies.sessionId;
+
+    // バリデーション
+    if (!validateSessionId(sessionId, res)) return;
+
+    // ユースケース
+    const todayRecommendations = await this._getTodayRecommendationsUseCase.run(
+      sessionId
+    );
+
+    // レスポンス
+    res
+      .cookie("sessionId", sessionId, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "none", // TODO：　時間があればCSRF対策　で　csurfを導入する
+      })
+      .status(200)
+      .json(RecommendationPresenter.toDTOList(todayRecommendations));
   }
 
   // レコメンド履歴を取得する
