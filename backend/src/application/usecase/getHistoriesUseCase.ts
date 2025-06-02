@@ -1,7 +1,7 @@
 import { SessionRepository } from "../../domain/interfaces/sessionRepository";
 import { HistoryDbRepository } from "../../domain/interfaces/historyDbRepository";
 
-export class GetHistorysUseCase {
+export class GetHistoriesUseCase {
   constructor(
     private readonly _sessionRepository: SessionRepository,
     private readonly _historyDbRepository: HistoryDbRepository

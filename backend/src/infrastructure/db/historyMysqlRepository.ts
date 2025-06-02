@@ -1,49 +1,72 @@
 import { HistoryDbRepository } from "../../domain/interfaces/historyDbRepository";
-import { RecommendationRecord } from "../../domain/entities/recommendationRecord";
+import { Recommendation } from "../../domain/entities/recommendation";
 import { MysqlClient } from "./mysqlClient";
 import mysql from "mysql2/promise";
-import { RecordedTrack } from "../../domain/entities/recordedTrack";
+import { Track } from "../../domain/entities/track";
+import { ArtistInfo } from "../../domain/valueObjects/artistInfo";
 
 export class HistoryMysqlRepository implements HistoryDbRepository {
   // レコメンド履歴を取得
-  async get(userId: number, limit: number): Promise<RecommendationRecord[]> {
+  async get(userId: number, limit: number): Promise<Recommendation[]> {
     try {
-      // DBからレコメンド履歴を取得する
+      // DBから レコメンド履歴 を取得する
       const [selectRecommendationsResults] = await MysqlClient.execute<
         mysql.RowDataPacket[]
       >(
         `
-        SELECT 
-            r.id AS recommendationId, 
-            r.created_at AS recommendedAt, 
-            t.id AS trackId, 
-            t.permalink_url AS permalinkUrl,
-            rt.was_liked AS wasLiked
-        FROM recommendations AS r
-        JOIN recommendations_tracks AS rt
-            ON r.id = rt.recommendations_id
-        JOIN tracks AS t
-            ON rt.tracks_id = t.id
-        WHERE r.user_id = ? 
-        ORDER BY r.created_at DESC 
-        LIMIT ?
+          SELECT 
+              r.id AS recommendationId, 
+              r.created_at AS recommendedAt, 
+              t.id AS trackId,
+              t.soundcloud_track_id AS soundcloudTrackId, 
+              t.title AS title,
+              t.artwork_url AS artworkUrl,
+              t.permalink_url AS trackPermalinkUrl,
+              a.id AS artistId,
+              a.soundcloud_artist_id AS soundcloudArtistId,
+              a.name AS name,
+              a.avatar_url AS avatarUrl,
+              a.permalink_url AS artistPermalinkUrl
+          FROM recommendations AS r
+          JOIN recommendations_tracks AS rt
+              ON r.id = rt.recommendations_id
+          JOIN tracks AS t
+              ON rt.tracks_id = t.id
+          JOIN artists AS a
+              ON t.artist_id = a.id  
+          WHERE r.user_id = ? 
+          ORDER BY r.created_at DESC 
+          LIMIT ?
         `,
         [userId, limit * 10] // レコメンド数 × 楽曲数（１レコメンドあたり必ず10曲）
       );
 
-      //　レコメンドIDでグループ分け
-      // 空の入れ物を用意
+      //　レコメンドIDで取得したレコメンドをグループ分け
+      // 空の入れ物　（MAP型）　を用意
       const groupedRecommendaions = new Map<
         number, // キー (recommendationId)
-        { recommendedAt: string; tracks: RecordedTrack[] } // バリュー
+        { recommendedAt: string; tracks: Track[] } // バリュー (日時　と 楽曲)
       >();
 
-      selectRecommendationsResults[0].forEach((r: any) => {
+      selectRecommendationsResults.forEach((r: any) => {
         // レコメンドから楽曲を1つ取り出す
-        const track = new RecordedTrack(r.trackId, r.permalinkUrl, r.wasLiked);
-        // すでに同じレコメンドIDがある場合
+        const track = new Track(
+          r.soundcloudTrackId,
+          r.title,
+          r.artworkUrl,
+          r.trackPermalinkUrl,
+          new ArtistInfo(
+            r.soundcloudArtistId,
+            r.name,
+            r.avatarUrl,
+            r.artistPermalinkUrl,
+            undefined
+          ),
+          r.trackId
+        );
+        // 同じレコメンドIDが既にある場合
         if (groupedRecommendaions.has(r.recommendationId)) {
-          // そこのtracksに楽曲を追加
+          // そのレコメンドIDのtracksに楽曲を追加
           groupedRecommendaions.get(r.recommendationId)?.tracks.push(track);
         }
         // 初めてのレコメンドIDの場合
@@ -56,19 +79,18 @@ export class HistoryMysqlRepository implements HistoryDbRepository {
         }
       });
 
-      // Map型からレコメンド履歴エンティティに変換
-      const recommendationsHistory = Array.from(
-        groupedRecommendaions.entries()
-      ).map(
-        // ２段階の分割代入
+      // Map型　から　Recommendation[] に変換
+      const histories = Array.from(groupedRecommendaions.entries()).map(
+        // ２段階の分割代入　で取り出してから変換する
         ([id, { recommendedAt, tracks }]) =>
-          new RecommendationRecord(id, recommendedAt, tracks)
+          new Recommendation(userId, tracks, id, recommendedAt)
       );
 
-      return recommendationsHistory;
+      return histories;
     } catch (error) {
-      console.error("getHistory request failed:", error);
-      throw new Error("GetHistory request failed");
+      const message = `Failed to fetch recommendation histories (userId: ${userId}): unable to communicate with MySQL`;
+      console.error(`[historyMysqlRepository] ${message}`, error);
+      throw new Error(message);
     }
   }
 }
