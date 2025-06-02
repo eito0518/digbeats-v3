@@ -26,7 +26,7 @@ export class GetRecommendationUseCase {
       validToken.accessToken
     );
 
-    //　フォロー中のアーティストを VO に変換
+    //　ArtistInfo[]型　から　VO(Followings型) に変換
     const followings = new Followings(rawFollowings);
 
     // レコメンドのソースとなるアーティストを選ぶ
@@ -41,11 +41,11 @@ export class GetRecommendationUseCase {
         10
       );
 
-    // 取得した楽曲からレコメンドを作成
+    // 取得した楽曲からレコメンド(VO)を作成
     const userId = await this._tokenApplicationService.getUserId(sessionId);
     const recommendation = new Recommendation(userId, tracks);
 
-    // レコメンドをDBに保存 (レコメンドIDを付与)
+    // レコメンドをDBに保存 (レコメンドID,作成日時を付与)
     const recommendationEntity =
       await this._recommendationDbRepository.saveAndReturnWithId(
         recommendation

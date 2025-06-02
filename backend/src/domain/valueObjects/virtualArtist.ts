@@ -9,6 +9,6 @@ export class VirtualArtist implements SourceArtist {
   }
 
   getFetchTargets(): ArtistInfo[] {
-    return this._artists; // 複数の構成アーティストをそのまま配列で返す
+    return this._artists; // そのまま構成アーティストの配列である　ArtistInfo[]　を返す
   }
 }

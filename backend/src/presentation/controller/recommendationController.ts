@@ -2,6 +2,8 @@ import { GetRecommendationUseCase } from "../../application/usecase/getRecommend
 import { GetHistorysUseCase } from "../../application/usecase/getHistorysUseCase";
 import { LikeTracksUseCase } from "../../application/usecase/likeTracksUseCase";
 import { Request, Response } from "express";
+import { validateSessionId } from "../utils/validation";
+import { RecommendationPresenter } from "../presenter/recommendationPresenter";
 
 export class RecommendationController {
   constructor(
@@ -15,6 +17,9 @@ export class RecommendationController {
     // リクエスト
     const sessionId = req.cookies.sessionId;
 
+    // バリデーション
+    if (!validateSessionId(sessionId, res)) return;
+
     // ユースケース
     const recommendation = await this._getRecommendationUseCase.run(sessionId);
 
@@ -26,7 +31,7 @@ export class RecommendationController {
         sameSite: "none", // TODO：　時間があればCSRF対策　で　csurfを導入する
       })
       .status(200)
-      .json({ recommendation: recommendation });
+      .json(RecommendationPresenter.toDTO(recommendation));
   }
 
   // レコメンド履歴を取得する

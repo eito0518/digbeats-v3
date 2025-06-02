@@ -9,6 +9,6 @@ export class RegularArtist implements SourceArtist {
   }
 
   getFetchTargets(): ArtistInfo[] {
-    return [this._artist]; // 1人のアーティストを配列にして返す
+    return [this._artist]; // ArtistInfo[] に変換
   }
 }
