@@ -4,6 +4,7 @@ import { TrackMysqlRepository } from "./tracksMysqlRepository";
 import { Recommendation } from "../../domain/entities/recommendation";
 import { MysqlClient } from "./mysqlClient";
 import mysql from "mysql2/promise";
+import { Track } from "../../domain/entities/track";
 
 export class RecommendationMySQLRepository implements RecommendationRepository {
   constructor(
@@ -11,7 +12,7 @@ export class RecommendationMySQLRepository implements RecommendationRepository {
     private readonly _trackMysqlRepository: TrackMysqlRepository
   ) {}
 
-  // レコメンドを作成
+  // レコメンドを保存してIDを付与する
   async saveAndReturnWithId(
     recommendation: Recommendation
   ): Promise<Recommendation> {
@@ -22,9 +23,9 @@ export class RecommendationMySQLRepository implements RecommendationRepository {
       // トランザクション開始
       await transactionConn.beginTransaction();
 
-      // テーブル間の依存関係に従って順番にIDを取得または保存
-      //　　楽曲IDを取得
-      const trackIds: number[] = await Promise.all(
+      // テーブル間の依存関係に従って、順番に取得または保存
+      //　　IDが付与された楽曲を 取得または保存
+      const savedTracks: Track[] = await Promise.all(
         recommendation.tracks.map(async (track) => {
           // DBに アーティスト が存在するか確認し、なければ保存
           const artistId = await this._artistMysqlRepository.findOrCreateId(
@@ -37,10 +38,13 @@ export class RecommendationMySQLRepository implements RecommendationRepository {
             track,
             artistId
           );
-          // 楽曲ID を返す
-          return trackId;
+          // IDが付与された楽曲　を返す
+          return track.withId(trackId); // IDを付与
         })
       );
+
+      // 楽曲IDを取得
+      const trackIds = savedTracks.map((track) => track.requireId());
 
       // レコメンドを保存
       const [recommendationInsertResults] =
@@ -52,11 +56,11 @@ export class RecommendationMySQLRepository implements RecommendationRepository {
       // レコメンドIDを取得
       const recommendationId = recommendationInsertResults.insertId;
 
-      // 中間テーブルに保存
+      // 中間テーブル （レコメンド・楽曲） に保存
       await Promise.all(
         trackIds.map(async (trackId) => {
           await transactionConn.execute<mysql.ResultSetHeader>(
-            "INSERT INTO recommendations_tracks (recommendations_id, tracks_id, was_liked) VALUES (?, ?, false)",
+            "INSERT INTO recommendations_tracks (recommendations_id, tracks_id, is_liked) VALUES (?, ?, false)",
             [recommendationId, trackId]
           );
         })
@@ -65,11 +69,20 @@ export class RecommendationMySQLRepository implements RecommendationRepository {
       // トランザクション終了
       await transactionConn.commit();
 
-      // レコメンドエンティティにIDを付与して返す
-      return new Recommendation(
-        recommendation.userId,
-        recommendation.tracks,
-        recommendationId // IDを付与
+      // レコメンド作成日時を取得
+      const [recommendationSelectResults] = await transactionConn.execute<
+        mysql.RowDataPacket[]
+      >("SELECT created_at FROM recommendations WHERE id = ?", [
+        recommendationId,
+      ]);
+
+      const createdAt = recommendationSelectResults[0].created_at;
+
+      // レコメンドにIDを付与して返す
+      return recommendation.withPersistenceInfo(
+        recommendationId, // IDを付与
+        savedTracks, // IDが付与された楽曲に差し替え
+        createdAt // 作成日時を付与
       );
     } catch (error) {
       // 失敗時にロールバック
@@ -77,19 +90,26 @@ export class RecommendationMySQLRepository implements RecommendationRepository {
         try {
           await transactionConn.rollback();
         } catch (rollbackError) {
-          console.error("rollback failed:", rollbackError);
+          console.error(
+            `[recommendationMysqlRepository] Failed to rollback transaction`,
+            rollbackError
+          );
         }
       }
 
-      console.error("Recommendation: saveAndReturnWithId failed:", error);
-      throw new Error("Recommendation: SaveAndReturnWithId request failed");
+      const message = `Failed to save recommendation (userId: ${recommendation.userId}): unable to communicate with MySQL`;
+      console.error(`[recommendationMysqlRepository] ${message}`, error);
+      throw new Error(message);
     } finally {
       // コネクションを開放
       if (transactionConn) {
         try {
           transactionConn.release();
         } catch (releaseError) {
-          console.error("connection release failed:", releaseError);
+          console.error(
+            `[recommendationMysqlRepository] Failed to release MySQL connection`,
+            releaseError
+          );
         }
       }
     }
