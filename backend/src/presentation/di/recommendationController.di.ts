@@ -10,7 +10,7 @@ import { TrackSoundCloudRepository } from "../../infrastructure/api/trackSoundCl
 import { RecommendationMySQLRepository } from "../../infrastructure/db/recommendationMySQLRepository";
 import { ArtistMysqlRepository } from "../../infrastructure/db/artistMysqlRepository";
 import { TrackMysqlRepository } from "../../infrastructure/db/tracksMysqlRepository";
-import { GetHistorysUseCase } from "../../application/usecase/getHistorysUseCase";
+import { GetHistoriesUseCase } from "../../application/usecase/getHistoriesUseCase";
 import { HistoryMysqlRepository } from "../../infrastructure/db/historyMysqlRepository";
 import { LikeTracksUseCase } from "../../application/usecase/likeTracksUseCase";
 import { LikeSoundCloudRepository } from "../../infrastructure/api/likeSoundCloudRepository";
@@ -40,7 +40,7 @@ export const recommendationController = new RecommendationController(
     new TodayRecommendationMysqlRepository()
   ),
   // レコメンド履歴を取得
-  new GetHistorysUseCase(
+  new GetHistoriesUseCase(
     new SessionRedisRepository(new Redis()),
     new HistoryMysqlRepository()
   ),

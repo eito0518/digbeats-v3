@@ -1,6 +1,6 @@
 import { GetRecommendationUseCase } from "../../application/usecase/getRecommendationUseCase";
 import { GetTodayRecommendationsUseCase } from "../../application/usecase/getTodayRecommendationsUseCase";
-import { GetHistorysUseCase } from "../../application/usecase/getHistorysUseCase";
+import { GetHistoriesUseCase } from "../../application/usecase/getHistoriesUseCase";
 import { LikeTracksUseCase } from "../../application/usecase/likeTracksUseCase";
 import { Request, Response } from "express";
 import { validateSessionId } from "../utils/validation";
@@ -10,7 +10,7 @@ export class RecommendationController {
   constructor(
     private readonly _getRecommendationUseCase: GetRecommendationUseCase,
     private readonly _getTodayRecommendationsUseCase: GetTodayRecommendationsUseCase,
-    private readonly _getHistorysUseCase: GetHistorysUseCase,
+    private readonly _getHistoriesUseCase: GetHistoriesUseCase,
     private readonly _likeTracksUseCase: LikeTracksUseCase
   ) {}
 
@@ -61,12 +61,15 @@ export class RecommendationController {
   }
 
   // レコメンド履歴を取得する
-  async getHistorys(req: Request, res: Response): Promise<void> {
+  async getHistories(req: Request, res: Response): Promise<void> {
     // リクエスト
     const sessionId = req.cookies.sessionId;
 
+    // バリデーション
+    if (!validateSessionId(sessionId, res)) return;
+
     // ユースケース
-    const histories = await this._getHistorysUseCase.run(sessionId);
+    const histories = await this._getHistoriesUseCase.run(sessionId);
 
     // レスポンス
     res
@@ -76,7 +79,7 @@ export class RecommendationController {
         sameSite: "none", // TODO：　時間があればCSRF対策　で　csurfを導入する
       })
       .status(200)
-      .json({ histories: histories });
+      .json(RecommendationPresenter.toDTOList(histories));
   }
 
   // レコメンド楽曲にいいねをする

@@ -19,7 +19,7 @@ recommendationRouter.get(
 // レコメンド履歴を取得するエンドポイント
 recommendationRouter.get(
   "/api/recommendations/histories",
-  asyncHandler(recommendationController.getHistorys)
+  asyncHandler(recommendationController.getHistories)
 );
 
 // レコメンド楽曲にいいねをするエンドポイント

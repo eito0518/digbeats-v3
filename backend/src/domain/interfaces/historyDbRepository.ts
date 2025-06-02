@@ -1,5 +1,5 @@
-import { RecommendationRecord } from "../entities/recommendationRecord";
+import { Recommendation } from "../entities/recommendation";
 
 export interface HistoryDbRepository {
-  get(userId: number, limit: number): Promise<RecommendationRecord[]>;
+  get(userId: number, limit: number): Promise<Recommendation[]>;
 }

@@ -41,7 +41,7 @@ export class TodayRecommendationMysqlRepository
               AND r.created_at < CURDATE() + INTERVAL 1 DAY
           ORDER BY r.created_at DESC 
           LIMIT ?
-          `,
+        `,
         [userId, limit]
       );
 
