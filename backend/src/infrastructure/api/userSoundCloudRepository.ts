@@ -176,4 +176,25 @@ export class UserSoundCloudRepository implements UserApiRepository {
       throw new Error(message);
     }
   }
+
+  // 楽曲のいいねを解除する
+  async unlikeTrack(
+    accessToken: string,
+    soundcloudTrackId: number
+  ): Promise<void> {
+    const endPoint = `${config.API_BASE_URL}/likes/tracks/${soundcloudTrackId}`;
+
+    const headers = {
+      accept: "application/json; charset=utf-8",
+      Authorization: `OAuth ${accessToken}`,
+    };
+
+    try {
+      await axios.delete(endPoint, { headers });
+    } catch (error) {
+      const message = `Failed to unlike track (ID: ${soundcloudTrackId}): unable to communicate with SoundCloud API`;
+      console.error(`[userSoundCloudRepository] ${message}`, error);
+      throw new Error(message);
+    }
+  }
 }
