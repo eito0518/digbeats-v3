@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Artist } from "../types/artistType";
-import axios from "axios";
+import { apiClient } from "../auth/apiClient";
 
 export const useFollow = () => {
   const [followedArtists, setFollowedArtists] = useState<Artist[]>([]);
@@ -9,7 +9,7 @@ export const useFollow = () => {
     // フォロー中のアーティストを取得
     const fetchFollowedArtists = async () => {
       try {
-        const response = await axios.get("/api/users/followings", {
+        const response = await apiClient.get("/users/followings", {
           withCredentials: true,
         });
         setFollowedArtists(response.data.artists);
@@ -30,7 +30,7 @@ export const useFollow = () => {
     try {
       if (isFollowed) {
         // フォロー解除
-        await axios.delete("/api/followings", {
+        await apiClient.delete("/followings", {
           data: { soundcloudArtistId: artist.soundcloudArtistId },
           withCredentials: true,
         });
@@ -41,8 +41,8 @@ export const useFollow = () => {
         );
       } else {
         // フォロー登録
-        await axios.post(
-          "/api/followings",
+        await apiClient.post(
+          "/followings",
           { soundcloudArtistId: artist.soundcloudArtistId },
           { withCredentials: true }
         );

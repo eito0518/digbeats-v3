@@ -1,5 +1,5 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
+import { apiClient } from "../auth/apiClient";
 
 export const useLike = () => {
   const [likedTrackIds, setLikedTrackIds] = useState<number[]>([]);
@@ -7,7 +7,7 @@ export const useLike = () => {
   useEffect(() => {
     const fetchLikedIds = async () => {
       try {
-        const response = await axios.get("/api/users/likes", {
+        const response = await apiClient.get("/users/likes", {
           withCredentials: true,
         });
         setLikedTrackIds(response.data.soundcloudTrackIds);
@@ -26,15 +26,15 @@ export const useLike = () => {
     try {
       if (isCurrentlyLiked) {
         // いいね解除
-        await axios.delete("/api/users/likes", {
+        await apiClient.delete("/users/likes", {
           data: { trackId, recommendationId },
           withCredentials: true,
         });
         setLikedTrackIds((previous) => previous.filter((id) => id !== trackId));
       } else {
         // いいね登録
-        await axios.post(
-          `/api/users/likes`,
+        await apiClient.post(
+          `/users/likes`,
           { trackId, recommendationId },
           { withCredentials: true }
         );

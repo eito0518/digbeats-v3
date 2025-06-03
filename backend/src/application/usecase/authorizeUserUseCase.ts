@@ -18,7 +18,9 @@ export class AuthorizeUserUseCase {
     const token = await this._tokenRepository.getToken(code, codeVerifier);
 
     // 外部 から ユーザー情報 を取得
-    const userInfo = await this._userApiRepository.fetchUser(token.accessToken);
+    const userInfo = await this._userApiRepository.fetchMyUserInfo(
+      token.accessToken
+    );
 
     // DB から ユーザー を取得
     const findUserIdResult =
@@ -27,9 +29,10 @@ export class AuthorizeUserUseCase {
       );
 
     // DB に ユーザー が登録されてなければ、新規登録
-    const userId = findUserIdResult
-      ? findUserIdResult
-      : await this._userDbRepository.createUser(userInfo.externalUserId);
+    const userId =
+      findUserIdResult === undefined
+        ? await this._userDbRepository.createUser(userInfo.externalUserId)
+        : findUserIdResult;
 
     // セッションIDを発行
     const sessionId = uuidv4();

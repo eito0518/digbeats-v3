@@ -10,10 +10,7 @@ export class TokenApplicationService {
   ) {}
 
   // ユーザーの有効なトークンを取得 or ユーザーに再ログインさせる
-  async getValidTokenOrThrow(sessionId: string | null): Promise<Token> {
-    // sessionId がなければ再ログインを要求
-    if (!sessionId) throw new Error("REAUTH_REQUIRED");
-
+  async getValidTokenOrThrow(sessionId: string): Promise<Token> {
     // セッションを取得
     const session = await this._sessionRepository.get(sessionId);
 
@@ -25,28 +22,20 @@ export class TokenApplicationService {
       token = await this._tokenRepository.refresh(token.refreshToken);
     }
 
-    // セッションを更新
+    // セッションを更新 (TTLは必ずリセットされる)
     await this._sessionRepository.save(
       sessionId,
       new Session(session.userId, token, Date.now())
     );
 
-    // 有効なトークンを返す
-    return session.token;
+    // 最新の有効なトークンを返す
+    return token;
   }
 
   // ユーザーIDを取得
   async getUserId(sessionId: string): Promise<number> {
-    // sessionId がなければ再ログインを要求
-    if (!sessionId) throw new Error("REAUTH_REQUIRED");
-
     // セッションを取得
     const session = await this._sessionRepository.get(sessionId);
-
-    // セッションが期限切れならば再ログインを要求
-    if (!session) {
-      throw new Error("REAUTH_REQUIRED");
-    }
 
     return session.userId;
   }

@@ -1,15 +1,17 @@
-import { HistoryDbRepository } from "../../domain/interfaces/historyDbRepository";
+import { TodayRecommendationDbRepository } from "../../domain/interfaces/todayRecommendationDbRepository";
 import { Recommendation } from "../../domain/entities/recommendation";
 import { MysqlClient } from "./mysqlClient";
 import mysql from "mysql2/promise";
 import { Track } from "../../domain/entities/track";
 import { ArtistInfo } from "../../domain/valueObjects/artistInfo";
 
-export class HistoryMysqlRepository implements HistoryDbRepository {
-  // レコメンド履歴を取得
+export class TodayRecommendationMysqlRepository
+  implements TodayRecommendationDbRepository
+{
+  // 「今日のレコメンド」 を取得する
   async get(userId: number, limit: number): Promise<Recommendation[]> {
     try {
-      // DBから レコメンド履歴 を取得する
+      // DBから 「今日のレコメンド」 を取得する
       const [selectRecommendationsResults] = await MysqlClient.execute<
         mysql.RowDataPacket[]
       >(
@@ -35,10 +37,12 @@ export class HistoryMysqlRepository implements HistoryDbRepository {
           JOIN artists AS a
               ON t.artist_id = a.id  
           WHERE r.user_id = ? 
+              AND r.created_at >= CURDATE() 
+              AND r.created_at < CURDATE() + INTERVAL 1 DAY
           ORDER BY r.created_at DESC 
           LIMIT ?
         `,
-        [userId, limit * 10] // レコメンド数 × 楽曲数（１レコメンドあたり必ず10曲）
+        [userId, limit]
       );
 
       //　レコメンドIDで取得したレコメンドをグループ分け
@@ -80,16 +84,18 @@ export class HistoryMysqlRepository implements HistoryDbRepository {
       });
 
       // Map型　から　Recommendation[] に変換
-      const histories = Array.from(groupedRecommendaions.entries()).map(
+      const todayRecommendations = Array.from(
+        groupedRecommendaions.entries()
+      ).map(
         // ２段階の分割代入　で取り出してから変換する
         ([id, { recommendedAt, tracks }]) =>
           new Recommendation(userId, tracks, id, recommendedAt)
       );
 
-      return histories;
+      return todayRecommendations;
     } catch (error) {
-      const message = `Failed to fetch recommendation histories (userId: ${userId}): unable to communicate with MySQL`;
-      console.error(`[historyMysqlRepository] ${message}`, error);
+      const message = `Failed to fetch today's recommendations (userId: ${userId}): unable to communicate with MySQL`;
+      console.error(`[todayRecommendationMysqlRepository] ${message}`, error);
       throw new Error(message);
     }
   }

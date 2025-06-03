@@ -9,18 +9,18 @@ import { RecommendationApplicationService } from "../../application/applicationS
 import { TrackSoundCloudRepository } from "../../infrastructure/api/trackSoundCloudRepository";
 import { RecommendationMySQLRepository } from "../../infrastructure/db/recommendationMySQLRepository";
 import { ArtistMysqlRepository } from "../../infrastructure/db/artistMysqlRepository";
-import { TrackMysqlRepository } from "../../infrastructure/db/tracksMysqlRepository";
-import { GetHistorysUseCase } from "../../application/usecase/getHistorysUseCase";
+import { TrackMysqlRepository } from "../../infrastructure/db/trackMysqlRepository";
+import { GetHistoriesUseCase } from "../../application/usecase/getHistoriesUseCase";
 import { HistoryMysqlRepository } from "../../infrastructure/db/historyMysqlRepository";
-import { LikeTracksUseCase } from "../../application/usecase/likeTracksUseCase";
-import { LikeSoundCloudRepository } from "../../infrastructure/api/likeSoundCloudRepository";
-import { LikeMysqlRepository } from "../../infrastructure/db/likeMysqlRepository";
+import Redis from "ioredis";
+import { GetTodayRecommendationsUseCase } from "../../application/usecase/getTodayRecommendationsUseCase";
+import { TodayRecommendationMysqlRepository } from "../../infrastructure/db/todayRecommendationMysqlRepository";
 
 export const recommendationController = new RecommendationController(
-  // レコメンド取得
+  // レコメンドを取得
   new GetRecommendationUseCase(
     new TokenApplicationService(
-      new SessionRedisRepository(),
+      new SessionRedisRepository(new Redis()),
       new TokenSoundCloudRepository()
     ),
     new UserSoundCloudRepository(),
@@ -31,19 +31,14 @@ export const recommendationController = new RecommendationController(
       new TrackMysqlRepository()
     )
   ),
-  // レコメンド履歴取得
-  new GetHistorysUseCase(
-    new SessionRedisRepository(),
-    new HistoryMysqlRepository()
+  // 「今日のレコメンド」を取得
+  new GetTodayRecommendationsUseCase(
+    new SessionRedisRepository(new Redis()),
+    new TodayRecommendationMysqlRepository()
   ),
-  // レコメンド楽曲をいいね
-  new LikeTracksUseCase(
-    new TokenApplicationService(
-      new SessionRedisRepository(),
-      new TokenSoundCloudRepository()
-    ),
-    new TrackMysqlRepository(),
-    new LikeSoundCloudRepository(),
-    new LikeMysqlRepository()
+  // レコメンド履歴を取得
+  new GetHistoriesUseCase(
+    new SessionRedisRepository(new Redis()),
+    new HistoryMysqlRepository()
   )
 );

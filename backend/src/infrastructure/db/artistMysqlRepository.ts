@@ -20,18 +20,24 @@ export class ArtistMysqlRepository {
         return artistSelectResults[0].id;
       }
 
-      // ユーザーが未登録ならば INSERT
+      // ユーザーが未登録ならば 登録する
       const [artistInsertResults] =
         await transactionConn.execute<mysql.ResultSetHeader>(
-          "INSERT INTO artists (soundcloud_artist_id) values (?)",
-          [artist.externalUserId]
+          "INSERT INTO artists (soundcloud_artist_id, name, avatar_url, permalink_url) values (?, ?, ?, ?)",
+          [
+            artist.externalUserId,
+            artist.name,
+            artist.avatarUrl,
+            artist.permalinkUrl,
+          ]
         );
 
       // artistId を返す
       return artistInsertResults.insertId;
     } catch (error) {
-      console.error("findOrCreateArtistId request failed:", error);
-      throw new Error("FindOrCreateArtistId request failed");
+      const message = `Failed to find or create artist (soundcloudArtistId: ${artist.externalUserId}): unable to communicate with MySQL`;
+      console.error(`[artistMysqlRepository] ${message}`, error);
+      throw new Error(message);
     }
   }
 }
