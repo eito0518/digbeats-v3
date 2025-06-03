@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { apiClient } from "../auth/apiClient";
 
 export const Callback = () => {
   const navigate = useNavigate();
@@ -31,9 +31,8 @@ export const Callback = () => {
 
       try {
         // バックエンドに code + code_verifier を送信し、 Cookieで sessionId を自動取得
-        const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-        await axios.post(
-          `${API_BASE_URL}/api/auth/authorize`,
+        await apiClient.post(
+          "/auth/authorize",
           {
             code: code,
             codeVerifier: codeVerifier,
