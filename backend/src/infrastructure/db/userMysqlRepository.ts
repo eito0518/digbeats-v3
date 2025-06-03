@@ -3,7 +3,7 @@ import { MysqlClient } from "./mysqlClient";
 import mysql from "mysql2/promise";
 
 export class UserMysqlRepository implements UserDbRepository {
-  // 外部IDからユーザーIDを取得
+  // 外部IDからユーザーIDを取得する
   async findUserIdByExternalId(
     soundcloudUserId: number
   ): Promise<number | undefined> {
@@ -29,7 +29,7 @@ export class UserMysqlRepository implements UserDbRepository {
     }
   }
 
-  // ユーザーを新規登録
+  // ユーザーを新規登録する
   async createUser(soundCloudUserId: number): Promise<number> {
     try {
       const [userInsertResults] =
@@ -44,6 +44,36 @@ export class UserMysqlRepository implements UserDbRepository {
       const message =
         "Failed to create user: insert operation on users table failed";
       console.error(`[userMysqlRepository] ${message}`, error);
+      throw new Error(message);
+    }
+  }
+
+  // 楽曲のいいねを登録する
+  async likeTrack(recommendationId: number, trackId: number): Promise<void> {
+    try {
+      // いいねを記録する中間テーブルが存在するか確認
+      const [jointableSelectResults] = await MysqlClient.execute<
+        mysql.RowDataPacket[]
+      >(
+        "SELECT is_liked FROM recommendations_tracks WHERE recommendation_id = ? AND track_id = ?",
+        [recommendationId, trackId]
+      );
+
+      // 中間テーブルが存在しない場合はエラー
+      if (jointableSelectResults.length === 0) {
+        const message = `No matching record found in recommendations_tracks (recommendationId: ${recommendationId}, trackId: ${trackId})`;
+        console.error(`[likeTrack] ${message}`);
+        throw new Error(message);
+      }
+
+      // いいねを登録（is_liked = true に更新）
+      await MysqlClient.execute(
+        "UPDATE recommendations_tracks SET is_liked = true WHERE recommendation_id = ? AND track_id = ?",
+        [recommendationId, trackId]
+      );
+    } catch (error) {
+      const message = `Failed to like track (recommendationId: ${recommendationId}, trackId: ${trackId})`;
+      console.error(`[likeTrack] ${message}`, error);
       throw new Error(message);
     }
   }

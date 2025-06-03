@@ -13,4 +13,5 @@ export interface UserApiRepository {
     accessToken: string,
     maxPageCount: number
   ): Promise<number[]>;
+  likeTrack(accessToken: string, soundcloudTrackId: number): Promise<void>;
 }

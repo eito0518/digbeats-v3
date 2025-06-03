@@ -4,9 +4,11 @@ import { FetchMyFollowingsUseCase } from "../../application/usecase/fetchMyFollo
 import { FollowArtistUseCase } from "../../application/usecase/followArtistUseCase";
 import { UnfollowArtistUseCase } from "../../application/usecase/unfollowArtistUseCase";
 import { FetchLikedSoundCloudTrackIdsUseCase } from "../../application/usecase/fetchLikedSoundCloudTrackIdsUseCase";
+import { LikeTrackUseCase } from "../../application/usecase/likeTrackUseCase";
 import {
   validateSessionId,
   validateSoundCloudArtistId,
+  validateLikeParams,
 } from "../utils/validation";
 import { UserPresenter } from "../presenter/userPresenter";
 import { ArtistPresenter } from "../presenter/artistPresenter";
@@ -17,7 +19,8 @@ export class UserController {
     private readonly _fetchMyFollowingsUseCase: FetchMyFollowingsUseCase,
     private readonly _followArtistUseCase: FollowArtistUseCase,
     private readonly _unfollowArtistUseCase: UnfollowArtistUseCase,
-    private readonly _fetchLikedSoundCloudTrackIdsUseCase: FetchLikedSoundCloudTrackIdsUseCase
+    private readonly _fetchLikedSoundCloudTrackIdsUseCase: FetchLikedSoundCloudTrackIdsUseCase,
+    private readonly _likeTrackUseCase: LikeTrackUseCase
   ) {}
 
   // 自分のユーザー情報を取得する
@@ -122,7 +125,7 @@ export class UserController {
       .json({ message: "unfollowed artist successfully" });
   }
 
-  // いいねした楽曲を取得する
+  // いいね中の SoundCloudTrackId を取得する
   async fetchLikedSoundCloudTrackIds(
     req: Request,
     res: Response
@@ -146,5 +149,38 @@ export class UserController {
       })
       .status(200)
       .json({ soundcloudTrackIds: likedSoundCloudTrackIds });
+  }
+
+  // 楽曲のいいねを登録する
+  async likeTrack(req: Request, res: Response): Promise<void> {
+    // リクエスト
+    const sessionId = req.cookies.sessionId;
+
+    const { recommendationIdRaw, trackIdRaw } = req.body;
+
+    // バリデーション
+    if (!validateSessionId(sessionId, res)) return;
+
+    const validatedLikeParams = validateLikeParams(
+      recommendationIdRaw,
+      trackIdRaw,
+      res
+    );
+    if (!validatedLikeParams) return;
+
+    const { recommendationId, trackId } = validatedLikeParams;
+
+    // ユースケース
+    await this._likeTrackUseCase.run(sessionId, recommendationId, trackId);
+
+    // レスポンス
+    res
+      .cookie("sessionId", sessionId, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "none", // TODO：　時間があればCSRF対策　で　csurfを導入する
+      })
+      .status(200)
+      .json({ message: "liked track successfully" });
   }
 }
