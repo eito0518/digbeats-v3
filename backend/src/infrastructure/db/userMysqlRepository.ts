@@ -62,7 +62,14 @@ export class UserMysqlRepository implements UserDbRepository {
       // 中間テーブルが存在しない場合はエラー
       if (jointableSelectResults.length === 0) {
         const message = `No matching record found in recommendations_tracks (recommendationId: ${recommendationId}, trackId: ${trackId})`;
-        console.error(`[likeTrack] ${message}`);
+        console.error(`[userMysqlRepository] ${message}`);
+        throw new Error(message);
+      }
+
+      // 既に is_liked = true である場合はエラー
+      if (jointableSelectResults[0].is_liked) {
+        const message = `Track already liked (recommendationId: ${recommendationId}, trackId: ${trackId})`;
+        console.warn(`[userMysqlRepository] ${message}`);
         throw new Error(message);
       }
 
@@ -73,7 +80,44 @@ export class UserMysqlRepository implements UserDbRepository {
       );
     } catch (error) {
       const message = `Failed to like track (recommendationId: ${recommendationId}, trackId: ${trackId})`;
-      console.error(`[likeTrack] ${message}`, error);
+      console.error(`[userMysqlRepository] ${message}`, error);
+      throw new Error(message);
+    }
+  }
+
+  // 楽曲のいいねを解除する
+  async unlikeTrack(recommendationId: number, trackId: number): Promise<void> {
+    try {
+      // いいねを記録する中間テーブルが存在するか確認
+      const [jointableSelectResults] = await MysqlClient.execute<
+        mysql.RowDataPacket[]
+      >(
+        "SELECT is_liked FROM recommendations_tracks WHERE recommendation_id = ? AND track_id = ?",
+        [recommendationId, trackId]
+      );
+
+      // 中間テーブルが存在しない場合はエラー
+      if (jointableSelectResults.length === 0) {
+        const message = `No matching record found in recommendations_tracks (recommendationId: ${recommendationId}, trackId: ${trackId})`;
+        console.error(`[userMysqlRepository] ${message}`);
+        throw new Error(message);
+      }
+
+      // 既に is_liked = false である場合はエラー
+      if (!jointableSelectResults[0].is_liked) {
+        const message = `Track already unliked (recommendationId: ${recommendationId}, trackId: ${trackId})`;
+        console.warn(`[userMysqlRepository] ${message}`);
+        throw new Error(message);
+      }
+
+      // いいねを解除（is_liked = false に更新）
+      await MysqlClient.execute(
+        "UPDATE recommendations_tracks SET is_liked = false WHERE recommendation_id = ? AND track_id = ?",
+        [recommendationId, trackId]
+      );
+    } catch (error) {
+      const message = `Failed to unlike track (recommendationId: ${recommendationId}, trackId: ${trackId})`;
+      console.error(`[userMysqlRepository] ${message}`, error);
       throw new Error(message);
     }
   }

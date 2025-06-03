@@ -27,3 +27,6 @@ userRouter.delete(
 
 // 楽曲のいいねを登録するエンドポイント
 userRouter.post("/api/users/likes", asyncHandler(userController.likeTrack));
+
+// 楽曲のいいねを解除するエンドポイント
+userRouter.delete("/api/users/likes", asyncHandler(userController.unlikeTrack));
