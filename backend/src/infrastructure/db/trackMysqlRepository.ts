@@ -45,7 +45,7 @@ export class TrackMysqlRepository implements TrackDbRepository {
     }
   }
 
-  // soundcloudTrackIdを取得
+  // トラックIDから外部IDを取得する
   async getExternalTrackId(trackId: number): Promise<number> {
     try {
       const [trackSelectResults] = await MysqlClient.execute<
@@ -53,14 +53,16 @@ export class TrackMysqlRepository implements TrackDbRepository {
       >("SELECT soundcloud_track_id FROM tracks WHERE id = ?", [trackId]);
 
       if (!trackSelectResults[0]) {
-        console.error(`matching record not found: trackId=${trackId}`);
-        throw new Error("Matching record not found");
+        const message = `No matching track found for internal trackId: ${trackId}`;
+        console.error(`[trackMysqlRepository] ${message}`);
+        throw new Error(message);
       }
 
       return trackSelectResults[0].soundcloud_track_id;
     } catch (error) {
-      console.error("getExternalTrackId request failed:", error);
-      throw new Error("GetExternalTrackId request failed");
+      const message = `Failed to fetch soundcloudTrackId for internal trackId: ${trackId}`;
+      console.error(`[trackMysqlRepository] ${message}`, error);
+      throw new Error(message);
     }
   }
 }

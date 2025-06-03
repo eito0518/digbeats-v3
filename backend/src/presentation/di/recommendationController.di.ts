@@ -9,7 +9,7 @@ import { RecommendationApplicationService } from "../../application/applicationS
 import { TrackSoundCloudRepository } from "../../infrastructure/api/trackSoundCloudRepository";
 import { RecommendationMySQLRepository } from "../../infrastructure/db/recommendationMySQLRepository";
 import { ArtistMysqlRepository } from "../../infrastructure/db/artistMysqlRepository";
-import { TrackMysqlRepository } from "../../infrastructure/db/tracksMysqlRepository";
+import { TrackMysqlRepository } from "../../infrastructure/db/trackMysqlRepository";
 import { GetHistoriesUseCase } from "../../application/usecase/getHistoriesUseCase";
 import { HistoryMysqlRepository } from "../../infrastructure/db/historyMysqlRepository";
 import { LikeTracksUseCase } from "../../application/usecase/likeTracksUseCase";

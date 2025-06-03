@@ -155,4 +155,25 @@ export class UserSoundCloudRepository implements UserApiRepository {
   private mapToSoundCloudTrackId(collection: any[]): number[] {
     return collection.map((track: any) => track.id);
   }
+
+  // 楽曲のいいねを登録する
+  async likeTrack(
+    accessToken: string,
+    soundcloudTrackId: number
+  ): Promise<void> {
+    const endPoint = `${config.API_BASE_URL}/likes/tracks/${soundcloudTrackId}`;
+
+    const headers = {
+      accept: "application/json; charset=utf-8",
+      Authorization: `OAuth ${accessToken}`,
+    };
+
+    try {
+      await axios.post(endPoint, null, { headers });
+    } catch (error) {
+      const message = `Failed to like track (ID: ${soundcloudTrackId}): unable to communicate with SoundCloud API`;
+      console.error(`[userSoundCloudRepository] ${message}`, error);
+      throw new Error(message);
+    }
+  }
 }

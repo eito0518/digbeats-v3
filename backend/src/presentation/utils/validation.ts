@@ -66,3 +66,37 @@ export const validateSoundCloudArtistId = (
 
   return soundCloudArtistId;
 };
+
+// いいね情報 （recommendationId, trackId） の存在チェック と 数値変換
+export const validateLikeParams = (
+  recommendationIdRaw: unknown,
+  trackIdRaw: unknown,
+  res: Response
+): { recommendationId: number; trackId: number } | undefined => {
+  // 値が無い場合
+  if (recommendationIdRaw === undefined || recommendationIdRaw === null) {
+    res.status(400).json({ error: "Missing 'recommendationId'" });
+    return;
+  } else if (trackIdRaw === undefined || trackIdRaw === null) {
+    res.status(400).json({ error: "Missing 'trackId'" });
+    return;
+  }
+  // 値が不正な数値の場合
+  const recommendationId = Number(recommendationIdRaw);
+  const trackId = Number(trackIdRaw);
+  if (
+    isNaN(recommendationId) ||
+    !Number.isInteger(recommendationId) ||
+    recommendationId <= 0
+  ) {
+    res
+      .status(400)
+      .json({ error: "'recommendationId' must be a positive integer" });
+    return;
+  } else if (isNaN(trackId) || !Number.isInteger(trackId) || trackId <= 0) {
+    res.status(400).json({ error: "'trackId' must be a positive integer" });
+    return;
+  }
+
+  return { recommendationId, trackId };
+};

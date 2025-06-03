@@ -1,6 +1,6 @@
 import { RecommendationRepository } from "../../domain/interfaces/recommendationDbRepository";
 import { ArtistMysqlRepository } from "./artistMysqlRepository";
-import { TrackMysqlRepository } from "./tracksMysqlRepository";
+import { TrackMysqlRepository } from "./trackMysqlRepository";
 import { Recommendation } from "../../domain/entities/recommendation";
 import { MysqlClient } from "./mysqlClient";
 import mysql from "mysql2/promise";
