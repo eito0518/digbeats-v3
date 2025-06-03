@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Recommendation } from "../types/recommendationType";
-import axios from "axios";
+import { apiClient } from "../auth/apiClient";
 
 export const useRecommendation = () => {
   const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
@@ -11,7 +11,7 @@ export const useRecommendation = () => {
     // 「今日のレコメンド」 を取得
     const fetchTodayRecommendation = async () => {
       try {
-        const response = await axios.get("/api/recommendations/today", {
+        const response = await apiClient.get("/recommendations/today", {
           withCredentials: true,
         });
         // 「今日のレコメンド」 がまだ無い場合
@@ -34,9 +34,7 @@ export const useRecommendation = () => {
     if (todaysGenerateCount >= 3) return;
 
     try {
-      const response = await axios.get(
-        `${import.meta.env.VITE_API_BASE_URL}/api/recommendations`
-      );
+      const response = await apiClient.get("/recommendations");
       const newRecommendation = response.data;
       // 生成したレコメンドを新しい順で追加
       setRecommendations((previous) => [newRecommendation, ...previous]);

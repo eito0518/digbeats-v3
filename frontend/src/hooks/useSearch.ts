@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Artist } from "../types/artistType";
-import axios from "axios";
+import { apiClient } from "../auth/apiClient";
 
 export const useSearch = () => {
   const [artists, setArtists] = useState<Artist[]>([]); // 検索結果のアーティスト
@@ -11,8 +11,8 @@ export const useSearch = () => {
     if (!searchQuery.trim()) return;
 
     try {
-      const response = await axios.get(
-        `/api/artists/search?artistName=${searchQuery}`
+      const response = await apiClient.get(
+        `/artists/search?artistName=${searchQuery}`
       );
       setArtists(response.data);
     } catch (error) {

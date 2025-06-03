@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Recommendation } from "../types/recommendationType";
-import axios from "axios";
+import { apiClient } from "../auth/apiClient";
 
 export const useHistory = () => {
   const [histories, setHistories] = useState<Recommendation[]>([]);
@@ -12,7 +12,7 @@ export const useHistory = () => {
     // レコメンド履歴を取得
     const fetchHistories = async () => {
       try {
-        const response = await axios.get("/api/recommendations/histories", {
+        const response = await apiClient.get("/recommendations/histories", {
           withCredentials: true,
         });
         setHistories(response.data);
