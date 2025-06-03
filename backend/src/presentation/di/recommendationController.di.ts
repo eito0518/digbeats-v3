@@ -12,9 +12,6 @@ import { ArtistMysqlRepository } from "../../infrastructure/db/artistMysqlReposi
 import { TrackMysqlRepository } from "../../infrastructure/db/trackMysqlRepository";
 import { GetHistoriesUseCase } from "../../application/usecase/getHistoriesUseCase";
 import { HistoryMysqlRepository } from "../../infrastructure/db/historyMysqlRepository";
-import { LikeTracksUseCase } from "../../application/usecase/likeTracksUseCase";
-import { LikeSoundCloudRepository } from "../../infrastructure/api/likeSoundCloudRepository";
-import { LikeMysqlRepository } from "../../infrastructure/db/likeMysqlRepository";
 import Redis from "ioredis";
 import { GetTodayRecommendationsUseCase } from "../../application/usecase/getTodayRecommendationsUseCase";
 import { TodayRecommendationMysqlRepository } from "../../infrastructure/db/todayRecommendationMysqlRepository";
@@ -43,15 +40,5 @@ export const recommendationController = new RecommendationController(
   new GetHistoriesUseCase(
     new SessionRedisRepository(new Redis()),
     new HistoryMysqlRepository()
-  ),
-  // レコメンド楽曲をいいね
-  new LikeTracksUseCase(
-    new TokenApplicationService(
-      new SessionRedisRepository(new Redis()),
-      new TokenSoundCloudRepository()
-    ),
-    new TrackMysqlRepository(),
-    new LikeSoundCloudRepository(),
-    new LikeMysqlRepository()
   )
 );

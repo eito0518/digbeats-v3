@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, ErrorRequestHandler } from "express";
 
-export const errorHandler = (
+export const errorHandler: ErrorRequestHandler = (
   err: Error,
   req: Request,
   res: Response,
@@ -10,9 +10,10 @@ export const errorHandler = (
 
   // 再認証を要求するエラー（セッション切れなど）
   if (err.message === "REAUTH_REQUIRED") {
-    return res.status(401).json({
+    res.status(401).json({
       message: "REAUTH_REQUIRED",
     });
+    return;
   }
 
   // それ以外のエラーは 500 として処理

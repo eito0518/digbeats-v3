@@ -6,10 +6,16 @@ export class Followings {
   // アーティストを いいね曲数 によって分類
   classifyByPublicFavoritesCount() {
     const availableArtists = this._artists.filter(
-      (artist) => artist.likedTracksCount >= 100
+      (artist) =>
+        artist.likedTracksCount !== undefined && artist.likedTracksCount >= 100
     );
+
     const groupableArtists = this._artists.filter(
-      (artist) => artist.likedTracksCount >= 20 && artist.likedTracksCount < 100 // いいね曲数が20未満のアーティストは切り捨てる
+      (artist) =>
+        artist.likedTracksCount !== undefined &&
+        // いいね曲数が20未満のアーティストは切り捨てる
+        artist.likedTracksCount >= 20 &&
+        artist.likedTracksCount < 100
     );
 
     return { availableArtists, groupableArtists };
