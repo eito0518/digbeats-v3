@@ -1,22 +1,24 @@
 import { TokenApplicationService } from "../applicationServices/tokenApplicationService";
 import { UserApiRepository } from "../../domain/interfaces/userApiRepository";
 
-export class FollowArtistUseCase {
+export class FetchMyUserInfoUseCase {
   constructor(
     private readonly _tokenApplicationService: TokenApplicationService,
     private readonly _userApiRepository: UserApiRepository
   ) {}
 
-  async run(sessionId: string, soundcloudArtistId: number): Promise<void> {
+  async run(sessionId: string) {
     // 有効なトークンを取得
     const validToken = await this._tokenApplicationService.getValidTokenOrThrow(
       sessionId
     );
 
-    // APIでアーティストをフォロー
-    await this._userApiRepository.followArtist(
-      validToken.accessToken,
-      soundcloudArtistId
+    //　APIで自分のユーザー情報を取得
+    const userInfo = await this._userApiRepository.fetchMyUserInfo(
+      validToken.accessToken
     );
+
+    // アーティスト情報 を コントローラーに返す
+    return userInfo;
   }
 }

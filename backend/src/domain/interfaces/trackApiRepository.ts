@@ -1,9 +1,9 @@
-import { TrackInfo } from "../valueObjects/trackInfo";
+import { Track } from "../entities/track";
 
 export interface TrackApiRepository {
   fetchLikedTracks(
     accessToken: string,
     externalUserId: number,
     maxPageCount: number
-  ): Promise<TrackInfo[]>;
+  ): Promise<Track[]>;
 }

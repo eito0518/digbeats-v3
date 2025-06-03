@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { User } from "../types/userType";
-import axios from "axios";
+import { apiClient } from "../auth/apiClient";
 
 export const useUser = () => {
   const [user, setUser] = useState<User>();
@@ -8,7 +8,7 @@ export const useUser = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await axios.get("/api/users", {
+        const response = await apiClient.get("/users", {
           withCredentials: true,
         });
         setUser(response.data);

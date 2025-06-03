@@ -237,6 +237,7 @@
 
 ```json
 {
+  "recommendationId": 4324,
   "trackId": 789(内部のtrackId)
 }
 ```
@@ -250,6 +251,7 @@
 
 ```json
 {
+  "recommendationId": 4324,
   "trackId": 789(内部のtrackId)
 }
 ```

@@ -17,6 +17,7 @@ export class Token {
     return Date.now() > this._accessTokenExpiresAt;
   }
 
+  // expiresInオブジェクト　から　Token型(expiresAt)に変換
   static fromExpiresIn(
     accessToken: string,
     expiresIn: number,
