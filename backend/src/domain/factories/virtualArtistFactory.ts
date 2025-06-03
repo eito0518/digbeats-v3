@@ -12,10 +12,17 @@ export class VirtualArtistFactory {
 
     // 「合計いいね曲数」が100曲以上のグループを判定
     const validGroups = artistsGroups.filter((group) => {
-      const groupTotalFavorits = group.reduce(
-        (sum, artist) => sum + artist.likedTracksCount,
-        0 // sumの初期値
-      );
+      const groupTotalFavorits = group.reduce((sum, artist) => {
+        if (artist.likedTracksCount === undefined) {
+          const message = `likedTracksCount is missing for artist: ${JSON.stringify(
+            artist
+          )}`;
+          console.error(`[virtualArtistFactory] ${message}`);
+          throw new Error(message);
+        }
+        return sum + artist.likedTracksCount;
+      }, 0); // sumの初期値
+
       return groupTotalFavorits >= 100;
     });
 
