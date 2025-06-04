@@ -5,21 +5,22 @@ export const useLike = () => {
   const [likedTrackIds, setLikedTrackIds] = useState<number[]>([]);
 
   useEffect(() => {
-    const fetchLikedIds = async () => {
+    // ユーザーがいいね中の SoundCloudTrackId を全て取得する
+    const fetchLikedTrackIds = async () => {
       try {
         const response = await apiClient.get("/users/likes", {
           withCredentials: true,
         });
         setLikedTrackIds(response.data.soundcloudTrackIds);
-      } catch (err) {
-        console.error("Failed to fetch liked tracks", err);
+      } catch (error) {
+        console.error("[useLike] Failed to fetch liked track ids: ", error);
       }
     };
 
-    fetchLikedIds();
+    fetchLikedTrackIds();
   }, []);
 
-  // いいね状態を切り替えてバックエンドにも反映
+  // いいね状態を切り替えてバックエンドに反映
   const toggleLike = async (trackId: number, recommendationId: number) => {
     const isCurrentlyLiked = likedTrackIds.includes(trackId);
 
@@ -34,15 +35,15 @@ export const useLike = () => {
       } else {
         // いいね登録
         await apiClient.post(
-          `/users/likes`,
+          "/users/likes",
           { trackId, recommendationId },
           { withCredentials: true }
         );
         setLikedTrackIds((previous) => [...previous, trackId]);
       }
     } catch (error) {
-      console.error("Failed to toggle like", error);
-      alert("Failed to update like. Please try again.");
+      console.error("[useLike] Failed to toggle like: ", error);
+      alert("Failed to update like state. Please try again.");
     }
   };
 
