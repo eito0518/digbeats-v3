@@ -17,7 +17,8 @@ export const ArtistList = ({
       {artists.map((artist) => {
         // フォロー中かどうか
         const isFollowed = followedArtists.some(
-          (a) => a.soundcloudArtistId === artist.soundcloudArtistId
+          (followedArtist) =>
+            followedArtist.soundcloudArtistId === artist.soundcloudArtistId
         );
 
         return (

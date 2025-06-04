@@ -1,19 +1,24 @@
 import { useEffect } from "react";
 import { generateAuthorizationUrl } from "../auth/generateAuthorizationUrl";
-import logo from "../assets/digbeats-logo-transparent.png";
+import logo from "../assets/digbeats-logo.png";
 
 export const Login = () => {
-  // マウント時に古いPKCE情報を削除
+  // 古いPKCE情報を削除する
   useEffect(() => {
     sessionStorage.removeItem("codeVerifier");
     sessionStorage.removeItem("state");
   }, []);
 
   const handleLogin = async () => {
-    // OAuth認証URL生成
-    const authorizationUrl = await generateAuthorizationUrl();
-    // OAuth認証画面にリダイレクト
-    window.location.href = authorizationUrl;
+    try {
+      // OAuth認証URL生成
+      const authorizationUrl = await generateAuthorizationUrl();
+      // OAuth認証画面にリダイレクト
+      window.location.href = authorizationUrl;
+    } catch (error) {
+      console.error("[Login] Failed to generate authorization URL: ", error);
+      alert("Failed to redirect to the login page. Please try again.");
+    }
   };
 
   return (
@@ -28,7 +33,7 @@ export const Login = () => {
         Find what you'll love.
       </h1>
 
-      {/* ボタン */}
+      {/* ログイン・アカウント作成ボタン(遷移先は同じ) */}
       <div className="flex flex-col gap-4 w-full max-w-xs">
         <button
           onClick={handleLogin}

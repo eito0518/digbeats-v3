@@ -1,7 +1,9 @@
-// codeVerifier を生成 （ランダムな文字列）
+// codeVerifier を生成 （ランダムな文字列） する
 export const generateCodeVerifier = (length = 64): string => {
   if (length < 43 || length > 128) {
-    throw new Error("code_verifier must be between 43 and 128 characters");
+    console.error(
+      "[generatePkce] codeVerifier must be between 43 and 128 characters: "
+    );
   }
 
   const randomValues = new Uint8Array(length); // 0〜255の整数(初期値0)がlength個だけ入る配列（8byteだから0〜255）
@@ -17,7 +19,7 @@ export const generateCodeVerifier = (length = 64): string => {
   return codeVerifier;
 };
 
-// codeChallenge を生成
+// codeChallenge を生成する
 export const generateCodeChallenge = async (
   codeVerifier: string,
   codeChallengeMethod: "S256" | "plain" = "S256"
@@ -27,7 +29,9 @@ export const generateCodeChallenge = async (
   }
 
   if (codeChallengeMethod !== "S256") {
-    throw new Error("Only 'S256' and 'plain' methods are supported");
+    console.error(
+      "[generatePkce] Only 'S256' and 'plain' methods are supported"
+    );
   }
 
   const encoder = new TextEncoder();
@@ -37,7 +41,7 @@ export const generateCodeChallenge = async (
   return base64urlEncode(digest); // Base64URLに変換
 };
 
-// state を生成
+// state を生成する
 export const generateState = (): string => {
   const randomValues = new Uint8Array(32); // 0〜255の整数(初期値0)がlength個だけ入る配列（8byteだから0〜255）
   crypto.getRandomValues(randomValues); // 各要素を0〜255のランダムな整数にする

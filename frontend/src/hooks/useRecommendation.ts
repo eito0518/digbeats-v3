@@ -8,7 +8,7 @@ export const useRecommendation = () => {
   const [animatedId, setAnimatedId] = useState<number | null>(null);
 
   useEffect(() => {
-    // 「今日のレコメンド」 を取得
+    // 「今日のレコメンド」 を取得する
     const fetchTodayRecommendation = async () => {
       try {
         const response = await apiClient.get("/recommendations/today", {
@@ -22,20 +22,23 @@ export const useRecommendation = () => {
         setRecommendations(response.data.recommendations);
         setTodaysGenerateCount(response.data.recommendations.length);
       } catch (error) {
-        console.error("Failed to fetch today recommendation ", error);
+        console.error(
+          "[useRecommendation] Failed to fetch today recommendations : ",
+          error
+        );
       }
     };
     fetchTodayRecommendation();
-  }, []); // 初回マウント時に発火
+  }, []);
 
-  // レコメンドを生成
+  // レコメンドを生成する
   const handleGenerate = async () => {
     // 1日３回以上は生成できない
     if (todaysGenerateCount >= 3) return;
 
     try {
       const response = await apiClient.get("/recommendations");
-      const newRecommendation = response.data;
+      const newRecommendation = response.data.recommendation;
       // 生成したレコメンドを新しい順で追加
       setRecommendations((previous) => [newRecommendation, ...previous]);
       // 生成したレコメンドアニメーション対象に追加
@@ -44,7 +47,11 @@ export const useRecommendation = () => {
       // 生成回数を更新
       setTodaysGenerateCount((previous) => previous + 1);
     } catch (error) {
-      console.error("Failed to genarate recommendation ", error);
+      console.error(
+        "[useRecommendation] Failed to generate recommendation: ",
+        error
+      );
+      alert("Failed to generate recommendation. Please try again.");
     }
   };
 

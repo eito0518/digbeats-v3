@@ -9,7 +9,7 @@ import { Avatar } from "@mui/material";
 import { ArtistList } from "../components/ArtistList";
 
 export const Profile = () => {
-  // 画面切り替え用のHooks
+  // プロフィール画面のモードを切り替えるHooks
   const [isViewingFollowings, setIsViewingFollowings] = useState(false);
   // プロフィール画面のHooks
   const { user } = useUser();
@@ -57,7 +57,7 @@ export const Profile = () => {
             <div className="flex gap-8 mt-2 text-center">
               <div>
                 <p className="text-lg font-semibold">{histories.length}</p>
-                <p className="text-xs text-gray-400">レコメンド</p>
+                <p className="text-xs text-gray-400">Recommendations</p>
               </div>
               <div
                 className="cursor-pointer hover:underline"
@@ -66,14 +66,14 @@ export const Profile = () => {
                 <p className="text-lg font-semibold">
                   {followedArtists.length}
                 </p>
-                <p className="text-xs text-gray-400">フォロー中</p>
+                <p className="text-xs text-gray-400">Followings</p>
               </div>
             </div>
           </div>
 
           {/* レコメンド履歴 */}
           <div className="space-y-2">
-            <p className="text-base font-semibold">レコメンド履歴</p>
+            <p className="text-base font-semibold">Recommendation History</p>
             <HistoryList
               recommendations={histories}
               expandedRecommendationId={expandedRecommendationId}
