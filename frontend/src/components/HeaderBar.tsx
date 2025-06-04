@@ -8,7 +8,7 @@ type Props = {
   onSearchFocus: () => void;
   onSearchCancel: () => void;
   searchQuery: string;
-  onSearchQueryChange: (q: string) => void;
+  onSearchQueryChange: (searchQuery: string) => void;
   onSearchSubmit: () => void;
 };
 

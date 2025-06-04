@@ -10,7 +10,7 @@ import { ArtistList } from "../components/ArtistList";
 import { RecommendationList } from "../components/RecommendationList";
 
 export const Home = () => {
-  // 画面切り替え用のHooks
+  // ホーム画面のモードを切り替えるHooks
   const [isSearching, setIsSearching] = useState(false);
   // アーティスト検索画面のHooks
   const { artists, searchQuery, setArtists, setSearchQuery, handleSearch } =
@@ -27,9 +27,9 @@ export const Home = () => {
       {/* ロゴ ＋ 検索バー ＋ プロフィールアイコン */}
       <HeaderBar
         isSearching={isSearching}
-        onSearchFocus={() => setIsSearching(true)} // 検索画面に切り替え
+        onSearchFocus={() => setIsSearching(true)} // 「検索画面」 に切り替え
         onSearchCancel={() => {
-          setIsSearching(false); // レコメンド画面に切り替え
+          setIsSearching(false); // 「レコメンド画面」 に切り替え
           setSearchQuery(""); // クエリをクリア
           setArtists([]); // 検索結果もクリア
         }}

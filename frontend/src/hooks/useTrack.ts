@@ -3,7 +3,7 @@ import { useState } from "react";
 export const useTrack = () => {
   const [expandedTrackId, setExpandedTrackId] = useState<number | null>(null); // 展開するのは１つだけ
 
-  // 展開するトラックを切り替え
+  // 展開するトラックを切り替える
   const toggleExpandTrack = (trackId: number) => {
     setExpandedTrackId(
       (previous: number | null) =>

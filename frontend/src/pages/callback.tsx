@@ -6,23 +6,40 @@ export const Callback = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // コールバックで認証情報を受け取り、バックエンドに渡す
     const handleAuthorizationCallback = async () => {
-      // params から code, state を取得
+      // コールバックのパラメータから code, state を取得
       const params = new URLSearchParams(window.location.search);
       const code = params.get("code");
       const returnedState = params.get("state");
-      // sessionStorage から codeVerifier, state を取得
+      // セッションストレージから codeVerifier, state を取得
       const codeVerifier = sessionStorage.getItem("codeVerifier");
       const storedState = sessionStorage.getItem("state");
 
       // stateチェック（CSRF対策）
       if (returnedState !== storedState) {
-        throw new Error("State mismatch, unauthorized request");
+        console.error("[Callback] State mismatch");
+        // 再ログインを要求
+        showLoginErrorAlert();
+        navigate("/login");
+        return;
       }
 
       // バリデーション
-      if (!code || !codeVerifier) {
-        throw new Error("Required information is missing");
+      if (!codeVerifier) {
+        console.error("[Callback] codeVerifier does not exist");
+        // 再ログインを要求
+        showLoginErrorAlert();
+        navigate("/login");
+        return;
+      } else if (!code) {
+        console.error(
+          "[Callback] code does not exist (SoundCloudAPI server error)"
+        );
+        // 再ログインを要求
+        showLoginErrorAlert();
+        navigate("/login");
+        return;
       }
 
       // セッションストレージから認証情報を削除
@@ -33,21 +50,14 @@ export const Callback = () => {
         // バックエンドに code + code_verifier を送信し、 Cookieで sessionId を自動取得
         await apiClient.post(
           "/auth/authorize",
-          {
-            code: code,
-            codeVerifier: codeVerifier,
-          },
-          {
-            withCredentials: true, // Cookieを受け取るために必要
-          }
+          { code, codeVerifier },
+          { withCredentials: true } // Cookieを受け取るために必要
         );
 
         // ホーム画面にリダイレクト
         navigate("/");
       } catch (error) {
-        console.error("failed to login ", error);
-        alert("ログインに失敗しました。もう一度お試しください。");
-        throw new Error("Failed to login");
+        console.error("[Callback] Failed to callback: ", error);
       }
     };
 
@@ -67,3 +77,6 @@ export const Callback = () => {
     </div>
   );
 };
+
+const showLoginErrorAlert = () =>
+  alert("Failed to login. Please try to login again.");
