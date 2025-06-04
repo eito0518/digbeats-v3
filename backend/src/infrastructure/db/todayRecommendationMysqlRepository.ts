@@ -31,9 +31,9 @@ export class TodayRecommendationMysqlRepository
               a.permalink_url AS artistPermalinkUrl
           FROM recommendations AS r
           JOIN recommendations_tracks AS rt
-              ON r.id = rt.recommendations_id
+              ON r.id = rt.recommendation_id
           JOIN tracks AS t
-              ON rt.tracks_id = t.id
+              ON rt.track_id = t.id
           JOIN artists AS a
               ON t.artist_id = a.id  
           WHERE r.user_id = ? 
