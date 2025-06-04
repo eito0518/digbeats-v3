@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useUser } from "../hooks/useUser";
 import { useHistory } from "../hooks/useHistory";
@@ -5,16 +6,17 @@ import { useFollow } from "../hooks/useFollow";
 import { useLike } from "../hooks/useLike";
 import { useTrack } from "../hooks/useTrack";
 import { HistoryList } from "../components/HistoryList";
-import { Avatar } from "@mui/material";
 import { ArtistList } from "../components/ArtistList";
+import { Avatar } from "@mui/material";
 
 export const Profile = () => {
+  const navigate = useNavigate();
   // プロフィール画面のモードを切り替えるHooks
   const [isViewingFollowings, setIsViewingFollowings] = useState(false);
   // プロフィール画面のHooks
   const { user } = useUser();
   // フォロー中アーティスト一覧画面のHooks
-  const { followedArtists, toggleFollow } = useFollow();
+  const { fetchedFollowedArtists, followedArtists, toggleFollow } = useFollow();
   // レコメンド履歴のHooks
   const { histories, expandedRecommendationId, toggleExpandRecommendation } =
     useHistory();
@@ -38,13 +40,23 @@ export const Profile = () => {
             </button>
           </div>
           <ArtistList
-            artists={followedArtists}
+            artists={fetchedFollowedArtists}
             followedArtists={followedArtists}
             onToggleFollow={toggleFollow}
           />
         </>
       ) : (
         <>
+          {/* ホーム画面に戻るボタン */}
+          <div className="flex justify-end">
+            <button
+              className="text-sm text-gray-400 hover:underline"
+              onClick={() => navigate("/")}
+            >
+              Back
+            </button>
+          </div>
+
           {/* プロフィールセクション */}
           <div className="flex flex-col items-center gap-2">
             <Avatar

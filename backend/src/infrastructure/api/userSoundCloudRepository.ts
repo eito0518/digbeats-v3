@@ -47,7 +47,7 @@ export class UserSoundCloudRepository implements UserApiRepository {
         (following: any) =>
           new ArtistInfo(
             following.id,
-            following.name,
+            following.username,
             following.avatar_url,
             following.permalink_url,
             following.public_favorites_count

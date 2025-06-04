@@ -12,7 +12,7 @@ export const ArtistList = ({
   onToggleFollow,
 }: Props) => {
   return (
-    // アーティスト検索結果
+    // アーティスト一覧
     <div className="mt-4 space-y-4 px-4">
       {artists.map((artist) => {
         // フォロー中かどうか

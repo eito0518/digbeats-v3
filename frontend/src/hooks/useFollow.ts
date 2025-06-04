@@ -3,6 +3,9 @@ import { Artist } from "../types/artistType";
 import { apiClient } from "../auth/apiClient";
 
 export const useFollow = () => {
+  const [fetchedFollowedArtists, setFetchedFollowedArtists] = useState<
+    Artist[]
+  >([]);
   const [followedArtists, setFollowedArtists] = useState<Artist[]>([]);
 
   useEffect(() => {
@@ -12,6 +15,7 @@ export const useFollow = () => {
         const response = await apiClient.get("/users/followings", {
           withCredentials: true,
         });
+        setFetchedFollowedArtists(response.data.artists);
         setFollowedArtists(response.data.artists);
       } catch (error) {
         console.error("[useFollow] Failed to fetch followed artists: ", error);
@@ -57,6 +61,7 @@ export const useFollow = () => {
   };
 
   return {
+    fetchedFollowedArtists,
     followedArtists,
     toggleFollow,
   };

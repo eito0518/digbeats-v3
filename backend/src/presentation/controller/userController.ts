@@ -26,7 +26,7 @@ export class UserController {
   ) {}
 
   // 自分のユーザー情報を取得する
-  async fetchMyUserInfo(req: Request, res: Response): Promise<void> {
+  fetchMyUserInfo = async (req: Request, res: Response): Promise<void> => {
     // リクエスト
     const sessionId = req.cookies.sessionId;
 
@@ -45,10 +45,10 @@ export class UserController {
       })
       .status(200)
       .json(UserPresenter.toDTO(user));
-  }
+  };
 
   // フォロー中のアーティストを取得する
-  async fetchMyFollowings(req: Request, res: Response): Promise<void> {
+  fetchMyFollowings = async (req: Request, res: Response): Promise<void> => {
     // リクエスト
     const sessionId = req.cookies.sessionId;
 
@@ -66,11 +66,11 @@ export class UserController {
         sameSite: "none", // TODO：　時間があればCSRF対策　で　csurfを導入する
       })
       .status(200)
-      .json({ artists: ArtistPresenter.toDTOList(followings) });
-  }
+      .json(ArtistPresenter.toDTOList(followings));
+  };
 
   // アーティストをフォローする
-  async followArtist(req: Request, res: Response): Promise<void> {
+  followArtist = async (req: Request, res: Response): Promise<void> => {
     // リクエスト
     const sessionId = req.cookies.sessionId;
     const soundcloudArtistIdRaw = req.body.soundcloudArtistId;
@@ -96,10 +96,10 @@ export class UserController {
       })
       .status(200)
       .json({ message: "Followed artist successfully" });
-  }
+  };
 
   // アーティストをフォロー解除する
-  async unfollowArtist(req: Request, res: Response): Promise<void> {
+  unfollowArtist = async (req: Request, res: Response): Promise<void> => {
     // リクエスト
     const sessionId = req.cookies.sessionId;
     const soundcloudArtistIdRaw = req.body.soundcloudArtistId;
@@ -125,13 +125,13 @@ export class UserController {
       })
       .status(200)
       .json({ message: "unfollowed artist successfully" });
-  }
+  };
 
   // いいね中の SoundCloudTrackId を取得する
-  async fetchLikedSoundCloudTrackIds(
+  fetchLikedSoundCloudTrackIds = async (
     req: Request,
     res: Response
-  ): Promise<void> {
+  ): Promise<void> => {
     // リクエスト
     const sessionId = req.cookies.sessionId;
 
@@ -151,10 +151,10 @@ export class UserController {
       })
       .status(200)
       .json({ soundcloudTrackIds: likedSoundCloudTrackIds });
-  }
+  };
 
   // 楽曲のいいねを登録する
-  async likeTrack(req: Request, res: Response): Promise<void> {
+  likeTrack = async (req: Request, res: Response): Promise<void> => {
     // リクエスト
     const sessionId = req.cookies.sessionId;
 
@@ -184,10 +184,10 @@ export class UserController {
       })
       .status(200)
       .json({ message: "liked track successfully" });
-  }
+  };
 
   // 楽曲のいいねを解除する
-  async unlikeTrack(req: Request, res: Response): Promise<void> {
+  unlikeTrack = async (req: Request, res: Response): Promise<void> => {
     // リクエスト
     const sessionId = req.cookies.sessionId;
 
@@ -217,5 +217,5 @@ export class UserController {
       })
       .status(200)
       .json({ message: "unliked track successfully" });
-  }
+  };
 }
