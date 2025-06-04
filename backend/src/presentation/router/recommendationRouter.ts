@@ -6,18 +6,18 @@ export const recommendationRouter = Router();
 
 // レコメンドを取得するエンドポイント
 recommendationRouter.get(
-  "/recommendations",
+  "/",
   asyncHandler(recommendationController.getRecommendation)
 );
 
 // 「今日のレコメンド」を取得するエンドポイント
 recommendationRouter.get(
-  "/recommendations/today",
+  "/today",
   asyncHandler(recommendationController.getTodayRecommendations)
 );
 
 // レコメンド履歴を取得するエンドポイント
 recommendationRouter.get(
-  "/recommendations/histories",
+  "/histories",
   asyncHandler(recommendationController.getHistories)
 );
