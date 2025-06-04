@@ -6,7 +6,7 @@ import { REAUTH_REQUIRED } from "../../constants/errorCodes";
 
 export class SessionRedisRepository implements SessionRepository {
   constructor(private readonly _redis: Redis) {}
-  // セッションを保存
+  // セッションを保存する
   async save(sessionId: string, session: Session): Promise<void> {
     try {
       await this._redis.set(
@@ -22,7 +22,7 @@ export class SessionRedisRepository implements SessionRepository {
     }
   }
 
-  //　セッションを取得
+  //　セッションを取得する
   async get(sessionId: string): Promise<Session> {
     try {
       const rawSession = await this._redis.get(`session: ${sessionId}`);
