@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../hooks/useUser";
-import logo from "../assets/digbeats-logo-transparent.png";
+import logo from "../assets/digbeats-logo.png";
 import { Avatar } from "@mui/material";
 
 type Props = {

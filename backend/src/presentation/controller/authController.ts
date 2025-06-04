@@ -1,12 +1,16 @@
 import { Request, Response } from "express";
 import { AuthorizeUserUseCase } from "../../application/usecase/authorizeUserUseCase";
-import { validateAuthParams } from "../utils/validation";
+import { CheckSessionUseCase } from "../../application/usecase/checkSessionUseCase";
+import { validateAuthParams, validateSessionId } from "../utils/validation";
 
 export class AuthController {
-  constructor(private readonly _authorizeUserUseCase: AuthorizeUserUseCase) {}
+  constructor(
+    private readonly _authorizeUserUseCase: AuthorizeUserUseCase,
+    private readonly _checkSessionUseCase: CheckSessionUseCase
+  ) {}
 
   // ユーザーを認証する
-  async authorizeUser(req: Request, res: Response): Promise<void> {
+  authorizeUser = async (req: Request, res: Response): Promise<void> => {
     // リクエスト
     const { code, codeVerifier } = req.body;
 
@@ -27,5 +31,27 @@ export class AuthController {
       .json({
         message: "Authorize user request succeeded",
       });
-  }
+  };
+
+  // ログイン中かどうかを判定する
+  checkSession = async (req: Request, res: Response): Promise<void> => {
+    // リクエスト
+    const sessionId = req.cookies.sessionId;
+
+    // バリデーション
+    if (!validateSessionId(sessionId, res)) return;
+
+    // ユースケース
+    await this._checkSessionUseCase.run(sessionId);
+
+    // レスポンス
+    res
+      .cookie("sessionId", sessionId, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "none", // TODO：　時間があればCSRF対策　で　csurfを導入する
+      })
+      .status(200)
+      .json({ message: "OK" });
+  };
 }

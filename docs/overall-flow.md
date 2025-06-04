@@ -34,6 +34,11 @@
 }
 ```
 
+### GET /api/auth/session
+
+- 説明：フロントエンドの Cookie に sessionId がセットされているか確認し、ログイン状態を判定する（初回アクセス時のログイン画面遷移に用いる）
+- 認証：Cookie(sessionId)
+
 ### GET /api/users
 
 - 説明： 自身のプロフィール情報を SoundCloud で取得する
