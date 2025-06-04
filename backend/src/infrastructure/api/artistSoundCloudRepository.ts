@@ -31,7 +31,7 @@ export class ArtistSoundCloudRepository implements ArtistApiRepository {
         (artist: any) =>
           new ArtistInfo(
             artist.id,
-            artist.name,
+            artist.username,
             artist.avatar_url,
             artist.permalink_url,
             artist.public_favorites_count
