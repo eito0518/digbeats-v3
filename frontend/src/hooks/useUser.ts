@@ -13,7 +13,7 @@ export const useUser = () => {
         });
         setUser(response.data);
       } catch (error) {
-        console.error("Failed to fetch user", error);
+        console.error("[useUser] Failed to fetch user: ", error);
       }
     };
 

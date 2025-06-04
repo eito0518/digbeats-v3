@@ -17,7 +17,10 @@ export const useHistory = () => {
         });
         setHistories(response.data);
       } catch (error) {
-        console.error("Failed to fetch recommendation histories", error);
+        console.error(
+          "[useHistory] Failed to fetch recommendation histories:",
+          error
+        );
       }
     };
 
