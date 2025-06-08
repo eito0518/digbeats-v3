@@ -1,41 +1,31 @@
-import { Response } from "express";
-import { REAUTH_REQUIRED } from "../../constants/errorCodes";
+import { ReauthenticationRequiredError } from "../../errors/application.errors";
+import { BadRequestError } from "../../errors/presentation.errors";
 
 // 認証情報 （code, codeVerifier） の存在チェック
 export const validateAuthParams = (
   code: string,
-  codeVerifier: string,
-  res: Response
-): boolean => {
+  codeVerifier: string
+): void => {
   if (!code || !codeVerifier) {
-    res.status(401).json({ message: REAUTH_REQUIRED });
-    return false;
+    throw new ReauthenticationRequiredError(
+      "Authentication parameters are missing."
+    );
   }
-  return true;
 };
 
 // sessionId の存在チェック
-export const validateSessionId = (
-  sessionId: string,
-  res: Response
-): boolean => {
+export const validateSessionId = (sessionId: string): void => {
   if (!sessionId) {
-    res.status(401).json({ message: REAUTH_REQUIRED });
-    return false;
+    throw new ReauthenticationRequiredError("Session ID is missing.");
   }
-  return true;
 };
 
 // artistName クエリパラメータの存在チェック と 文字変換
-export const validateArtistNameParam = (
-  artistNameRaw: unknown,
-  res: Response
-): string | undefined => {
+export const validateArtistNameParam = (artistNameRaw: unknown): string => {
   if (typeof artistNameRaw !== "string" || artistNameRaw.trim() === "") {
-    res
-      .status(400)
-      .json({ error: "Invalid or missing 'artistName' query parameter" });
-    return;
+    throw new BadRequestError(
+      "Invalid or missing 'artistName' query parameter"
+    );
   }
 
   return decodeURIComponent(artistNameRaw);
@@ -43,13 +33,11 @@ export const validateArtistNameParam = (
 
 // soundcloudArtistId の存在チェック と 数値変換
 export const validateSoundCloudArtistId = (
-  soundCloudArtistIdRaw: unknown,
-  res: Response
-): number | undefined => {
+  soundCloudArtistIdRaw: unknown
+): number => {
   // 値が無い場合
   if (soundCloudArtistIdRaw === undefined || soundCloudArtistIdRaw === null) {
-    res.status(400).json({ error: "Missing 'soundcloudArtistId'" });
-    return;
+    throw new BadRequestError("Missing 'soundcloudArtistId'");
   }
   // 値が不正な数値の場合
   const soundCloudArtistId = Number(soundCloudArtistIdRaw);
@@ -58,10 +46,9 @@ export const validateSoundCloudArtistId = (
     !Number.isInteger(soundCloudArtistId) ||
     soundCloudArtistId <= 0
   ) {
-    res
-      .status(400)
-      .json({ error: "'soundcloudArtistId' must be a positive integer" });
-    return;
+    throw new BadRequestError(
+      "'soundcloudArtistId' must be a positive integer"
+    );
   }
 
   return soundCloudArtistId;
@@ -70,32 +57,32 @@ export const validateSoundCloudArtistId = (
 // いいね情報 （recommendationId, trackId） の存在チェック と 数値変換
 export const validateLikeParams = (
   recommendationIdRaw: unknown,
-  trackIdRaw: unknown,
-  res: Response
-): { recommendationId: number; trackId: number } | undefined => {
+  trackIdRaw: unknown
+): { recommendationId: number; trackId: number } => {
+  // recommendationIdの検証
   // 値が無い場合
   if (recommendationIdRaw === undefined || recommendationIdRaw === null) {
-    res.status(400).json({ error: "Missing 'recommendationId'" });
-    return;
-  } else if (trackIdRaw === undefined || trackIdRaw === null) {
-    res.status(400).json({ error: "Missing 'trackId'" });
-    return;
+    throw new BadRequestError("Missing 'recommendationId'");
   }
   // 値が不正な数値の場合
   const recommendationId = Number(recommendationIdRaw);
-  const trackId = Number(trackIdRaw);
   if (
     isNaN(recommendationId) ||
     !Number.isInteger(recommendationId) ||
     recommendationId <= 0
   ) {
-    res
-      .status(400)
-      .json({ error: "'recommendationId' must be a positive integer" });
-    return;
-  } else if (isNaN(trackId) || !Number.isInteger(trackId) || trackId <= 0) {
-    res.status(400).json({ error: "'trackId' must be a positive integer" });
-    return;
+    throw new BadRequestError("'recommendationId' must be a positive integer");
+  }
+
+  // trackIdの検証
+  // 値が無い場合
+  if (trackIdRaw === undefined || trackIdRaw === null) {
+    throw new BadRequestError("Missing 'trackId'");
+  }
+  // 値が不正な数値の場合
+  const trackId = Number(trackIdRaw);
+  if (isNaN(trackId) || !Number.isInteger(trackId) || trackId <= 0) {
+    throw new BadRequestError("'trackId' must be a positive integer");
   }
 
   return { recommendationId, trackId };

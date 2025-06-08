@@ -7,6 +7,7 @@ export const useFollow = () => {
     Artist[]
   >([]);
   const [followedArtists, setFollowedArtists] = useState<Artist[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     // フォロー中のアーティストを取得する
@@ -19,6 +20,9 @@ export const useFollow = () => {
         setFollowedArtists(response.data.artists);
       } catch (error) {
         console.error("[useFollow] Failed to fetch followed artists: ", error);
+      } finally {
+        // ローディングを終了する
+        setIsLoading(false);
       }
     };
 
@@ -27,6 +31,7 @@ export const useFollow = () => {
 
   // フォロー状態を切り替えてバックエンドに反映
   const toggleFollow = async (artist: Artist) => {
+    // 既にフォロー済みかどうか
     const isFollowed = followedArtists.some(
       (followedArtist) =>
         followedArtist.soundcloudArtistId === artist.soundcloudArtistId
@@ -63,6 +68,7 @@ export const useFollow = () => {
   return {
     fetchedFollowedArtists,
     followedArtists,
+    isLoading,
     toggleFollow,
   };
 };

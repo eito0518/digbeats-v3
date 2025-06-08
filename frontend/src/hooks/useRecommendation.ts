@@ -2,6 +2,11 @@ import { useCallback, useEffect, useState } from "react";
 import { Recommendation } from "../types/recommendationType";
 import { apiClient } from "../auth/apiClient";
 
+// 環境変数からデモモードかどうかを判定
+const isDemoMode = import.meta.env.VITE_DEMO_MODE === "true";
+// 生成回数の上限を定数として定義
+const GENERATION_LIMIT = 3; // デバック
+
 export const useRecommendation = () => {
   const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
@@ -34,8 +39,13 @@ export const useRecommendation = () => {
 
   // レコメンドを生成する
   const handleGenerate = async () => {
-    // 1日３回以上は生成できない
-    if (todaysGenerateCount >= 10 || isGenerating) return; // デバック
+    // デモモードではない場合のみ回数制限をチェックする
+    if (!isDemoMode && todaysGenerateCount >= GENERATION_LIMIT) {
+      console.log("Generation limit reached.");
+      return;
+    }
+    // 生成を実行中の場合
+    if (isGenerating) return;
 
     setIsGenerating(true); //　API通信前にローディングを開始
 
@@ -130,5 +140,7 @@ export const useRecommendation = () => {
     animatedId,
     handleGenerate,
     toggleLike,
+    isDemoMode,
+    GENERATION_LIMIT,
   };
 };

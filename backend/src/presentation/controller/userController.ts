@@ -29,7 +29,7 @@ export class UserController {
     const sessionId = req.cookies.sessionId;
 
     // バリデーション
-    if (!validateSessionId(sessionId, res)) return;
+    validateSessionId(sessionId);
 
     // ユースケース
     const user = await this._fetchMyUserInfoUseCase.run(sessionId);
@@ -51,7 +51,7 @@ export class UserController {
     const sessionId = req.cookies.sessionId;
 
     // バリデーション
-    if (!validateSessionId(sessionId, res)) return;
+    validateSessionId(sessionId);
 
     // ユースケース
     const followings = await this._fetchMyFollowingsUseCase.run(sessionId);
@@ -74,13 +74,11 @@ export class UserController {
     const soundcloudArtistIdRaw = req.body.soundcloudArtistId;
 
     // バリデーション
-    if (!validateSessionId(sessionId, res)) return;
+    validateSessionId(sessionId);
 
     const soundcloudArtistId = validateSoundCloudArtistId(
-      soundcloudArtistIdRaw,
-      res
+      soundcloudArtistIdRaw
     );
-    if (soundcloudArtistId === undefined) return;
 
     // ユースケース
     await this._followArtistUseCase.run(sessionId, soundcloudArtistId);
@@ -103,13 +101,11 @@ export class UserController {
     const soundcloudArtistIdRaw = req.body.soundcloudArtistId;
 
     // バリデーション
-    if (!validateSessionId(sessionId, res)) return;
+    validateSessionId(sessionId);
 
     const soundcloudArtistId = validateSoundCloudArtistId(
-      soundcloudArtistIdRaw,
-      res
+      soundcloudArtistIdRaw
     );
-    if (soundcloudArtistId === undefined) return;
 
     // ユースケース
     await this._unfollowArtistUseCase.run(sessionId, soundcloudArtistId);
@@ -133,14 +129,9 @@ export class UserController {
     const { recommendationId, trackId } = req.body;
 
     // バリデーション
-    if (!validateSessionId(sessionId, res)) return;
+    validateSessionId(sessionId);
 
-    const validatedLikeParams = validateLikeParams(
-      recommendationId,
-      trackId,
-      res
-    );
-    if (!validatedLikeParams) return;
+    const validatedLikeParams = validateLikeParams(recommendationId, trackId);
 
     // ユースケース
     await this._likeTrackUseCase.run(
@@ -168,14 +159,9 @@ export class UserController {
     const { recommendationId, trackId } = req.body;
 
     // バリデーション
-    if (!validateSessionId(sessionId, res)) return;
+    validateSessionId(sessionId);
 
-    const validatedLikeParams = validateLikeParams(
-      recommendationId,
-      trackId,
-      res
-    );
-    if (!validatedLikeParams) return;
+    const validatedLikeParams = validateLikeParams(recommendationId, trackId);
 
     // ユースケース
     await this._unlikeTrackUseCase.run(
