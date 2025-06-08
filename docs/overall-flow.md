@@ -19,6 +19,15 @@
 - フォロ中のアーティスト一覧が見れる（アーティストをフォロー・解除できる）
 - レコメンド履歴が見れる（楽曲をいいね・解除できる）
 
+### 楽曲いいねについて
+
+- アプリケーション内での「いいね」の状態は、**内部データベースの`recommendations_tracks`テーブルにある`is_liked`フラグを唯一の信頼できる情報源とする。**
+- フロントエンドは、ページの初期表示時に API から取得した各トラックの`isLiked`プロパティに従って、「いいね」の初期状態を表示する。
+- ユーザーがアプリ内で「いいね／いいね解除」の操作を行った場合、バックエンドは以下の 2 つの処理を実行する。
+  1.  **内部データベースの`is_liked`フラグを更新する（`true`または`false`に）。**
+  2.  SoundCloud API を呼び出し、SoundCloud 本体の「いいね」状態も同様に更新する（これは、あくまで外部サービスとの同期を試みるための処理）。
+- SoundCloud 本体の Web サイトや他のアプリで行われた「いいね」状態の変更は、このアプリケーションの表示には**反映されない**。
+
 ##　 API 設計
 
 ### POST /api/auth/authorize
@@ -76,27 +85,6 @@
 }
 ```
 
-### GET /api/artists/search`?artistName=Travis+Scott`
-
-- 説明：アーティストを SoundCloud で検索する
-- 認証：Cookie(sessionId)
-- レスポンス：
-
-```json
-{
-  "artists": [
-    {
-      "soundcloudArtistId": 12345,
-      "name": "Travis Sccott",
-      "avatarUrl": "https:~",
-      "permalinkUrl": "https:~",
-      "likedTracksCount": 123
-    }
-    // ...
-  ]
-}
-```
-
 ### POST /api/users/followings
 
 - 説明：アーティストを SoundCloud でフォローする
@@ -123,6 +111,34 @@
 }
 ```
 
+### POST /api/users/likes
+
+- 説明：楽曲のいいねを SoundCloud と DB に反映する
+- 注意：ボタン連打の対策をする
+- 認証：Cookie(sessionId)
+- リクエスト：
+
+```json
+{
+  "recommendationId": 4324,
+  "trackId": 789(内部のtrackId)
+}
+```
+
+### DELETE /api/users/likes
+
+- 説明：楽曲のいいね解除を SoundCloud と DB に反映する
+- 注意：ボタン連打の対策をする
+- 認証：Cookie(sessionId)
+- リクエスト：
+
+```json
+{
+  "recommendationId": 4324,
+  "trackId": 789(内部のtrackId)
+}
+```
+
 ### GET /api/recommendations
 
 - 説明：楽曲レコメンドを取得する
@@ -141,6 +157,7 @@
         "title": "FE!N",
         "artworkUrl": "https:~",
         "permalinkUrl": "https:~", // ウィジェット再生で使用
+        "isLiked": false, // DBのいいね状態のみを信頼
         "artist": {
           "name": "Travis Sccott",
           "avatarUrl": "https:~",
@@ -171,6 +188,7 @@
           "title": "FE!N",
           "artworkUrl": "https:~",
           "permalinkUrl": "https:~", // ウィジェット再生で使用
+          "isLiked": true, // DBのいいね状態のみを信頼
           "artist": {
             "name": "Travis Sccott",
             "avatarUrl": "https:~",
@@ -203,6 +221,7 @@
           "title": "FE!N",
           "artworkUrl": "https:~",
           "permalinkUrl": "https:~", // ウィジェット再生で使用
+          "isLiked": true, // DBのいいね状態のみを信頼
           "artist": {
             "name": "Travis Sccott",
             "avatarUrl": "https:~",
@@ -217,52 +236,23 @@
 }
 ```
 
-### GET /api/users/likes
+### GET /api/artists/search`?artistName=Travis+Scott`
 
-- 説明：いいね中の楽曲 ID を SoundCloud で取得する
+- 説明：アーティストを SoundCloud で検索する
 - 認証：Cookie(sessionId)
 - レスポンス：
 
 ```json
 {
-  "soundcloudTrackIds": [
-    12345,
-    23512,
-    31231 // SoundCloudの trackID
+  "artists": [
+    {
+      "soundcloudArtistId": 12345,
+      "name": "Travis Sccott",
+      "avatarUrl": "https:~",
+      "permalinkUrl": "https:~",
+      "likedTracksCount": 123
+    }
+    // ...
   ]
 }
 ```
-
-### POST /api/users/likes
-
-- 説明：楽曲のいいねを SoundCloud と DB に反映する
-- 注意：ボタン連打の対策をする
-- 認証：Cookie(sessionId)
-- リクエスト：
-
-```json
-{
-  "recommendationId": 4324,
-  "trackId": 789(内部のtrackId)
-}
-```
-
-### DELETE /api/users/likes
-
-- 説明：楽曲のいいね解除を SoundCloud と DB に反映する
-- 注意：ボタン連打の対策をする
-- 認証：Cookie(sessionId)
-- リクエスト：
-
-```json
-{
-  "recommendationId": 4324,
-  "trackId": 789(内部のtrackId)
-}
-```
-
-### いいねについて
-
-- フロントエンドでのいいね状態は、常に SoundCloud 上の情報を参照する
-- ただし、ユーザーがアプリ上で行った「いいね／いいね解除」の操作は、 SoundCloud API に即時反映し、加えて、アプリ内ログとして `isLikedInApp` に記録する
-  ※ただし、このログは SoundCloud 本体で行われた状態変更とは同期させず、ユーザーがアプリ上で行った操作のみを反映させる

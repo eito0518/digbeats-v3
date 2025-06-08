@@ -4,16 +4,18 @@ import { RecommendedTrackItem } from "./RecommendedTrackItem";
 type Props = {
   tracks: Track[];
   recommendationId: number;
-  likedTrackIds: number[];
   expandedTrackId: number | null;
-  onToggleLike: (trackId: number, recommendationId: number) => void;
+  onToggleLike: (
+    trackId: number,
+    recommendationId: number,
+    isCurrentlyLiked: boolean
+  ) => void;
   onToggleExpandTrack: (trackId: number) => void;
 };
 
 export const RecommendedTrackList = ({
   tracks,
   recommendationId,
-  likedTrackIds,
   expandedTrackId,
   onToggleLike,
   onToggleExpandTrack,
@@ -26,7 +28,7 @@ export const RecommendedTrackList = ({
           key={track.id}
           track={track}
           recommendationId={recommendationId}
-          isLiked={likedTrackIds.includes(track.id)} // いいねされているか
+          isLiked={track.isLiked} // いいねされているか
           isExpanded={expandedTrackId === track.id} // 展開されているか
           onToggleLike={onToggleLike}
           onToggleExpandTrack={onToggleExpandTrack}

@@ -1,7 +1,13 @@
+import { config } from "../../config/config";
 import { TrackDbRepository } from "../../domain/interfaces/trackDbRepository";
 import mysql from "mysql2/promise";
 import { Track } from "../../domain/entities/track";
 import { MysqlClient } from "./mysqlClient";
+
+const defaultArtworkUrl =
+  config.NODE_ENV === "production"
+    ? "https://your-app-domain.com/default-artwork.png"
+    : "https://localhost:3000/default-artwork.png";
 
 export class TrackMysqlRepository implements TrackDbRepository {
   // 楽曲の存在確認と保存
@@ -32,7 +38,7 @@ export class TrackMysqlRepository implements TrackDbRepository {
               artistId,
               track.externalTrackId,
               track.title,
-              track.artworkUrl,
+              track.artworkUrl || defaultArtworkUrl, // 存在しない場合はデフォルト画像をDBに保存
               track.permalinkUrl,
             ]
           );

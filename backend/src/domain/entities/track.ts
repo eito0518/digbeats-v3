@@ -7,7 +7,8 @@ export class Track {
     private readonly _artworkUrl: string,
     private readonly _permalinkUrl: string,
     private readonly _artist: ArtistInfo,
-    private readonly _id?: number
+    private readonly _id?: number,
+    private readonly _isLiked?: boolean
   ) {}
 
   get externalTrackId() {
@@ -34,6 +35,10 @@ export class Track {
     return this._id;
   }
 
+  get isLiked(): boolean {
+    return this._isLiked ?? false; // isLikedがセットされていなければ、デフォルトでfalseを返す
+  }
+
   // IDを付与した新しいTrackを返す
   withId(id: number): Track {
     return new Track(
@@ -42,7 +47,8 @@ export class Track {
       this._artworkUrl,
       this._permalinkUrl,
       this._artist,
-      id
+      id,
+      this._isLiked
     );
   }
 

@@ -4,16 +4,18 @@ import { RecommendedTrackList } from "./RecommendedTrackList";
 type Props = {
   recommendations: Recommendation[];
   animatedId: number | null;
-  likedTrackIds: number[];
   expandedTrackId: number | null;
-  onToggleLike: (trackId: number, recommendationId: number) => void;
+  onToggleLike: (
+    trackId: number,
+    recommendationId: number,
+    isCurrentlyLiked: boolean
+  ) => void;
   onToggleExpandTrack: (trackId: number) => void;
 };
 
 export const RecommendationList = ({
   recommendations,
   animatedId,
-  likedTrackIds,
   expandedTrackId,
   onToggleLike,
   onToggleExpandTrack,
@@ -25,10 +27,10 @@ export const RecommendationList = ({
         return (
           <div
             key={recommendation.recommendationId}
-            className={`transition-all duration-700 rounded-xl px-2 py-1 ${
+            className={`rounded-xl px-2 py-1 transition-colors duration-2000 ${
               recommendation.recommendationId === animatedId
-                ? "bg-yellow-500/10 animate-pulse"
-                : ""
+                ? "bg-orange-400"
+                : "bg-transparent"
             }`}
           >
             <p className="text-sm text-gray-400">
@@ -38,7 +40,6 @@ export const RecommendationList = ({
               key={recommendation.recommendationId}
               tracks={recommendation.tracks}
               recommendationId={recommendation.recommendationId}
-              likedTrackIds={likedTrackIds}
               expandedTrackId={expandedTrackId}
               onToggleLike={onToggleLike}
               onToggleExpandTrack={onToggleExpandTrack}

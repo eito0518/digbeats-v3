@@ -7,7 +7,7 @@ import { ArtistInfo } from "../../domain/valueObjects/artistInfo";
 
 export class HistoryMysqlRepository implements HistoryDbRepository {
   // レコメンド履歴を取得
-  async get(userId: number, limit: number): Promise<Recommendation[]> {
+  async get(userId: number): Promise<Recommendation[]> {
     try {
       // DBから レコメンド履歴 を取得する
       const [selectRecommendationsResults] = await MysqlClient.execute<
@@ -22,6 +22,7 @@ export class HistoryMysqlRepository implements HistoryDbRepository {
               t.title AS title,
               t.artwork_url AS artworkUrl,
               t.permalink_url AS trackPermalinkUrl,
+              rt.is_liked AS isLiked,
               a.id AS artistId,
               a.soundcloud_artist_id AS soundcloudArtistId,
               a.name AS name,
@@ -36,9 +37,9 @@ export class HistoryMysqlRepository implements HistoryDbRepository {
               ON t.artist_id = a.id  
           WHERE r.user_id = ? 
           ORDER BY r.created_at DESC 
-          LIMIT ?
+          LIMIT 900
         `,
-        [userId, limit * 10] // レコメンド数 × 楽曲数（１レコメンドあたり必ず10曲）
+        [userId] // 最大900件
       );
 
       //　レコメンドIDで取得したレコメンドをグループ分け
@@ -60,9 +61,11 @@ export class HistoryMysqlRepository implements HistoryDbRepository {
             r.name,
             r.avatarUrl,
             r.artistPermalinkUrl,
+            undefined,
             undefined
           ),
-          r.trackId
+          r.trackId,
+          r.isLiked
         );
         // 同じレコメンドIDが既にある場合
         if (groupedRecommendaions.has(r.recommendationId)) {

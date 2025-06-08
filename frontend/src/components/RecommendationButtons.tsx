@@ -12,9 +12,9 @@ export const RecommendationButtons = ({
     <div className="flex flex-col items-center w-full mt-20 sm:mt-16 mb-20 sm:mb-12">
       {/* レコメンド生成ボタン */}
       <button
-        className="bg-white text-black font-bold py-4 px-8 rounded-full shadow-lg hover:scale-105 transition disabled:opacity-50"
+        className="bg-orange-400 text-black font-bold py-4 px-8 rounded-full shadow-lg hover:scale-105 transition disabled:opacity-50"
         onClick={onGenerate}
-        disabled={todaysGenerateCount >= 3} // ３回生成でボタンを無効化
+        disabled={todaysGenerateCount >= 10} // ３回生成でボタンを無効化  // デバック
       >
         Generate Recommendation
       </button>

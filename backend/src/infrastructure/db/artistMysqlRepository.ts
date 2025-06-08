@@ -1,5 +1,11 @@
+import { config } from "../../config/config";
 import { ArtistInfo } from "../../domain/valueObjects/artistInfo";
 import mysql from "mysql2/promise";
+
+const defaultAvatarUrl =
+  config.NODE_ENV === "production"
+    ? "https://your-app-domain.com/default-avatar.png"
+    : "https://localhost:3000/default-avatar.png";
 
 export class ArtistMysqlRepository {
   // アーティストの存在確認と保存
@@ -28,7 +34,7 @@ export class ArtistMysqlRepository {
             [
               artist.externalUserId,
               artist.name,
-              artist.avatarUrl,
+              artist.avatarUrl || defaultAvatarUrl, // 存在しない場合はデフォルト画像をDBに保存
               artist.permalinkUrl,
             ]
           );
