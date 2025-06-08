@@ -4,7 +4,6 @@ import { RecommendedTrackList } from "./RecommendedTrackList";
 type Props = {
   recommendations: Recommendation[];
   expandedRecommendationId: number | null;
-  likedTrackIds: number[];
   expandedTrackId: number | null;
   onToggleExpandRecommendation: (recommendationId: number) => void;
   onToggleLike: (trackId: number, recommendationId: number) => void;
@@ -14,7 +13,6 @@ type Props = {
 export const HistoryList = ({
   recommendations,
   expandedRecommendationId,
-  likedTrackIds,
   expandedTrackId,
   onToggleExpandRecommendation,
   onToggleLike,
@@ -35,9 +33,18 @@ export const HistoryList = ({
                 onToggleExpandRecommendation(recommendation.recommendationId)
               }
             >
-              {/* レコメンドを生成した日付 */}
+              {/* レコメンドを生成した日時 */}
               <p className="text-sm text-gray-400">
-                {new Date(recommendation.recommendedAt).toLocaleDateString()}
+                {new Date(recommendation.recommendedAt).toLocaleString(
+                  "ja-JP",
+                  {
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  }
+                )}
               </p>
 
               {/* 展開中のレコメンド　（トラック一覧） */}
@@ -46,7 +53,6 @@ export const HistoryList = ({
                   <RecommendedTrackList
                     tracks={recommendation.tracks}
                     recommendationId={recommendation.recommendationId}
-                    likedTrackIds={likedTrackIds}
                     expandedTrackId={expandedTrackId}
                     onToggleLike={onToggleLike}
                     onToggleExpandTrack={onToggleExpandTrack}

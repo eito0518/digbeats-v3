@@ -9,10 +9,6 @@ export interface UserApiRepository {
     accessToken: string,
     soundcloudArtistId: number
   ): Promise<void>;
-  fetchLikedSoundCloudTrackIds(
-    accessToken: string,
-    maxPageCount: number
-  ): Promise<number[]>;
   likeTrack(accessToken: string, soundcloudTrackId: number): Promise<void>;
   unlikeTrack(accessToken: string, soundcloudTrackId: number): Promise<void>;
 }

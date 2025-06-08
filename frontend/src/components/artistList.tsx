@@ -24,23 +24,41 @@ export const ArtistList = ({
         return (
           <div
             key={artist.soundcloudArtistId}
-            className="flex items-center justify-between"
+            className="flex items-center justify-between bg-neutral-900 rounded-xl px-4 py-3"
           >
-            {/* アーティストアバター */}
+            {/* アーティストアバターと情報 */}
             <div className="flex items-center gap-3">
               <img src={artist.avatarUrl} className="w-12 h-12 rounded-full" />
-              {/* アーティスト名・いいね曲数 */}
-              <div>
-                <p className="font-semibold">{artist.name}</p>
-                <p className="text-sm text-gray-400">
-                  {artist.likedTracksCount} tracks liked
-                </p>
+              <div className="flex flex-col">
+                <a
+                  href={artist.permalinkUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-semibold hover:underline"
+                >
+                  {artist.name}
+                </a>
+                {/* フォロワー数・Like数*/}
+                <div className="flex flex-col md:flex-row md:items-center md:gap-3 text-sm text-gray-400">
+                  <p>
+                    <span className="font-semibold">
+                      {artist.followersCount.toLocaleString()}
+                    </span>{" "}
+                    followers
+                  </p>
+                  <p>
+                    <span className="font-semibold">
+                      {artist.likedTracksCount.toLocaleString()}
+                    </span>{" "}
+                    likes
+                  </p>
+                </div>
               </div>
             </div>
             {/* フォローボタン */}
             <button
               onClick={() => onToggleFollow(artist)}
-              className={`px-4 py-2 rounded-full text-sm font-semibold transition 
+              className={`w-24 text-center px-4 py-2 rounded-full text-sm font-semibold transition 
               ${
                 isFollowed
                   ? "bg-orange-400 text-white" // フォロー済み

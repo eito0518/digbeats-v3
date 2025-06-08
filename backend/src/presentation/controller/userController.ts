@@ -3,7 +3,6 @@ import { FetchMyUserInfoUseCase } from "../../application/usecase/fetchMyUserInf
 import { FetchMyFollowingsUseCase } from "../../application/usecase/fetchMyFollowingsUseCase";
 import { FollowArtistUseCase } from "../../application/usecase/followArtistUseCase";
 import { UnfollowArtistUseCase } from "../../application/usecase/unfollowArtistUseCase";
-import { FetchLikedSoundCloudTrackIdsUseCase } from "../../application/usecase/fetchLikedSoundCloudTrackIdsUseCase";
 import { LikeTrackUseCase } from "../../application/usecase/likeTrackUseCase";
 import { UnlikeTrackUseCase } from "../../application/usecase/unlikeTrackUseCase";
 import {
@@ -20,7 +19,6 @@ export class UserController {
     private readonly _fetchMyFollowingsUseCase: FetchMyFollowingsUseCase,
     private readonly _followArtistUseCase: FollowArtistUseCase,
     private readonly _unfollowArtistUseCase: UnfollowArtistUseCase,
-    private readonly _fetchLikedSoundCloudTrackIdsUseCase: FetchLikedSoundCloudTrackIdsUseCase,
     private readonly _likeTrackUseCase: LikeTrackUseCase,
     private readonly _unlikeTrackUseCase: UnlikeTrackUseCase
   ) {}
@@ -127,53 +125,29 @@ export class UserController {
       .json({ message: "unfollowed artist successfully" });
   };
 
-  // いいね中の SoundCloudTrackId を取得する
-  fetchLikedSoundCloudTrackIds = async (
-    req: Request,
-    res: Response
-  ): Promise<void> => {
-    // リクエスト
-    const sessionId = req.cookies.sessionId;
-
-    // バリデーション
-    if (!validateSessionId(sessionId, res)) return;
-
-    // ユースケース
-    const likedSoundCloudTrackIds =
-      await this._fetchLikedSoundCloudTrackIdsUseCase.run(sessionId);
-
-    // レスポンス
-    res
-      .cookie("sessionId", sessionId, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "none", // TODO：　時間があればCSRF対策　で　csurfを導入する
-      })
-      .status(200)
-      .json({ soundcloudTrackIds: likedSoundCloudTrackIds });
-  };
-
   // 楽曲のいいねを登録する
   likeTrack = async (req: Request, res: Response): Promise<void> => {
     // リクエスト
     const sessionId = req.cookies.sessionId;
 
-    const { recommendationIdRaw, trackIdRaw } = req.body;
+    const { recommendationId, trackId } = req.body;
 
     // バリデーション
     if (!validateSessionId(sessionId, res)) return;
 
     const validatedLikeParams = validateLikeParams(
-      recommendationIdRaw,
-      trackIdRaw,
+      recommendationId,
+      trackId,
       res
     );
     if (!validatedLikeParams) return;
 
-    const { recommendationId, trackId } = validatedLikeParams;
-
     // ユースケース
-    await this._likeTrackUseCase.run(sessionId, recommendationId, trackId);
+    await this._likeTrackUseCase.run(
+      sessionId,
+      validatedLikeParams.recommendationId,
+      validatedLikeParams.trackId
+    );
 
     // レスポンス
     res
@@ -191,22 +165,24 @@ export class UserController {
     // リクエスト
     const sessionId = req.cookies.sessionId;
 
-    const { recommendationIdRaw, trackIdRaw } = req.body;
+    const { recommendationId, trackId } = req.body;
 
     // バリデーション
     if (!validateSessionId(sessionId, res)) return;
 
     const validatedLikeParams = validateLikeParams(
-      recommendationIdRaw,
-      trackIdRaw,
+      recommendationId,
+      trackId,
       res
     );
     if (!validatedLikeParams) return;
 
-    const { recommendationId, trackId } = validatedLikeParams;
-
     // ユースケース
-    await this._unlikeTrackUseCase.run(sessionId, recommendationId, trackId);
+    await this._unlikeTrackUseCase.run(
+      sessionId,
+      validatedLikeParams.recommendationId,
+      validatedLikeParams.trackId
+    );
 
     // レスポンス
     res

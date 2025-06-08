@@ -8,7 +8,11 @@ type Props = {
   recommendationId: number;
   isLiked: boolean;
   isExpanded: boolean;
-  onToggleLike: (trackId: number, recommendationId: number) => void;
+  onToggleLike: (
+    trackId: number,
+    recommendationId: number,
+    isCurrentlyLiked: boolean
+  ) => void;
   onToggleExpandTrack: (trackId: number) => void;
 };
 
@@ -50,7 +54,7 @@ export const RecommendedTrackItem = ({
         <IconButton
           onClick={(e) => {
             e.stopPropagation(); // 親のonClickの発火を防ぐ
-            onToggleLike(track.id, recommendationId);
+            onToggleLike(track.id, recommendationId, isLiked);
           }}
         >
           {isLiked ? (

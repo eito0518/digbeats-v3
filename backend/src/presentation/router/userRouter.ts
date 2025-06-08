@@ -16,12 +16,6 @@ userRouter.post("/followings", asyncHandler(userController.followArtist));
 // アーティストをフォロー解除するエンドポイント
 userRouter.delete("/followings", asyncHandler(userController.unfollowArtist));
 
-// いいねした楽曲の SoundCloudTrackId を取得するエンドポイント
-userRouter.get(
-  "/likes",
-  asyncHandler(userController.fetchLikedSoundCloudTrackIds)
-);
-
 // 楽曲のいいねを登録するエンドポイント
 userRouter.post("/likes", asyncHandler(userController.likeTrack));
 
