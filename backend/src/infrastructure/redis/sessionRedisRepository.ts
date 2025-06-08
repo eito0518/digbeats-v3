@@ -2,7 +2,7 @@ import Redis from "ioredis";
 import { SessionRepository } from "../../domain/interfaces/sessionRepository";
 import { Session } from "../../domain/valueObjects/session";
 import { config } from "../../config/config";
-import { REAUTH_REQUIRED } from "../../constants/errorCodes";
+import { ReauthenticationRequiredError } from "../../errors/application.error";
 
 export class SessionRedisRepository implements SessionRepository {
   constructor(private readonly _redis: Redis) {}
@@ -29,15 +29,17 @@ export class SessionRedisRepository implements SessionRepository {
 
       // セッションがなければ再ログインを要求
       if (rawSession === null) {
-        throw new Error(REAUTH_REQUIRED); // 再認証を要求
+        throw new ReauthenticationRequiredError(); // 再認証を要求
       }
 
       return Session.fromJSON(rawSession);
     } catch (error) {
-      const message =
-        error instanceof Error && error.message === REAUTH_REQUIRED // エラーメッセージが "REAUTH_REQUIRED" ならば errorHandler でフロントエンドに通知
-          ? REAUTH_REQUIRED
-          : "Failed to fetch session: Redis read operation failed";
+      if (error instanceof ReauthenticationRequiredError) {
+        throw error; //  errorHandler に通知
+      }
+
+      // その他の予期せぬエラー
+      const message = "Failed to fetch session: Redis read operation failed";
       console.error(`[sessionRedisRepository] ${message}`, error);
       throw new Error(message);
     }
