@@ -7,14 +7,13 @@ export class ArtistController {
   constructor(private readonly _searchArtistsUseCase: SearchArtistsUseCase) {}
 
   // アーティストを検索する
-  async searchArtists(req: Request, res: Response): Promise<void> {
+  searchArtists = async (req: Request, res: Response): Promise<void> => {
     // リクエスト
     const sessionId = req.cookies.sessionId;
     const artistNameRaw = req.query.artistName;
 
     // バリデーション
-    const artistName = validateArtistNameParam(artistNameRaw, res);
-    if (!artistName) return;
+    const artistName = validateArtistNameParam(artistNameRaw);
 
     // ユースケース
     const artists = await this._searchArtistsUseCase.run(sessionId, artistName);
@@ -28,5 +27,5 @@ export class ArtistController {
       })
       .status(200)
       .json(ArtistPresenter.toDTOList(artists));
-  }
+  };
 }

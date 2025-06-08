@@ -19,7 +19,11 @@ export class Session {
   toObject(): object {
     return {
       userId: this._userId,
-      token: this._token,
+      token: {
+        accessToken: this._token.accessToken,
+        accessTokenExpiresAt: this._token.accessTokenExpiresAt,
+        refreshToken: this._token.refreshToken,
+      },
       createdAt: this._createdAt,
     };
   }

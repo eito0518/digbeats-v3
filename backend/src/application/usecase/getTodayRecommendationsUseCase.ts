@@ -14,9 +14,9 @@ export class GetTodayRecommendationsUseCase {
     // セッションからユーザーIDを取得
     const userId = session.userId;
 
-    // 今日のレコメンドを最大３件取得
+    // 今日のレコメンドを取得
     const todayRecommendations =
-      await this._todayRecommendationDbRepository.get(userId, 3);
+      await this._todayRecommendationDbRepository.get(userId);
 
     // 今日のレコメンドをコントローラーに返す
     return todayRecommendations;

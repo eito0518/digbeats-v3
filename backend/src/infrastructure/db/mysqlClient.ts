@@ -7,6 +7,7 @@ export const MysqlClient = mysql.createPool({
   password: config.DB_PASSWORD,
   database: config.DB_NAME,
   port: config.DB_PORT,
+  timezone: "+00:00",
   waitForConnections: true,
   connectionLimit: 10,
 });

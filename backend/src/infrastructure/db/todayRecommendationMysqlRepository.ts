@@ -9,7 +9,7 @@ export class TodayRecommendationMysqlRepository
   implements TodayRecommendationDbRepository
 {
   // 「今日のレコメンド」 を取得する
-  async get(userId: number, limit: number): Promise<Recommendation[]> {
+  async get(userId: number): Promise<Recommendation[]> {
     try {
       // DBから 「今日のレコメンド」 を取得する
       const [selectRecommendationsResults] = await MysqlClient.execute<
@@ -24,6 +24,7 @@ export class TodayRecommendationMysqlRepository
               t.title AS title,
               t.artwork_url AS artworkUrl,
               t.permalink_url AS trackPermalinkUrl,
+              rt.is_liked AS isLiked,
               a.id AS artistId,
               a.soundcloud_artist_id AS soundcloudArtistId,
               a.name AS name,
@@ -31,18 +32,18 @@ export class TodayRecommendationMysqlRepository
               a.permalink_url AS artistPermalinkUrl
           FROM recommendations AS r
           JOIN recommendations_tracks AS rt
-              ON r.id = rt.recommendations_id
+              ON r.id = rt.recommendation_id
           JOIN tracks AS t
-              ON rt.tracks_id = t.id
+              ON rt.track_id = t.id
           JOIN artists AS a
               ON t.artist_id = a.id  
           WHERE r.user_id = ? 
               AND r.created_at >= CURDATE() 
               AND r.created_at < CURDATE() + INTERVAL 1 DAY
           ORDER BY r.created_at DESC 
-          LIMIT ?
+          LIMIT 30
         `,
-        [userId, limit]
+        [userId]
       );
 
       //　レコメンドIDで取得したレコメンドをグループ分け
@@ -64,9 +65,11 @@ export class TodayRecommendationMysqlRepository
             r.name,
             r.avatarUrl,
             r.artistPermalinkUrl,
+            undefined,
             undefined
           ),
-          r.trackId
+          r.trackId,
+          r.isLiked
         );
         // 同じレコメンドIDが既にある場合
         if (groupedRecommendaions.has(r.recommendationId)) {

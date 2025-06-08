@@ -7,6 +7,7 @@ export class TrackPresenter {
       title: track.title,
       artworkUrl: track.artworkUrl,
       permalinkUrl: track.permalinkUrl,
+      isLiked: track.isLiked,
       artist: {
         name: track.artist.name,
         avatarUrl: track.artist.avatarUrl,

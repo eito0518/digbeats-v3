@@ -3,7 +3,6 @@ import { FetchMyUserInfoUseCase } from "../../application/usecase/fetchMyUserInf
 import { FetchMyFollowingsUseCase } from "../../application/usecase/fetchMyFollowingsUseCase";
 import { FollowArtistUseCase } from "../../application/usecase/followArtistUseCase";
 import { UnfollowArtistUseCase } from "../../application/usecase/unfollowArtistUseCase";
-import { FetchLikedSoundCloudTrackIdsUseCase } from "../../application/usecase/fetchLikedSoundCloudTrackIdsUseCase";
 import { LikeTrackUseCase } from "../../application/usecase/likeTrackUseCase";
 import { UnlikeTrackUseCase } from "../../application/usecase/unlikeTrackUseCase";
 import { TokenApplicationService } from "../../application/applicationServices/tokenApplicationService";
@@ -41,14 +40,6 @@ export const userController = new UserController(
   ),
   // アーティストのフォローを解除
   new UnfollowArtistUseCase(
-    new TokenApplicationService(
-      new SessionRedisRepository(new Redis()),
-      new TokenSoundCloudRepository()
-    ),
-    new UserSoundCloudRepository()
-  ),
-  // 自分のいいね楽曲のSoundCloudIdを取得
-  new FetchLikedSoundCloudTrackIdsUseCase(
     new TokenApplicationService(
       new SessionRedisRepository(new Redis()),
       new TokenSoundCloudRepository()

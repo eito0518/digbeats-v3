@@ -9,7 +9,7 @@ export class ArtistSoundCloudRepository implements ArtistApiRepository {
     accessToken: string,
     artistName: string
   ): Promise<Array<ArtistInfo>> {
-    const endPoint = `${config.API_BASE_URL}/search/users`;
+    const endPoint = `${config.API_BASE_URL}/users`;
 
     const headers = {
       accept: "application/json; charset=utf-8",
@@ -27,14 +27,15 @@ export class ArtistSoundCloudRepository implements ArtistApiRepository {
         params: params,
       });
 
-      return response.data.collection.map(
+      return response.data.map(
         (artist: any) =>
           new ArtistInfo(
             artist.id,
-            artist.name,
+            artist.username,
             artist.avatar_url,
             artist.permalink_url,
-            artist.public_favorites_count
+            artist.public_favorites_count,
+            artist.followers_count
           )
       );
     } catch (error) {

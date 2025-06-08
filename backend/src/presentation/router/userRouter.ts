@@ -5,28 +5,19 @@ import { userController } from "../di/userController.di";
 export const userRouter = Router();
 
 // 自分のユーザー情報を取得するエンドポイント
-userRouter.get("/api/users", asyncHandler(userController.fetchMyUserInfo));
+userRouter.get("/", asyncHandler(userController.fetchMyUserInfo));
 
 // フォロー中のアーティストを取得するエンドポイント
-userRouter.get(
-  "/api/users/followings",
-  asyncHandler(userController.fetchMyFollowings)
-);
+userRouter.get("/followings", asyncHandler(userController.fetchMyFollowings));
 
 // アーティストをフォローするエンドポイント
-userRouter.post(
-  "/api/users/followings",
-  asyncHandler(userController.followArtist)
-);
+userRouter.post("/followings", asyncHandler(userController.followArtist));
 
 // アーティストをフォロー解除するエンドポイント
-userRouter.delete(
-  "/api/users/followings",
-  asyncHandler(userController.unfollowArtist)
-);
+userRouter.delete("/followings", asyncHandler(userController.unfollowArtist));
 
 // 楽曲のいいねを登録するエンドポイント
-userRouter.post("/api/users/likes", asyncHandler(userController.likeTrack));
+userRouter.post("/likes", asyncHandler(userController.likeTrack));
 
 // 楽曲のいいねを解除するエンドポイント
-userRouter.delete("/api/users/likes", asyncHandler(userController.unlikeTrack));
+userRouter.delete("/likes", asyncHandler(userController.unlikeTrack));

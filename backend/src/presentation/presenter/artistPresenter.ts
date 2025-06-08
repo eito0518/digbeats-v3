@@ -8,6 +8,7 @@ export class ArtistPresenter {
       avatarUrl: artist.avatarUrl,
       permalinkUrl: artist.permalinkUrl,
       likedTracksCount: artist.likedTracksCount,
+      followersCount: artist.followersCount,
     };
   }
 

@@ -13,12 +13,12 @@ export class RecommendationController {
   ) {}
 
   // レコメンドを取得する
-  async getRecommendation(req: Request, res: Response): Promise<void> {
+  getRecommendation = async (req: Request, res: Response): Promise<void> => {
     // リクエスト
     const sessionId = req.cookies.sessionId;
 
     // バリデーション
-    if (!validateSessionId(sessionId, res)) return;
+    validateSessionId(sessionId);
 
     // ユースケース
     const recommendation = await this._getRecommendationUseCase.run(sessionId);
@@ -32,15 +32,18 @@ export class RecommendationController {
       })
       .status(200)
       .json(RecommendationPresenter.toDTO(recommendation));
-  }
+  };
 
   // 「今日のレコメンド」 を取得する
-  async getTodayRecommendations(req: Request, res: Response): Promise<void> {
+  getTodayRecommendations = async (
+    req: Request,
+    res: Response
+  ): Promise<void> => {
     // リクエスト
     const sessionId = req.cookies.sessionId;
 
     // バリデーション
-    if (!validateSessionId(sessionId, res)) return;
+    validateSessionId(sessionId);
 
     // ユースケース
     const todayRecommendations = await this._getTodayRecommendationsUseCase.run(
@@ -56,15 +59,15 @@ export class RecommendationController {
       })
       .status(200)
       .json(RecommendationPresenter.toDTOList(todayRecommendations));
-  }
+  };
 
   // レコメンド履歴を取得する
-  async getHistories(req: Request, res: Response): Promise<void> {
+  getHistories = async (req: Request, res: Response): Promise<void> => {
     // リクエスト
     const sessionId = req.cookies.sessionId;
 
     // バリデーション
-    if (!validateSessionId(sessionId, res)) return;
+    validateSessionId(sessionId);
 
     // ユースケース
     const histories = await this._getHistoriesUseCase.run(sessionId);
@@ -78,5 +81,5 @@ export class RecommendationController {
       })
       .status(200)
       .json(RecommendationPresenter.toDTOList(histories));
-  }
+  };
 }

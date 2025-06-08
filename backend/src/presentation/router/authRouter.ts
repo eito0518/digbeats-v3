@@ -5,7 +5,7 @@ import { authController } from "../di/authController.di";
 export const authRouter = Router();
 
 // ユーザーを認証するエンドポイント
-authRouter.post(
-  "/api/auth/authorize",
-  asyncHandler(authController.authorizeUser)
-);
+authRouter.post("/authorize", asyncHandler(authController.authorizeUser));
+
+// ユーザーがログイン中か判定するエンドポイント
+authRouter.get("/session", asyncHandler(authController.checkSession));

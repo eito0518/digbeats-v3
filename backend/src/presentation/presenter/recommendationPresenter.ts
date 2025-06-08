@@ -2,7 +2,7 @@ import { Recommendation } from "../../domain/entities/recommendation";
 import { TrackPresenter } from "./trackPresenter";
 
 export class RecommendationPresenter {
-  static toDTO(recommendation: Recommendation) {
+  private static formatRecommendation(recommendation: Recommendation) {
     return {
       recommendationId: recommendation.id,
       recommendedAt: recommendation.createdAt,
@@ -10,10 +10,16 @@ export class RecommendationPresenter {
     };
   }
 
+  static toDTO(recommendation: Recommendation) {
+    return {
+      recommendation: this.formatRecommendation(recommendation),
+    };
+  }
+
   static toDTOList(recommendations: Recommendation[]) {
     return {
       recommendations: recommendations.map((recommendation) =>
-        this.toDTO(recommendation)
+        this.formatRecommendation(recommendation)
       ),
     };
   }

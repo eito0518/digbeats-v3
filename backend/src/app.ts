@@ -21,10 +21,10 @@ export const createApp = () => {
     })
   );
 
-  app.use(authRouter);
-  app.use(userRouter);
-  app.use(artistRouter);
-  app.use(recommendationRouter);
+  app.use("/api/auth", authRouter);
+  app.use("/api/users", userRouter);
+  app.use("/api/artists", artistRouter);
+  app.use("/api/recommendations", recommendationRouter);
 
   app.use(errorHandler);
 

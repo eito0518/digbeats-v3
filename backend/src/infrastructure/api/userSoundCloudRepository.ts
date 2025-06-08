@@ -47,10 +47,11 @@ export class UserSoundCloudRepository implements UserApiRepository {
         (following: any) =>
           new ArtistInfo(
             following.id,
-            following.name,
+            following.username,
             following.avatar_url,
             following.permalink_url,
-            following.public_favorites_count
+            following.public_favorites_count,
+            following.followers_count
           )
       );
     } catch (error) {
@@ -74,7 +75,7 @@ export class UserSoundCloudRepository implements UserApiRepository {
     };
 
     try {
-      await axios.put(endPoint, { headers });
+      await axios.put(endPoint, null, { headers });
     } catch (error) {
       const message = `Failed to follow artist (ID: ${soundcloudArtistId}): unable to communicate with SoundCloud API`;
       console.error(`[userSoundCloudRepository] ${message}`, error);
@@ -101,59 +102,6 @@ export class UserSoundCloudRepository implements UserApiRepository {
       console.error(`[userSoundCloudRepository] ${message}`, error);
       throw new Error(message);
     }
-  }
-
-  // いいねした楽曲の SoundCloudId を取得する
-  async fetchLikedSoundCloudTrackIds(
-    accessToken: string,
-    maxPageCount: number
-  ): Promise<number[]> {
-    // urlの初期値
-    const endPoint = `${config.API_BASE_URL}/me/likes/tracks`;
-
-    const headers = {
-      accept: "application/json; charset=utf-8",
-      Authorization: `OAuth ${accessToken}`,
-    };
-
-    // パラメータの初期値
-    const initialParams = {
-      limit: 50,
-      linked_partitioning: true,
-    };
-
-    // next_href　を用いて複数ページを取得する
-    try {
-      // 取得した楽曲のIDを空配列に順番にプッシュ
-      const soundcloudTrackIds: number[] = [];
-      let url: string | null = endPoint;
-      const params = initialParams;
-      let pageCount = 0;
-
-      // ページ数が上限未満 かつ まだ次のページのURLがある　場合繰り返す
-      while (pageCount < maxPageCount && url) {
-        const response: any = await axios.get(url, {
-          headers,
-          ...(url === endPoint ? { params } : {}), // スプレッド構文で条件付き展開
-        });
-        soundcloudTrackIds.push(
-          ...this.mapToSoundCloudTrackId(response.data.collection)
-        ); // number[] をスプレッド構文で展開してプッシュ
-        url = response.data.next_href; // urlを更新
-        pageCount++; // ページ数を更新
-      }
-
-      return soundcloudTrackIds;
-    } catch (error) {
-      const message = `Failed to fetch my liked tracks: unable to communicate with SoundCloud API`;
-      console.error(`[userSoundCloudRepository] ${message}`, error);
-      throw new Error(message);
-    }
-  }
-
-  // APIレスポンスのトラック一覧を SoundCloudIdの配列 に変換する関数
-  private mapToSoundCloudTrackId(collection: any[]): number[] {
-    return collection.map((track: any) => track.id);
   }
 
   // 楽曲のいいねを登録する
