@@ -1,5 +1,6 @@
 import { Recommendation } from "../types/recommendationType";
 import { RecommendedTrackList } from "./RecommendedTrackList";
+import { formatToJST } from "../utils/dateFormatter";
 
 type Props = {
   recommendations: Recommendation[];
@@ -27,14 +28,14 @@ export const RecommendationList = ({
         return (
           <div
             key={recommendation.recommendationId}
-            className={`rounded-xl px-2 py-1 transition-colors duration-2000 ${
+            className={`rounded-xl px-2 py-1 transition-colors duration-2000 border ${
               recommendation.recommendationId === animatedId
-                ? "bg-orange-400"
-                : "bg-transparent"
+                ? "border-orange-400"
+                : "border-transparent"
             }`}
           >
             <p className="text-sm text-gray-400">
-              {new Date(recommendation.recommendedAt).toLocaleDateString()}
+              {formatToJST(recommendation.recommendedAt)}
             </p>
             <RecommendedTrackList
               key={recommendation.recommendationId}

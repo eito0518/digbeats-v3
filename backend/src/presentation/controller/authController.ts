@@ -15,7 +15,7 @@ export class AuthController {
     const { code, codeVerifier } = req.body;
 
     // バリデーション
-    if (!validateAuthParams(code, codeVerifier, res)) return;
+    validateAuthParams(code, codeVerifier);
 
     // ユースケース
     const sessionId = await this._authorizeUserUseCase.run(code, codeVerifier);
@@ -39,7 +39,7 @@ export class AuthController {
     const sessionId = req.cookies.sessionId;
 
     // バリデーション
-    if (!validateSessionId(sessionId, res)) return;
+    validateSessionId(sessionId);
 
     // ユースケース
     await this._checkSessionUseCase.run(sessionId);

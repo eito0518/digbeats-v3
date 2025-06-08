@@ -18,7 +18,7 @@ export class RecommendationController {
     const sessionId = req.cookies.sessionId;
 
     // バリデーション
-    if (!validateSessionId(sessionId, res)) return;
+    validateSessionId(sessionId);
 
     // ユースケース
     const recommendation = await this._getRecommendationUseCase.run(sessionId);
@@ -43,7 +43,7 @@ export class RecommendationController {
     const sessionId = req.cookies.sessionId;
 
     // バリデーション
-    if (!validateSessionId(sessionId, res)) return;
+    validateSessionId(sessionId);
 
     // ユースケース
     const todayRecommendations = await this._getTodayRecommendationsUseCase.run(
@@ -67,7 +67,7 @@ export class RecommendationController {
     const sessionId = req.cookies.sessionId;
 
     // バリデーション
-    if (!validateSessionId(sessionId, res)) return;
+    validateSessionId(sessionId);
 
     // ユースケース
     const histories = await this._getHistoriesUseCase.run(sessionId);

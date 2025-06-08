@@ -1,5 +1,6 @@
 import { Recommendation } from "../types/recommendationType";
 import { RecommendedTrackList } from "./RecommendedTrackList";
+import { formatToJST } from "../utils/dateFormatter";
 
 type Props = {
   recommendations: Recommendation[];
@@ -35,16 +36,7 @@ export const HistoryList = ({
             >
               {/* レコメンドを生成した日時 */}
               <p className="text-sm text-gray-400">
-                {new Date(recommendation.recommendedAt).toLocaleString(
-                  "ja-JP",
-                  {
-                    year: "numeric",
-                    month: "2-digit",
-                    day: "2-digit",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  }
-                )}
+                {formatToJST(recommendation.recommendedAt)}
               </p>
 
               {/* 展開中のレコメンド　（トラック一覧） */}

@@ -2,7 +2,7 @@ import Redis from "ioredis";
 import { SessionRepository } from "../../domain/interfaces/sessionRepository";
 import { Session } from "../../domain/valueObjects/session";
 import { config } from "../../config/config";
-import { ReauthenticationRequiredError } from "../../errors/application.error";
+import { ReauthenticationRequiredError } from "../../errors/application.errors";
 
 export class SessionRedisRepository implements SessionRepository {
   constructor(private readonly _redis: Redis) {}

@@ -58,6 +58,8 @@ export const Callback = () => {
         navigate("/");
       } catch (error) {
         console.error("[Callback] Failed to callback: ", error);
+        showLoginErrorAlert();
+        navigate("/login");
       }
     };
 
