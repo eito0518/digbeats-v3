@@ -1,2 +1,37 @@
-.DS_Store
+# OS-specific files
+## macOS
+.DS_Store 
+## windowsOS
+Thumbs.db
+
+# IDE / Editor specific
+## vscode
+.vscode/
+## JetBrains IDE
+.idea/
+
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Certificates & Secrets
 cert/
+*.pem
+
+# Frontend-specific
+/frontend/.vite/
