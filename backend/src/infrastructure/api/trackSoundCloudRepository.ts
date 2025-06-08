@@ -65,7 +65,8 @@ export class TrackSoundCloudRepository {
             track.user.username,
             track.user.avatar_url,
             track.user.permalink_url,
-            track.user.public_favorites_count
+            track.user.public_favorites_count,
+            track.user.followers_count
           )
         )
     );

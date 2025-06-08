@@ -3,6 +3,7 @@ export type Track = {
   title: string;
   artworkUrl: string;
   permalinkUrl: string;
+  isLiked: boolean;
   artist: {
     name: string;
     avatarUrl: string;

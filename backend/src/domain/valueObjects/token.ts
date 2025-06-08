@@ -9,6 +9,10 @@ export class Token {
     return this._accessToken;
   }
 
+  get accessTokenExpiresAt(): number {
+    return this._accessTokenExpiresAt;
+  }
+
   get refreshToken(): string {
     return this._refreshToken;
   }

@@ -10,6 +10,8 @@ function getEnv(key: string): string {
 }
 
 export const config = {
+  // Node
+  NODE_ENV: getEnv("MODE"),
   // MySQL
   DB_HOST: getEnv("MYSQL_HOST"),
   DB_USER: getEnv("MYSQL_USER"),

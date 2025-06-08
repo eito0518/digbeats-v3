@@ -4,7 +4,8 @@ export class ArtistInfo {
     private readonly _name: string,
     private readonly _avatarUrl: string,
     private readonly _permalinkUrl: string,
-    private readonly _likedTracksCount?: number // フェッチ時のみ
+    private readonly _likedTracksCount?: number, // フェッチ時のみ
+    private readonly _followersCount?: number // フェッチ時のみ
   ) {}
 
   get externalUserId() {
@@ -25,5 +26,9 @@ export class ArtistInfo {
 
   get likedTracksCount() {
     return this._likedTracksCount;
+  }
+
+  get followersCount() {
+    return this._followersCount;
   }
 }

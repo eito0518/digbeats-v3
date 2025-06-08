@@ -42,10 +42,6 @@ export const Callback = () => {
         return;
       }
 
-      // セッションストレージから認証情報を削除
-      sessionStorage.removeItem("codeVerifier");
-      sessionStorage.removeItem("state");
-
       try {
         // バックエンドに code + code_verifier を送信し、 Cookieで sessionId を自動取得
         await apiClient.post(
@@ -54,10 +50,16 @@ export const Callback = () => {
           { withCredentials: true } // Cookieを受け取るために必要
         );
 
+        // セッションストレージから認証情報を削除
+        sessionStorage.removeItem("codeVerifier");
+        sessionStorage.removeItem("state");
+
         // ホーム画面にリダイレクト
         navigate("/");
       } catch (error) {
         console.error("[Callback] Failed to callback: ", error);
+        showLoginErrorAlert();
+        navigate("/login");
       }
     };
 

@@ -60,7 +60,7 @@ export class RecommendationMySQLRepository implements RecommendationRepository {
       await Promise.all(
         trackIds.map(async (trackId) => {
           await transactionConn.execute<mysql.ResultSetHeader>(
-            "INSERT INTO recommendations_tracks (recommendations_id, tracks_id, is_liked) VALUES (?, ?, false)",
+            "INSERT INTO recommendations_tracks (recommendation_id, track_id, is_liked) VALUES (?, ?, false)",
             [recommendationId, trackId]
           );
         })

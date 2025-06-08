@@ -11,7 +11,7 @@ export const useUser = () => {
         const response = await apiClient.get("/users", {
           withCredentials: true,
         });
-        setUser(response.data);
+        setUser(response.data.user);
       } catch (error) {
         console.error("[useUser] Failed to fetch user: ", error);
       }

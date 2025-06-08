@@ -29,6 +29,9 @@ export class GetRecommendationUseCase {
     //　ArtistInfo[]型　から　VO(Followings型) に変換
     const followings = new Followings(rawFollowings);
 
+    // レコメンド生成の条件を検証
+    followings.validateRecommendation();
+
     // レコメンドのソースとなるアーティストを選ぶ
     const sourceArtist =
       this._recommendationDomainService.pickSourceArtist(followings);
