@@ -7,7 +7,7 @@ import { LikeTrackUseCase } from "../../application/usecase/likeTrackUseCase";
 import { UnlikeTrackUseCase } from "../../application/usecase/unlikeTrackUseCase";
 import { TokenApplicationService } from "../../application/applicationServices/tokenApplicationService";
 import { SessionRedisRepository } from "../../infrastructure/redis/sessionRedisRepository";
-import Redis from "ioredis";
+import { RedisClient } from "../../infrastructure/redis/redisClient";
 import { TokenSoundCloudRepository } from "../../infrastructure/api/tokenSoundCloudRepository";
 import { UserSoundCloudRepository } from "../../infrastructure/api/userSoundCloudRepository";
 import { TrackMysqlRepository } from "../../infrastructure/db/trackMysqlRepository";
@@ -17,7 +17,7 @@ export const userController = new UserController(
   // 自分のユーザー情報を取得
   new FetchMyUserInfoUseCase(
     new TokenApplicationService(
-      new SessionRedisRepository(new Redis()),
+      new SessionRedisRepository(RedisClient),
       new TokenSoundCloudRepository()
     ),
     new UserSoundCloudRepository()
@@ -25,7 +25,7 @@ export const userController = new UserController(
   // フォロー中のアーティストを取得
   new FetchMyFollowingsUseCase(
     new TokenApplicationService(
-      new SessionRedisRepository(new Redis()),
+      new SessionRedisRepository(RedisClient),
       new TokenSoundCloudRepository()
     ),
     new UserSoundCloudRepository()
@@ -33,7 +33,7 @@ export const userController = new UserController(
   // アーティストをフォロー
   new FollowArtistUseCase(
     new TokenApplicationService(
-      new SessionRedisRepository(new Redis()),
+      new SessionRedisRepository(RedisClient),
       new TokenSoundCloudRepository()
     ),
     new UserSoundCloudRepository()
@@ -41,7 +41,7 @@ export const userController = new UserController(
   // アーティストのフォローを解除
   new UnfollowArtistUseCase(
     new TokenApplicationService(
-      new SessionRedisRepository(new Redis()),
+      new SessionRedisRepository(RedisClient),
       new TokenSoundCloudRepository()
     ),
     new UserSoundCloudRepository()
@@ -49,7 +49,7 @@ export const userController = new UserController(
   // 楽曲のいいねを登録
   new LikeTrackUseCase(
     new TokenApplicationService(
-      new SessionRedisRepository(new Redis()),
+      new SessionRedisRepository(RedisClient),
       new TokenSoundCloudRepository()
     ),
     new TrackMysqlRepository(),
@@ -59,7 +59,7 @@ export const userController = new UserController(
   // 楽曲のいいねを解除
   new UnlikeTrackUseCase(
     new TokenApplicationService(
-      new SessionRedisRepository(new Redis()),
+      new SessionRedisRepository(RedisClient),
       new TokenSoundCloudRepository()
     ),
     new TrackMysqlRepository(),

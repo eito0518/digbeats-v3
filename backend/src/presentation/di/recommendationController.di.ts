@@ -2,6 +2,7 @@ import { RecommendationController } from "../controller/recommendationController
 import { GetRecommendationUseCase } from "../../application/usecase/getRecommendationUseCase";
 import { TokenApplicationService } from "../../application/applicationServices/tokenApplicationService";
 import { SessionRedisRepository } from "../../infrastructure/redis/sessionRedisRepository";
+import { RedisClient } from "../../infrastructure/redis/redisClient";
 import { TokenSoundCloudRepository } from "../../infrastructure/api/tokenSoundCloudRepository";
 import { UserSoundCloudRepository } from "../../infrastructure/api/userSoundCloudRepository";
 import { RecommendationDomainService } from "../../domain/domainServices/recommendationDomainService";
@@ -12,7 +13,6 @@ import { ArtistMysqlRepository } from "../../infrastructure/db/artistMysqlReposi
 import { TrackMysqlRepository } from "../../infrastructure/db/trackMysqlRepository";
 import { GetHistoriesUseCase } from "../../application/usecase/getHistoriesUseCase";
 import { HistoryMysqlRepository } from "../../infrastructure/db/historyMysqlRepository";
-import Redis from "ioredis";
 import { GetTodayRecommendationsUseCase } from "../../application/usecase/getTodayRecommendationsUseCase";
 import { TodayRecommendationMysqlRepository } from "../../infrastructure/db/todayRecommendationMysqlRepository";
 
@@ -20,7 +20,7 @@ export const recommendationController = new RecommendationController(
   // レコメンドを取得
   new GetRecommendationUseCase(
     new TokenApplicationService(
-      new SessionRedisRepository(new Redis()),
+      new SessionRedisRepository(RedisClient),
       new TokenSoundCloudRepository()
     ),
     new UserSoundCloudRepository(),
@@ -33,12 +33,12 @@ export const recommendationController = new RecommendationController(
   ),
   // 「今日のレコメンド」を取得
   new GetTodayRecommendationsUseCase(
-    new SessionRedisRepository(new Redis()),
+    new SessionRedisRepository(RedisClient),
     new TodayRecommendationMysqlRepository()
   ),
   // レコメンド履歴を取得
   new GetHistoriesUseCase(
-    new SessionRedisRepository(new Redis()),
+    new SessionRedisRepository(RedisClient),
     new HistoryMysqlRepository()
   )
 );

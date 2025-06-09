@@ -4,7 +4,7 @@ import { TokenSoundCloudRepository } from "../../infrastructure/api/tokenSoundCl
 import { UserSoundCloudRepository } from "../../infrastructure/api/userSoundCloudRepository";
 import { UserMysqlRepository } from "../../infrastructure/db/userMysqlRepository";
 import { SessionRedisRepository } from "../../infrastructure/redis/sessionRedisRepository";
-import Redis from "ioredis";
+import { RedisClient } from "../../infrastructure/redis/redisClient";
 import { CheckSessionUseCase } from "../../application/usecase/checkSessionUseCase";
 
 export const authController = new AuthController(
@@ -13,8 +13,8 @@ export const authController = new AuthController(
     new TokenSoundCloudRepository(),
     new UserSoundCloudRepository(),
     new UserMysqlRepository(),
-    new SessionRedisRepository(new Redis())
+    new SessionRedisRepository(RedisClient)
   ),
   // ログインを判定
-  new CheckSessionUseCase(new SessionRedisRepository(new Redis()))
+  new CheckSessionUseCase(new SessionRedisRepository(RedisClient))
 );

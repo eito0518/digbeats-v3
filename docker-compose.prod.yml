@@ -1,0 +1,41 @@
+# 本番環境
+# コマンドで上書き
+# コマンド：　docker-compose -f docker-compose.prod.yml up --build
+services:
+  # Backend Service (Node.js App)
+  backend:
+    # Dockerfileからイメージを作成
+    build:
+      context: ./backend
+      dockerfile: Dockerfile # 本番用のDockerfileを指定
+    # backendコンテナの環境変数ファイルを指定
+    env_file:
+      - ./backend/.env.local # EC2上では本番用の.envに差し替える
+    # 依存関係を定義 （mysqlが起動後にbackendを起動)
+    depends_on:
+      - mysql
+      - redis
+
+  # Reverse Proxy (Nginx)
+  nginx:
+    image: nginx:stable-alpine3.21
+    ports:
+      # ホストの80, 443ポートをNginxコンテナに繋ぐ
+      - "80:80"
+      - "443:443"
+    volumes:
+      # 作成したNginx設定ファイルをマウント
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      # Certbotと証明書・チャレンジファイルを共有するためのボリューム
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    depends_on:
+      - backend
+
+  # SSL Certificate
+  certbot:
+    image: certbot:v4.0.0
+    volumes:
+      # Nginxと証明書・チャレンジファイルを共有するためのボリューム
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot

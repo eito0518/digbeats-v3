@@ -1,8 +1,3 @@
-import dotenv from "dotenv";
-
-dotenv.config();
-dotenv.config({ path: ".env.local" });
-
 function getEnv(key: string): string {
   const value = process.env[key];
   if (!value) throw new Error(`Environment variable ${key} is missing`);
