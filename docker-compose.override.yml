@@ -1,0 +1,28 @@
+# 開発環境
+# 自動的に上書きされる(override)
+# コマンド：　docker-compose up --build
+services:
+  # Backend Service (Node.js App)
+  backend:
+    # Dockerfileからイメージを作成
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev # 開発用のDockerfileを指定
+    # ローカルの4000番ポートをコンテナの4000番ポートに繋ぐ
+    ports:
+      - "4000:4000"
+    # backendコンテナの環境変数ファイルを指定
+    env_file:
+      - ./backend/.env.local
+    # 依存関係を定義 （mysqlが起動後にbackendを起動)
+    depends_on:
+      - mysql
+      - redis
+    volumes:
+      # volumesは開発時に使用
+      # ローカルとコンテナのbackendソースコードを同期 （変更をtsx watchが検知してサーバーを自動で再起動）
+      - ./backend:/usr/src/app
+      # Docker(linux)でインストールしたモジュールで上書き
+      - /usr/src/app/node_modules
+      # ローカルのcertをマウント
+      - ./cert:/usr/src/cert
