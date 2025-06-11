@@ -3,9 +3,9 @@ import { ArtistInfo } from "../../domain/valueObjects/artistInfo";
 import mysql from "mysql2/promise";
 
 const defaultAvatarUrl =
-  config.NODE_ENV === "production"
-    ? "https://your-app-domain.com/default-avatar.png"
-    : "https://localhost:3000/default-avatar.png";
+  config.NODE_ENV === "development"
+    ? "https://localhost:3000/default-avatar.png"
+    : "https://your-app-domain.com/default-avatar.png"; // デバック
 
 export class ArtistMysqlRepository {
   // アーティストの存在確認と保存

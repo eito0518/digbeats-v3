@@ -5,7 +5,7 @@ import { apiClient } from "../auth/apiClient";
 // 環境変数からデモモードかどうかを判定
 const isDemoMode = import.meta.env.VITE_DEMO_MODE === "true";
 // 生成回数の上限を定数として定義
-const GENERATION_LIMIT = 3; // デバック
+const GENERATION_LIMIT = 3;
 
 export const useRecommendation = () => {
   const [recommendations, setRecommendations] = useState<Recommendation[]>([]);

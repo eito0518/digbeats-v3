@@ -10,9 +10,9 @@ export class TokenSoundCloudRepository implements TokenRepository {
     const tokenUrl = "https://secure.soundcloud.com/oauth/token";
     const params = new url.URLSearchParams();
     params.append("grant_type", "authorization_code");
-    params.append("client_id", config.CLIENT_ID);
-    params.append("client_secret", config.CLIENT_SECRET);
-    params.append("redirect_uri", config.REDIRECT_URI);
+    params.append("client_id", config.OAUTH_CLIENT_ID);
+    params.append("client_secret", config.OAUTH_CLIENT_SECRET);
+    params.append("redirect_uri", config.OAUTH_REDIRECT_URI);
     params.append("code_verifier", codeVerifier);
     params.append("code", code);
 
@@ -42,8 +42,8 @@ export class TokenSoundCloudRepository implements TokenRepository {
     const tokenUrl = "https://secure.soundcloud.com/oauth/token";
     const params = new url.URLSearchParams();
     params.append("grant_type", "refresh_token");
-    params.append("client_id", config.CLIENT_ID);
-    params.append("client_secret", config.CLIENT_SECRET);
+    params.append("client_id", config.OAUTH_CLIENT_ID);
+    params.append("client_secret", config.OAUTH_CLIENT_SECRET);
     params.append("refresh_token", refreshToken);
 
     try {

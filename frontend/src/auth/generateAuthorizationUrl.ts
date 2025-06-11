@@ -7,8 +7,8 @@ import {
 // OAuth認証URLを生成する
 export const generateAuthorizationUrl = async () => {
   // 生成に必要な情報を取得
-  const clientId = import.meta.env.VITE_SOUNDCLOUD_CLIENT_ID;
-  const redirectUri = import.meta.env.VITE_SOUNDCLOUD_REDIRECT_URI;
+  const clientId = import.meta.env.VITE_OAUTH_CLIENT_ID;
+  const redirectUri = import.meta.env.VITE_OAUTH_REDIRECT_URI;
   const responseType = "code";
   const codeVerifier = generateCodeVerifier();
   const codeChallengeMethod = "S256";
