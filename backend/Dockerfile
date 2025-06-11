@@ -1,4 +1,6 @@
-# 本番用
+# 本番環境
+# マルチステージビルド
+
 # ----- 1. ビルドステージ -----
 # TypeScriptをJavaScriptにコンパイルするための環境を作成
 # NodeとOSのバージョンをLTSで固定
@@ -24,10 +26,14 @@ FROM node:22.16.0-alpine3.22
 # コンテナ内の作業ディレクトリを指定
 WORKDIR /usr/src/app
 
-# ビルドステージからビルドされたものと、本番で必要なnode_modules、 package.json、 package-lock.jsonをコピー
-COPY --from=builder /usr/src/app/dist ./dist
-COPY --from=builder /usr/src/app/node_modules ./node_modules
+# 必要なpackage.jsonのみを先にコピー
 COPY --from=builder /usr/src/app/package*.json ./
+
+# 本番用の依存関係のみをインストール
+RUN npm install --omit=dev
+
+# ビルド成果物のみをコピー
+COPY --from=builder /usr/src/app/dist ./dist
 
 # 本番サーバーの起動コマンドを実行
 CMD [ "npm", "run", "start" ]
