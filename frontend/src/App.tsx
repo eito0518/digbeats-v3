@@ -32,3 +32,5 @@ export function App() {
     </>
   );
 }
+
+// Re-deploy to apply environment variables
