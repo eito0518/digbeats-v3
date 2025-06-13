@@ -1,7 +1,13 @@
+// 環境変数を取得する関数
 function getEnv(key: string): string {
   const value = process.env[key];
   if (!value) throw new Error(`Environment variable ${key} is missing`);
   return value;
+}
+
+// オプショナルな環境変数を取得する関数
+function getOptionalEnv(key: string): string | undefined {
+  return process.env[key];
 }
 
 export const config = {
@@ -18,6 +24,7 @@ export const config = {
   // Cache
   CACHE_HOST: getEnv("CACHE_HOST"),
   CACHE_PORT: Number(getEnv("CACHE_PORT")),
+  CACHE_PASSWORD: getOptionalEnv("CACHE_PASSWORD"),
   // OAuth
   OAUTH_CLIENT_ID: getEnv("OAUTH_CLIENT_ID"),
   OAUTH_CLIENT_SECRET: getEnv("OAUTH_CLIENT_SECRET"),
