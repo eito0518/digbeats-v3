@@ -12,7 +12,7 @@ services:
       - ./.env
     volumes:
       # コンテナ起動時にinit.sqlを実行
-      - ./backend/db:/docker-entrypoint-initdb.d
+      - ./backend/config/db:/docker-entrypoint-initdb.d
       # 永続的にデータを保存する場所を指定
       - mysql_data:/var/lib/mysql
 
