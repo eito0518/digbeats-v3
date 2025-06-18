@@ -13,6 +13,8 @@ function getOptionalEnv(key: string): string | undefined {
 export const config = {
   // Node
   NODE_ENV: getEnv("NODE_ENV"),
+  // Server
+  PORT: getEnv("PORT"),
   // API
   API_BASE_URL: getEnv("API_BASE_URL"),
   // Database

@@ -1,13 +1,15 @@
 import http from "http";
 import https from "https";
 import fs from "fs";
+import path from "path";
 import { createApp } from "./app";
+import { config } from "./config/config";
 
 const app = createApp();
-const port = process.env.PORT;
+const port = config.PORT;
 
 // NODE_ENVの値によって起動するサーバーを切り替える
-if (process.env.NODE_ENV === "production") {
+if (config.NODE_ENV === "production") {
   // 本番環境(Azure)の場合
   // AzureAppServiceがSSL認証を行うため HTTP で起動
   const httpServer = http.createServer(app);
@@ -18,8 +20,14 @@ if (process.env.NODE_ENV === "production") {
   // 開発環境（ローカル）の場合
   // 自作のSSL証明書ファイルを読み込む
   try {
-    const key = fs.readFileSync("../cert/localhost-key.pem");
-    const cert = fs.readFileSync("../cert/localhost.pem");
+    const keyPath = path.join(
+      __dirname,
+      "../config/cert.dev/localhost-key.pem"
+    );
+    const certPath = path.join(__dirname, "../config/cert.dev/localhost.pem");
+
+    const key = fs.readFileSync(keyPath);
+    const cert = fs.readFileSync(certPath);
 
     // 自作のSSL証明書を使用するため HTTPS で起動
     const httpsServer = https.createServer({ key, cert }, app);
