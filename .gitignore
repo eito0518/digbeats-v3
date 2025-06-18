@@ -33,6 +33,7 @@ yarn-error.log*
 cert/
 certbot/
 *.pem
+!/backend/config/cert.prod/DigiCertGlobalRootCA.crt.pem
 
 # Frontend-specific
 /frontend/.vite/
