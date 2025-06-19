@@ -55,7 +55,7 @@ export const Callback = () => {
         sessionStorage.removeItem("state");
 
         // ホーム画面にリダイレクト
-        navigate("/");
+        navigate("/home");
       } catch (error) {
         console.error("[Callback] Failed to callback: ", error);
         showLoginErrorAlert();

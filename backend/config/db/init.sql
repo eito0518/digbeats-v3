@@ -1,3 +1,6 @@
+CREATE DATABASE IF NOT EXISTS digbeats;
+USE digbeats;
+
 DROP TABLE IF EXISTS recommendations_tracks;
 DROP TABLE IF EXISTS recommendations;
 DROP TABLE IF EXISTS tracks;

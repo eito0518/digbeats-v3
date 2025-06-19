@@ -59,7 +59,7 @@ export const Profile = () => {
               <p className="text-lg font-bold">Profile</p>
               <button
                 className="text-sm text-gray-400 hover:underline"
-                onClick={() => navigate("/")}
+                onClick={() => navigate("/home")}
               >
                 Back to Home
               </button>
