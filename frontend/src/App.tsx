@@ -1,7 +1,9 @@
 import { Routes, Route } from "react-router-dom";
+import { PublicRoute } from "./auth/PublicRoute";
+import { PrivateRoute } from "./auth/PrivateRoute";
+import { Landing } from "./pages/Landing";
 import { Login } from "./pages/Login";
 import { Callback } from "./pages/Callback";
-import { RequireSession } from "./auth/RequireSession";
 import { Home } from "./pages/Home";
 import { Profile } from "./pages/Profile";
 
@@ -9,28 +11,46 @@ export function App() {
   return (
     <>
       <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/callback" element={<Callback />} />
         <Route
           path="/"
           element={
-            <RequireSession>
-              <Home />
-            </RequireSession>
+            <PublicRoute>
+              <Landing />
+            </PublicRoute>
           }
         />
+
+        <Route
+          path="/login"
+          element={
+            <PublicRoute>
+              <Login />
+            </PublicRoute>
+          }
+        />
+
+        <Route path="/callback" element={<Callback />} />
+
+        <Route
+          path="/home"
+          element={
+            <PrivateRoute>
+              <Home />
+            </PrivateRoute>
+          }
+        />
+
         <Route
           path="/profile"
           element={
-            <RequireSession>
+            <PrivateRoute>
               <Profile />
-            </RequireSession>
+            </PrivateRoute>
           }
         />
+
         <Route path="*" element={<h1>Not Found Page</h1>} />
       </Routes>
     </>
   );
 }
-
-// Re-deploy to apply environment variables
