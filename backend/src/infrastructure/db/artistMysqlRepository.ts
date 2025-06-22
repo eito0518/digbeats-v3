@@ -5,7 +5,7 @@ import mysql from "mysql2/promise";
 const defaultAvatarUrl =
   config.NODE_ENV === "development"
     ? "https://localhost:3000/default-avatar.png"
-    : "https://your-app-domain.com/default-avatar.png"; // デバック
+    : "https://www.digbeats.jp/default-avatar.png";
 
 export class ArtistMysqlRepository {
   // アーティストの存在確認と保存

@@ -2,11 +2,12 @@ import express from "express";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import { config } from "./config/config";
+import { errorHandler } from "./middleware/errorHandler";
 import { authRouter } from "./presentation/router/authRouter";
 import { userRouter } from "./presentation/router/userRouter";
 import { artistRouter } from "./presentation/router/artistRouter";
 import { recommendationRouter } from "./presentation/router/recommendationRouter";
-import { errorHandler } from "./middleware/errorHandler";
 
 export const createApp = () => {
   const app = express();
@@ -18,7 +19,11 @@ export const createApp = () => {
     "https://portfolio-digbeats-frontend-app.azurestaticapps.net", // 念のためAzureのデフォルトドメイン
   ];
 
-  app.use(morgan("dev"));
+  if (config.NODE_ENV === "production") {
+    app.use(morgan("combined"));
+  } else {
+    app.use(morgan("dev"));
+  }
   app.use(express.json());
   app.use(cookieParser());
   app.use(
