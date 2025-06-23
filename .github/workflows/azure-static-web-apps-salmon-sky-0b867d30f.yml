@@ -47,7 +47,6 @@ jobs:
           ###### End of Repository/Build Configurations ###### 
         env: 
           # ビルド時に環境変数を注入する
-          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
           VITE_DEMO_MODE: ${{ secrets.VITE_DEMO_MODE }}
           VITE_OAUTH_CLIENT_ID: ${{ secrets.VITE_OAUTH_CLIENT_ID }}
           VITE_OAUTH_REDIRECT_URI: ${{ secrets.VITE_OAUTH_REDIRECT_URI }}
