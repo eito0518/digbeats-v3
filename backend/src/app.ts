@@ -12,14 +12,11 @@ import { recommendationRouter } from "./presentation/router/recommendationRouter
 export const createApp = () => {
   const app = express();
 
-  // リバースプロキシを信頼させ、secure cookieを使えるようにする
-  app.set("trust proxy", 1);
-
   // 許可するオリジン（ドメイン）のリストを定義
   const allowedOrigins = [
     "https://localhost:3000", // 開発環境
-    "https://www.digbeats.jp", // 本番環境（カスタムドメイン）
-    "https://portfolio-digbeats-frontend-app.azurestaticapps.net", // 念のためAzureのデフォルトドメイン
+    "https://www.digbeats.jp", // 本番環境（旧カスタムドメイン、　動作確認できたら削除）
+    "https://app.digbeats.jp", // 本番環境（カスタムドメイン）
   ];
 
   if (config.NODE_ENV === "production") {

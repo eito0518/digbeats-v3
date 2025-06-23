@@ -39,7 +39,8 @@ export class UserController {
       .cookie("sessionId", sessionId, {
         httpOnly: true,
         secure: true,
-        sameSite: "none", // TODO：　時間があればCSRF対策　で　csurfを導入する
+        domain: ".digbeats.jp",
+        sameSite: "lax",
       })
       .status(200)
       .json(UserPresenter.toDTO(user));
@@ -61,7 +62,8 @@ export class UserController {
       .cookie("sessionId", sessionId, {
         httpOnly: true,
         secure: true,
-        sameSite: "none", // TODO：　時間があればCSRF対策　で　csurfを導入する
+        domain: ".digbeats.jp",
+        sameSite: "lax",
       })
       .status(200)
       .json(ArtistPresenter.toDTOList(followings));
@@ -88,7 +90,8 @@ export class UserController {
       .cookie("sessionId", sessionId, {
         httpOnly: true,
         secure: true,
-        sameSite: "none", // TODO：　時間があればCSRF対策　で　csurfを導入する
+        domain: ".digbeats.jp",
+        sameSite: "lax",
       })
       .status(200)
       .json({ message: "Followed artist successfully" });
@@ -115,7 +118,8 @@ export class UserController {
       .cookie("sessionId", sessionId, {
         httpOnly: true,
         secure: true,
-        sameSite: "none", // TODO：　時間があればCSRF対策　で　csurfを導入する
+        domain: ".digbeats.jp",
+        sameSite: "lax",
       })
       .status(200)
       .json({ message: "unfollowed artist successfully" });
@@ -145,7 +149,8 @@ export class UserController {
       .cookie("sessionId", sessionId, {
         httpOnly: true,
         secure: true,
-        sameSite: "none", // TODO：　時間があればCSRF対策　で　csurfを導入する
+        domain: ".digbeats.jp",
+        sameSite: "lax",
       })
       .status(200)
       .json({ message: "liked track successfully" });
@@ -175,7 +180,8 @@ export class UserController {
       .cookie("sessionId", sessionId, {
         httpOnly: true,
         secure: true,
-        sameSite: "none", // TODO：　時間があればCSRF対策　で　csurfを導入する
+        domain: ".digbeats.jp",
+        sameSite: "lax",
       })
       .status(200)
       .json({ message: "unliked track successfully" });
