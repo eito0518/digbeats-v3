@@ -7,7 +7,7 @@ import { MysqlClient } from "./mysqlClient";
 const defaultArtworkUrl =
   config.NODE_ENV === "development"
     ? "https://localhost:3000/default-artwork.png"
-    : "https://www.digbeats.jp/default-artwork.png";
+    : "https://app.digbeats.jp/default-artwork.png";
 
 export class TrackMysqlRepository implements TrackDbRepository {
   // 楽曲の存在確認と保存

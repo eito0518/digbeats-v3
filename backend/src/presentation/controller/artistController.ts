@@ -23,7 +23,8 @@ export class ArtistController {
       .cookie("sessionId", sessionId, {
         httpOnly: true,
         secure: true,
-        sameSite: "none", // TODO：　時間があればCSRF対策　で　csurfを導入する
+        domain: ".digbeats.jp",
+        sameSite: "lax",
       })
       .status(200)
       .json(ArtistPresenter.toDTOList(artists));
