@@ -12,6 +12,9 @@ import { recommendationRouter } from "./presentation/router/recommendationRouter
 export const createApp = () => {
   const app = express();
 
+  // リバースプロキシを信頼させ、secure cookieを使えるようにする
+  app.set("trust proxy", 1);
+
   // 許可するオリジン（ドメイン）のリストを定義
   const allowedOrigins = [
     "https://localhost:3000", // 開発環境
