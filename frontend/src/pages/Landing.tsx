@@ -1,14 +1,13 @@
 import { Link } from "react-router-dom";
 import logo from "../assets/digbeats-logo.png";
-// ★★★ TODO：　モックアップ画像を先変える ★★★
-import mockup from "../assets/digbeats-mockup-2.png";
-
-// ★★★ TODO：　各ステップで使うスクリーンショット画像に差し替える ★★★
-import step1Image from "../assets/digbeats-mockup-2.png";
-import step2Image from "../assets/digbeats-mockup-2.png";
-import step3Image from "../assets/digbeats-mockup-2.png";
-import step4Image from "../assets/digbeats-mockup-2.png";
-import step5Image from "../assets/digbeats-mockup-2.png";
+import mockup from "../assets/mockup.png";
+import step1Image from "../assets/login.png";
+import step2Image from "../assets/search-follow.png";
+import step3Image from "../assets/home.png";
+import step4Image from "../assets/listen.png";
+import step5Image from "../assets/like.png";
+import profileImage from "../assets/history.png";
+import followingsImage from "../assets/followings.png";
 
 export const Landing = () => {
   return (
@@ -41,7 +40,7 @@ export const Landing = () => {
             </h1>
             {/* サブテキスト */}
             <p className="text-lg text-gray-400 mb-8 max-w-xl mx-auto md:mx-0">
-              DigBeatsは、憧れのアーティストの『お気に入り』を覗いて、あなたの新しい『好き』が見つかる音楽発見アプリです。
+              DigBeatsは、憧れのアーティストが『Like』した楽曲を元に、あなたへのおすすめを生成する音楽発見アプリです。
             </p>
             {/* ログインボタン */}
             <Link
@@ -62,7 +61,7 @@ export const Landing = () => {
           </div>
         </div>
         {/* スクロール指示 */}
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2">
+        <div className="hidden md:block absolute bottom-4 left-1/2 -translate-x-1/2">
           <div className="flex flex-col items-center gap-1 text-gray-400 animate-bounce">
             <p className="text-lg font-bold tracking-widest">HOW TO USE</p>
             <span className="material-icons-outlined text-4xl">⬇</span>
@@ -78,7 +77,7 @@ export const Landing = () => {
         <div className="container mx-auto">
           {/* タイトル */}
           <div className="text-center mb-20">
-            <h2 className="text-3xl font-bold text-orange-400 mb-4">
+            <h2 className="text-3xl font-bold text-yellow-400 mb-4">
               使い方は簡単 5ステップ
             </h2>
             <p className="text-gray-400">
@@ -121,7 +120,7 @@ export const Landing = () => {
                   Step 2
                 </p>
                 <h3 className="text-2xl font-bold mb-4">
-                  アーティストをフォロー
+                  アーティストを「検索」して「フォロー」
                 </h3>
                 <p className="text-gray-400 leading-relaxed">
                   「アーティストの検索」でお気に入りのアーティストをフォローして、あなたの音楽の好みを登録します。
@@ -204,6 +203,67 @@ export const Landing = () => {
               <div className="md:w-1/2">
                 <img
                   src={step5Image}
+                  alt="Step 5のスクリーンショット"
+                  className="rounded-lg shadow-xl border border-gray-700"
+                />
+              </div>
+            </div>
+
+            {/* タイトル */}
+            <div className="text-center mb-20">
+              <h2 className="text-3xl font-bold text-yellow-400 mb-4">
+                その他の機能（Profile Page）
+              </h2>
+              <p className="text-gray-400">
+                プロフィールページでは様々な情報を確認できます。
+              </p>
+            </div>
+
+            {/* Profile */}
+            {/* md:even:flex-row-reverse で左右を入れ替え */}
+            <div className="flex flex-col md:flex-row-reverse items-center gap-10">
+              {/* テキストエリア */}
+              <div className="md:w-1/2 text-center md:text-left">
+                <p className="text-4xl font-bold text-orange-400 mb-6">
+                  History
+                </p>
+                <h3 className="text-2xl font-bold mb-4">
+                  「レコメンド履歴」を確認
+                </h3>
+                <p className="text-gray-400 leading-relaxed">
+                  ホーム画面
+                  右上の「プロフィールアイコン」をクリックすると、プロフィールページに移動します。
+                  ここでは「レコメンドの履歴」を確認でき、気に入った楽曲を登録することもできます。
+                </p>
+              </div>
+              {/* 画像エリア */}
+              <div className="md:w-1/2">
+                <img
+                  src={profileImage}
+                  alt="Step 4のスクリーンショット"
+                  className="rounded-lg shadow-xl border border-gray-700"
+                />
+              </div>
+            </div>
+
+            {/* Profile Page */}
+            <div className="flex flex-col md:flex-row items-center gap-10">
+              {/* テキストエリア */}
+              <div className="md:w-1/2 text-center md:text-left">
+                <p className="text-4xl font-bold text-orange-400 mb-6">
+                  Followings
+                </p>
+                <h3 className="text-2xl font-bold mb-4">
+                  「フォロー中のアーティスト」を確認
+                </h3>
+                <p className="text-gray-400 leading-relaxed">
+                  プロフィールページの「Followings」をクリックすると、フォロー中のアーティストを確認できます。
+                </p>
+              </div>
+              {/* 画像エリア */}
+              <div className="md:w-1/2">
+                <img
+                  src={followingsImage}
                   alt="Step 5のスクリーンショット"
                   className="rounded-lg shadow-xl border border-gray-700"
                 />
