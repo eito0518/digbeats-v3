@@ -1,0 +1,81 @@
+name: Azure Static Web Apps CI/CD
+
+# トリガー
+on:
+  # 本番環境にプッシュ時
+  push:
+    branches:
+      - main
+    paths:
+      - "frontend/**"
+  # PRを作成時（Azureが自動でプレビュー環境を作成し検証してくれる）
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    branches:
+      - main
+    paths:
+      - "frontend/**"
+
+# ジョブ
+jobs:
+  build_and_deploy_job:
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed') # ジョブの実行条件
+    runs-on: ubuntu-latest # ランナーを指定
+    name: Build and Deploy Job
+    permissions:
+      id-token: write # IDトークンを発行する権限
+      contents: read # リポジトリのコードを読み取る権限
+
+    # ステップ
+    steps:
+      # リポジトリのソースコードをランナー上にチェックアウトするステップ
+      - uses: actions/checkout@v3 # GitHub公式が提供するアクション
+        with:
+          submodules: true # サブモジュールも含む
+          lfs: false # ビルドに不要な巨大ファイルは無視
+
+      # IDトークンを取得するためにGitHub公式ライブラリをインストールするステップ
+      - name: Install OIDC Client from Core Package
+        run: npm install @actions/core@1.6.0 @actions/http-client
+
+      #　JavaScriptコードを実行して、IDトークンを取得するステップ
+      - name: Get Id Token
+        uses: actions/github-script@v6 # GitHub公式が提供するアクション
+        id: idtoken # 後で参照できるようステップにIDを付与
+        with:
+          # JavaScriptコードを実行して、IDトークンを取得
+          script: |
+            const coredemo = require('@actions/core')
+            return await coredemo.getIDToken()
+          result-encoding: string
+
+      # ビルド　と　デプロイを実行するステップ
+      - name: Build And Deploy
+        id: builddeploy
+        uses: Azure/static-web-apps-deploy@v1 # GitHub公式が提供するアクション
+        with:
+          action: "upload" # ビルドとデプロイ
+          ###### Repository/Build Configurations ######
+          app_location: "/frontend" # ソースコードのパス (/frontend)
+          output_location: "dist" # ビルド成果物の相対パス (/frontend/dist)
+          github_id_token: ${{ steps.idtoken.outputs.result }} # 前のステップで取得したIDトークンを渡す
+          ###### End of Repository/Build Configurations ######
+        env:
+          # ビルド時に環境変数を注入する
+          VITE_DEMO_MODE: ${{ secrets.VITE_DEMO_MODE }}
+          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
+          VITE_OAUTH_CLIENT_ID: ${{ secrets.VITE_OAUTH_CLIENT_ID }}
+          VITE_OAUTH_REDIRECT_URI: ${{ secrets.VITE_OAUTH_REDIRECT_URI }}
+
+  ###### Azure Static Web Appsの無料プランでは、自動でプレビュー環境を削除できないためコメントアウト ######
+
+  # close_pull_request_job:
+  #   if: github.event_name == 'pull_request' && github.event.action == 'closed'
+  #   runs-on: ubuntu-latest
+  #   name: Close Pull Request Job
+  #   steps:
+  #     - name: Close Pull Request
+  #       id: closepullrequest
+  #       uses: Azure/static-web-apps-deploy@v1
+  #       with:
+  #         action: "close"
