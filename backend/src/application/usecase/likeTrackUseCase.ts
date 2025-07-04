@@ -21,18 +21,18 @@ export class LikeTrackUseCase {
       sessionId
     );
 
+    // DBに楽曲のいいねを登録
+    await this._userDbRepository.likeTrack(recommendationId, trackId);
+
     // trackId から soundcloudTrackId を取得する
     const soundcloudTrackId = await this._trackDbRepository.getExternalTrackId(
       trackId
     );
 
-    // APIで楽曲のいいねを登録
+    // APIで楽曲のいいねを登録(エラーをthrowしない)
     await this._userApiRepository.likeTrack(
       validToken.accessToken,
       soundcloudTrackId
     );
-
-    // DBに楽曲のいいねを登録
-    await this._userDbRepository.likeTrack(recommendationId, trackId);
   }
 }

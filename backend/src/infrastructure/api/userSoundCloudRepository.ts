@@ -119,9 +119,9 @@ export class UserSoundCloudRepository implements UserApiRepository {
     try {
       await axios.post(endPoint, null, { headers });
     } catch (error) {
+      // エラーをthrowせず、ログ出力に留める
       const message = `Failed to like track (ID: ${soundcloudTrackId}): unable to communicate with SoundCloud API`;
       console.error(`[userSoundCloudRepository] ${message}`, error);
-      throw new Error(message);
     }
   }
 
@@ -140,9 +140,9 @@ export class UserSoundCloudRepository implements UserApiRepository {
     try {
       await axios.delete(endPoint, { headers });
     } catch (error) {
+      // エラーをthrowせず、ログ出力に留める
       const message = `Failed to unlike track (ID: ${soundcloudTrackId}): unable to communicate with SoundCloud API`;
       console.error(`[userSoundCloudRepository] ${message}`, error);
-      throw new Error(message);
     }
   }
 }
