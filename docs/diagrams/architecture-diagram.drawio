@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="afhy61-JGGwbrwMMAsw_" name="ページ1">
-        <mxGraphModel dx="868" dy="1692" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="1492" dy="1063" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -61,7 +61,7 @@
                         <mxPoint x="800" y="362.5925925925926" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="45" value="Value Object,&amp;nbsp;&lt;div&gt;Entity,&lt;/div&gt;&lt;div&gt;Model&lt;/div&gt;" style="html=1;" parent="1" vertex="1">
+                <mxCell id="45" value="&lt;font style=&quot;color: rgb(0, 0, 0);&quot;&gt;Value Object,&amp;nbsp;&lt;/font&gt;&lt;div&gt;&lt;font style=&quot;color: rgb(0, 0, 0);&quot;&gt;Entity,&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;color: rgb(0, 0, 0);&quot;&gt;Model&lt;/font&gt;&lt;/div&gt;" style="html=1;" parent="1" vertex="1">
                     <mxGeometry x="800" y="160" width="110" height="50" as="geometry"/>
                 </mxCell>
                 <mxCell id="46" value="" style="endArrow=open;endFill=1;endSize=12;html=1;" parent="1" source="33" target="45" edge="1">

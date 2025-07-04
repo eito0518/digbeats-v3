@@ -123,8 +123,6 @@ DigBeats は SoundCloud アカウントがあればすぐに始められます�
 
 <br>
 
----
-
 ## その他の機能
 
 ### History: 今までの「レコメンド履歴」を確認
@@ -151,9 +149,9 @@ DigBeats は SoundCloud アカウントがあればすぐに始められます�
 
 - [fetchMyFollowingsUseCase.ts](backend/src/application/usecase/fetchMyFollowingsUseCase.ts)
 
----
-
 <br>
+
+---
 
 ## 使用技術
 
@@ -164,18 +162,18 @@ DigBeats は SoundCloud アカウントがあればすぐに始められます�
 | データベース   | MySQL                                                                                        |
 | セッション管理 | Redis / Cookie                                                                               |
 | 認証           | SoundCloud OAuth 2.1                                                                         |
-| 環境構築       | Docker / Docker hub                                                                          |
-| バージョン管理 | Git / Git hub                                                                                |
+| 環境構築       | Docker / Docker Hub                                                                          |
+| バージョン管理 | Git / GitHub                                                                                 |
 | CI/CD          | Github Actions                                                                               |
 | インフラ       | Azure Static Web Apps / Azure App Service / Azure DataBase for MySQL / Azure Cache for Redis |
 
 <br>
 
-インフラ構成図
-
----
+![インフラ構成図](docs/assets/infrastructure-diagram.png)
 
 <br>
+
+---
 
 ## アプリケーション設計
 
@@ -192,7 +190,17 @@ DigBeats は SoundCloud アカウントがあればすぐに始められます�
 | Domain         | domain/         | アプリケーションの最も核となるビジネスルールやデータ構造（値オブジェクト、エンティティ等）を定義します。 |
 | Infrastructure | infrastructure/ | データベース、外部 API、Redis など、外部システムと通信を行います。                                       |
 
-具体例
+#### 具体的な処理フローの例（レコメンド生成処理の場合）
+
+1. **Presentation 層**の`recommendationRouter`がリクエストを受け取り、`recommendationController.di`によって依存注入された`recommendationController`にリクエストを渡します。
+
+2. `recommendationController` はリクエスト内容を検証し、**Application 層** の `getRecommendationUseCase` を呼び出します。
+
+3. `getRecommendationUseCase`は、**Application 層** の`ApplicationService` や **Domain 層**の`DomainService, Value Object, Entity`などを利用して、ビジネスロジックを実行します。
+
+4. この際、**Infrastructure 層** の `trackApiRepository` や `recommendationDbRepository` を（インターフェース経由で）利用して、外部 API や DB と通信します。
+
+5. 処理結果が **Presentation 層**の`recommendationController` に返され、`recommendationPresenter`によって整形された後、クライアントにレスポンスが送信されます。
 
 <br>
 
@@ -208,34 +216,128 @@ SoundCloud から API を通じて毎回最新のものを取得するものと�
 
 ## こだわった実装
 
-テキスト
+### 認証フローの設計と実装
+
+#### 【課題】
+
+SoundCloud API の利用には、OAuth 2.1 の **PKCE フロー**が必須でした。しかし、一般的な PKCE の実装例はクライアント側でトークンを保持するモバイルアプリが中心です。本アプリのようなフロントエンドとバックエンドが分離した Web アプリケーションにおいて、最大の課題は、アクセストークン等の機密情報をフロントエンド（ブラウザ）に一切保存させず、XSS 攻撃などのリスクを最小限に抑えることでした。
+
+SoundCloud API Guide： https://developers.soundcloud.com/docs/api/guide
+
+#### 【工夫・実装】
+
+この課題を解決するため、トークン管理を全てサーバーサイドで完結させるアーキテクチャを設計・実装しました。
+
+1. **トークン交換のサーバーサイド化：**<br>
+   PKCE のフローに従い、フロントエンドは認可コード（`code`）を取得する役割のみを担います。取得した認可コードは一度だけバックエンドに送信され、**アクセストークンへの交換処理と、その後の管理は全てサーバーサイドで完結**させます。
+
+2. **Cookie と Redis によるセッション管理:**<br>
+   サーバーサイドで安全なセッション ID を生成し、`HttpOnly` **属性を付与した Cookie** としてフロントエンドに返却します。このセッション ID をキーとして、実際のアクセストークンやユーザー情報はサーバー側の **Redis** に保存します。以降、フロントエンドからのリクエストは、この Cookie を元にサーバー側でユーザーを特定し、SoundCloud API との通信は全てバックエンドが代理で行います。
+
+3. **技術選定の意図:**<br>
+   `localStorage` へのトークン保存は XSS に対して脆弱であり、JWT の導入も検討しましたが、今回は実装コストと学習効果（セッション・Cookie 実装は初挑戦）のバランスを考慮し、この堅牢なセッションベースの認証方式を選択しました。
+
+#### 【成果】
+
+この設計により、ブラウザの JavaScript からは **アクセストークン** と **セッション ID** にアクセスできないため、**XSS によるトークン盗難** や **セッションハイジャック** のリスクを排除しました。同時に、ユーザーは一度ログインすればセッションが続く限りサービスをシームレスに利用できる、安全で快適なユーザー体験を実現しました。
+
+> より具体的な認証フローは以下をご覧ください
+
+- [auth-flow.md](docs/specifications/auth-flow.md)
 
 <br>
 
-### ログイン機能
+> 主な関連コード
 
-テキスト
+※ これらのファイルから処理の流れを追えます
 
-> より詳しくみたい場合は以下をご覧ください
-
-[auth-flow.md](docs/specifications/auth-flow.md)
+- Backend
+  - [authorizeUserUseCase.ts](backend/src/application/usecase/authorizeUserUseCase.ts)
+- Frontend
+  - [Login.tsx](frontend/src/pages/Login.tsx)
+  - [Callback.tsx](frontend/src/pages/Callback.tsx)
 
 <br>
 
-### レコメンドアルゴリズム
+### レコメンドアルゴリズムの設計と実装
 
-テキスト
+#### 【課題】
 
-> より詳しくみたい場合は以下をご覧ください
+質の高いレコメンドには、元となる「いいね」楽曲が多数（例: 100 曲以上）必要でした。しかし、ユーザーがフォローするアーティストの中には、素晴らしい楽曲を持っていても「いいね」数が少ないアーティストも多く含まれます。これらのアーティストを単純に除外してしまうと、**多くのユーザーが良いレコメンド体験を得られなくなる**というジレンマがありました。
 
-[recommendations-flow.md](docs/specifications/recommendations-flow.md)
+#### 【工夫・実装】
+
+この課題を解決するため、複数のアーティストをプログラム上で束ねて一人のアーティストとして扱う『**仮想アーティスト**』という独自の概念を考案・実装しました。
+
+1. **仮想アーティストの生成:**<br>
+   まず、フォロー中のアーティストを「いいね」の数で分類します。100 件未満 20 曲以上のアーティストをランダムに 5 人ずつグルーピングし、これを一人の『仮想アーティスト』と見なします。これにより、個々の「いいね」は少なくても、合計で **100 曲以上の楽曲ソースを安定的に確保**できるようになりました。
+
+2. **「深掘り」体験の演出:**<br>
+   レコメンドのソースは、「十分な楽曲数を持つ通常アーティスト」か、この「仮想アーティスト」の**どちらか一つをランダムに選ぶ**設計にしました。これにより、一人のアーティスト（またはそれに準ずる集合）の好みを深く掘り下げる「ディグ体験」を演出し、アプリのコンセプトとの一貫性を持たせました。
+
+   同時にこの方式は、『仮想アーティスト』が選ばれた場合でも、その構成人数（最大 5 人）が API 呼び出し回数の上限となるため、パフォーマンスの極端な悪化を防いでいます。
+
+3. **パフォーマンスと API 規約遵守:**<br>
+   この仕組みにより、1 回のレコメンドで呼び出す API の回数をソースが**『通常アーティスト』の場合は最大 6 回**、**『仮想アーティスト』の場合でも構成人数分（最大 5 回）**に抑制できます。これにより、多くのケースで 2〜5 秒以内という高速なレスポンスを維持しつつ、SoundCloud の API ポリシーも遵守した設計を実現しました。
+
+#### 【成果】
+
+この『仮想アーティスト』の仕組みにより、ユーザーがどんなアーティストをフォローしていても、その好みを無駄にすることなく、質の高いレコメンドを受けられるようになりました。技術的な制約の中で、2〜5 秒という高速なレスポンスと、質の高いユーザー体験を両立させる具体的な解決策を自ら考案し、形にできたことが、この機能の最大のこだわりです。
+
+> レコメンドアルゴリズムの詳しい説明は以下をご覧ください
+
+- [recommendations-flow.md](docs/specifications/recommendations-flow.md)
+
+<br>
+
+> 主な関連コード
+
+※ このファイルから処理の流れを追えます
+
+- [getRecommendationUseCase.ts](backend/src/application/usecase/getRecommendationUseCase.ts)
+
+<br>
+
+### いいね機能の設計と実装
+
+#### 【課題】
+
+外部 API（SoundCloud）と内部データベースを持つアプリケーションにおいて、「いいね」の状態をどう扱うかは大きな課題でした。常に SoundCloud の最新状態を正とすると、DB に保存されているすべての楽曲とユーザーの組み合わせの数だけ同期を行う必要があり、API を呼び出すコストが非常に大きくなってしまうリスクがあります。
+
+また、それ以上に重要だったのが、**「ユーザーのグローバルな『いいね』履歴」と「このレコメンドをきっかけに、いいねしたか」**というアプリ内での行動履歴は、コンセプト上、意味合いが異なるという点でした。
+
+#### 【工夫・実装】
+
+この課題を解決するため、**内部 DB の `recommendations_tracks` テーブルに `is_liked` カラム（Boolean 型）を追加**し、これをアプリ内でのいいね状態の**唯一の信頼できる情報源**としました。この設計判断に基づき、以下の具体的なフローを実装しました。
+
+1. **UI/UX の即時反映と非同期処理:**
+   ユーザーが「いいね」ボタンを押すと、フロントエンドは `POST /api/users/likes`エンドポイントを呼び出します。バックエンドでは、まず受け取った `recommendationId` と `trackId` を元に、**`recommendations_tracks` テーブルの `is_liked` フラグを `true` に更新**します。この DB 更新が成功した時点で、フロントエンドには即座に「成功」のレスポンスを返します。
+   その後、バックグラウンドで**非同期に SoundCloud API を呼び出し**、SoundCloud 上でも同じ楽曲を「いいね」します。この外部 API 通信の成否は、ユーザーの画面表示には影響しません。
+
+2. **一貫性のあるデータ提供:**
+   レコメンド履歴などを表示する際は、毎回 SoundCloud API に問い合わせるのではなく、**内部 DB の `is_liked` フラグの値をそのままフロントエンドに返す**ことで、高速かつ安定したデータ表示を実現しています。これにより、「**このレコメンドをきっかけに、ユーザーがいいねをしたか**」というアプリ独自の行動履歴を正確に提示できます。
+
+#### 【成果】
+
+この設計により、外部 API の状況に左右されない高速で安定したユーザー体験を実現しました。さらに、単なる外部データのミラーリングではなく、**「アプリ内での音楽発見の記録」**という独自の意味を持つデータを定義・管理することで、アプリケーションのコンセプトをより強固なものにできました。
+
+> いいね機能設計や API のレスポンスの詳細は以下をご覧ください
+
+- [overall-flow.md](docs/specifications/overall-flow.md)
+
+> 主な関連コード
+
+※ このファイルから処理の流れを追えます
+
+- [recommendationMySQLRepository.ts](backend/src/infrastructure/db/recommendationMySQLRepository.ts)<br>　(レコメンド生成時は`isLiked=false`)
+- [likeTrackUseCase.ts](backend/src/application/usecase/likeTrackUseCase.ts)
 
 <br>
 
 ## 今後の開発について
 
-テキスト
+Azure for student で完全無料だと思っていた Azure DataBase for MySQL は一定以上の I/O 操作によって従量課金されることがわかった。
+そこで、コストダウンを目指して以下の改善を行いたい。
 
-<br>
-
----
+- SQL の最適化を行い DB の I/O を減らす
+- キャッシュを用いて DB の I/O を減らす
