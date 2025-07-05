@@ -12,4 +12,4 @@ createRoot(document.getElementById("root")!).render(
   </StrictMode>
 );
 
-// CI/CD trigger
+// CI/CD trigger for frontend
