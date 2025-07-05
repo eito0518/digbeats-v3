@@ -15,8 +15,7 @@ export const createApp = () => {
   // 許可するオリジン（ドメイン）のリストを定義
   const allowedOrigins = [
     "https://localhost:3000", // 開発環境
-    "https://www.digbeats.jp", // 本番環境（旧カスタムドメイン、　動作確認できたら削除）
-    "https://app.digbeats.jp", // 本番環境（カスタムドメイン）
+    "https://www.digbeats.jp", // 本番環境(カスタムドメイン）
   ];
 
   if (config.NODE_ENV === "production") {
