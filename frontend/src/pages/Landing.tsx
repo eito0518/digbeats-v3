@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import logo from "../assets/digbeats-logo.png";
+import logo from "../assets/app-logo.png";
 import mockup from "../assets/mockup.png";
 import step1Image from "../assets/login.png";
 import step2Image from "../assets/search-follow.png";

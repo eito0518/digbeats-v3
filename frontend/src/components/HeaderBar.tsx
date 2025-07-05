@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../hooks/useUser";
-import logo from "../assets/digbeats-logo.png";
+import logo from "../assets/app-logo.png";
 import SearchIcon from "@mui/icons-material/Search";
 import { Avatar } from "@mui/material";
 
