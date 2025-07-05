@@ -42,5 +42,3 @@ if (config.NODE_ENV === "production") {
     );
   }
 }
-
-// CI/CD trigger
