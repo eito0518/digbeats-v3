@@ -21,18 +21,18 @@ export class UnlikeTrackUseCase {
       sessionId
     );
 
+    // DBに楽曲のいいねを解除
+    await this._userDbRepository.unlikeTrack(recommendationId, trackId);
+
     // trackId から soundcloudTrackId を取得する
     const soundcloudTrackId = await this._trackDbRepository.getExternalTrackId(
       trackId
     );
 
-    // APIで楽曲のいいねを解除
+    // APIで楽曲のいいねを解除(エラーはthrowしない)
     await this._userApiRepository.unlikeTrack(
       validToken.accessToken,
       soundcloudTrackId
     );
-
-    // DBに楽曲のいいねを解除
-    await this._userDbRepository.unlikeTrack(recommendationId, trackId);
   }
 }
