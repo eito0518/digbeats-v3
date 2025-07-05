@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { generateAuthorizationUrl } from "../auth/generateAuthorizationUrl";
-import logo from "../assets/digbeats-logo.png";
+import logo from "../assets/app-logo.png";
 
 export const Login = () => {
   // 古いPKCE情報を削除する
