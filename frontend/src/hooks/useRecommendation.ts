@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Recommendation } from "../types/recommendationType";
 import { apiClient } from "../auth/apiClient";
 
-// 環境変数からデモモードかどうかを判定
+// 環境変数からデモモードかどうかを判定 （2025/08/12現在： false）
 const isDemoMode = import.meta.env.VITE_DEMO_MODE === "true";
 // 生成回数の上限を定数として定義
 const GENERATION_LIMIT = 3;
@@ -47,7 +47,7 @@ export const useRecommendation = () => {
     // 生成を実行中の場合
     if (isGenerating) return;
 
-    setIsGenerating(true); //　API通信前にローディングを開始
+    setIsGenerating(true); //API通信前にローディングを開始
 
     try {
       const response = await apiClient.get("/recommendations");
@@ -56,7 +56,7 @@ export const useRecommendation = () => {
       setRecommendations((previous) => [newRecommendation, ...previous]);
       // 生成したレコメンドアニメーション対象に追加
       setAnimatedId(newRecommendation.recommendationId);
-      setTimeout(() => setAnimatedId(null), 1000); //　アニメーションを解除
+      setTimeout(() => setAnimatedId(null), 1000); //アニメーションを解除
       // 生成回数を更新
       setTodaysGenerateCount((previous) => previous + 1);
     } catch (error) {
@@ -66,7 +66,7 @@ export const useRecommendation = () => {
       );
       alert("Failed to generate recommendation. Please try again.");
     } finally {
-      setIsGenerating(false); //　API通信完了後にローディングを終了
+      setIsGenerating(false); //API通信完了後にローディングを終了
     }
   };
 
@@ -107,7 +107,7 @@ export const useRecommendation = () => {
       });
       setRecommendations(newRecommendations);
 
-      //　バックエンドに反映
+      //バックエンドに反映
       try {
         if (isCurrentlyLiked) {
           // いいね解除
