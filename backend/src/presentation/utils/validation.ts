@@ -20,6 +20,8 @@ export const validateSessionId = (sessionId: string): void => {
   }
 };
 
+////////////////////// TODO: unit test //////////////////////////
+
 // artistName クエリパラメータの存在チェック と 文字変換
 export const validateArtistNameParam = (artistNameRaw: unknown): string => {
   if (typeof artistNameRaw !== "string" || artistNameRaw.trim() === "") {
