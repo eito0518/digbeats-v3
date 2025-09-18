@@ -2,6 +2,7 @@ import {
   validateAuthParams,
   validateSessionId,
   validateArtistNameParam,
+  validateSoundCloudArtistId,
 } from "./validation";
 import { ReauthenticationRequiredError } from "../../errors/application.errors";
 import { BadRequestError } from "../../errors/presentation.errors";
@@ -98,5 +99,48 @@ describe("validateArtistNameParam", () => {
     expect(() => {
       validateArtistNameParam("   ");
     }).toThrow(BadRequestError);
+  });
+});
+
+// soundcloudArtistId の存在チェック と 数値変換
+describe("validateSoundCloudArtistId", () => {
+  it("should return a number when given a valid positive integer string", () => {
+    expect(validateSoundCloudArtistId("12345")).toBe(12345);
+  });
+
+  it("should throw BadRequestError when the input is null", () => {
+    expect(() => {
+      validateSoundCloudArtistId(null as any);
+    }).toThrow("Missing 'soundcloudArtistId'");
+  });
+
+  it("should throw BadRequestError when the input is undefined", () => {
+    expect(() => {
+      validateSoundCloudArtistId(undefined as any);
+    }).toThrow("Missing 'soundcloudArtistId'");
+  });
+
+  it("should throw BadRequestError when the input is a non-numeric string", () => {
+    expect(() => {
+      validateSoundCloudArtistId("abc" as any);
+    }).toThrow("'soundcloudArtistId' must be a positive integer");
+  });
+
+  it("should throw BadRequestError when the input is a float string", () => {
+    expect(() => {
+      validateSoundCloudArtistId("123.45" as any);
+    }).toThrow("'soundcloudArtistId' must be a positive integer");
+  });
+
+  it("should throw BadRequestError when the input is zero", () => {
+    expect(() => {
+      validateSoundCloudArtistId("0" as any);
+    }).toThrow("'soundcloudArtistId' must be a positive integer");
+  });
+
+  it("should throw BadRequestError when the input is a negative integer string", () => {
+    expect(() => {
+      validateSoundCloudArtistId("-123" as any);
+    }).toThrow("'soundcloudArtistId' must be a positive integer");
   });
 });
