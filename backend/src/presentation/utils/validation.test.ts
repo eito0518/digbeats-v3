@@ -3,6 +3,7 @@ import {
   validateSessionId,
   validateArtistNameParam,
   validateSoundCloudArtistId,
+  validateLikeParams,
 } from "./validation";
 import { ReauthenticationRequiredError } from "../../errors/application.errors";
 import { BadRequestError } from "../../errors/presentation.errors";
@@ -142,5 +143,88 @@ describe("validateSoundCloudArtistId", () => {
     expect(() => {
       validateSoundCloudArtistId("-123" as any);
     }).toThrow("'soundcloudArtistId' must be a positive integer");
+  });
+});
+
+// いいね情報 （recommendationId, trackId） の存在チェック と 数値変換
+describe("validateLikeParams", () => {
+  it("should return an object with numbers when both inputs are valid integer strings", () => {
+    // toEqualでオブジェクトの内容を比較
+    expect(validateLikeParams("123", "456")).toEqual({
+      recommendationId: 123,
+      trackId: 456,
+    });
+  });
+
+  it("should throw BadRequestError when recommendationId is null", () => {
+    expect(() => {
+      validateLikeParams(null as any, "456");
+    }).toThrow("Missing 'recommendationId'");
+  });
+
+  it("should throw BadRequestError when recommendationId is undefined", () => {
+    expect(() => {
+      validateLikeParams(undefined as any, "456");
+    }).toThrow("Missing 'recommendationId'");
+  });
+
+  it("should throw BadRequestError when the recommendationId is a non-numeric string", () => {
+    expect(() => {
+      validateLikeParams("abc" as any, "456");
+    }).toThrow("'recommendationId' must be a positive integer");
+  });
+
+  it("should throw BadRequestError when the recommendationId is a float string", () => {
+    expect(() => {
+      validateLikeParams("123.45" as any, "456");
+    }).toThrow("'recommendationId' must be a positive integer");
+  });
+
+  it("should throw BadRequestError when the recommendationId is zero", () => {
+    expect(() => {
+      validateLikeParams("0" as any, "456");
+    }).toThrow("'recommendationId' must be a positive integer");
+  });
+
+  it("should throw BadRequestError when the recommendationId is a negative integer string", () => {
+    expect(() => {
+      validateLikeParams("-123" as any, "456");
+    }).toThrow("'recommendationId' must be a positive integer");
+  });
+
+  it("should throw BadRequestError when trackId is null", () => {
+    expect(() => {
+      validateLikeParams("123", null as any);
+    }).toThrow("Missing 'trackId'");
+  });
+
+  it("should throw BadRequestError when trackId is undefined", () => {
+    expect(() => {
+      validateLikeParams("456", undefined as any);
+    }).toThrow("Missing 'trackId'");
+  });
+
+  it("should throw BadRequestError when the trackId is a non-numeric string", () => {
+    expect(() => {
+      validateLikeParams("456", "abc" as any);
+    }).toThrow("'trackId' must be a positive integer");
+  });
+
+  it("should throw BadRequestError when the trackId is a float string", () => {
+    expect(() => {
+      validateLikeParams("456", "123.45" as any);
+    }).toThrow("'trackId' must be a positive integer");
+  });
+
+  it("should throw BadRequestError when the trackId is zero", () => {
+    expect(() => {
+      validateLikeParams("456", "0" as any);
+    }).toThrow("'trackId' must be a positive integer");
+  });
+
+  it("should throw BadRequestError when the trackId is a negative integer string", () => {
+    expect(() => {
+      validateLikeParams("456", "-123" as any);
+    }).toThrow("'trackId' must be a positive integer");
   });
 });
