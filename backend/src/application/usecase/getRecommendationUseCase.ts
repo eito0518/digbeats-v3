@@ -29,12 +29,15 @@ export class GetRecommendationUseCase {
     //　ArtistInfo[]型　から　VO(Followings型) に変換
     const followings = new Followings(rawFollowings);
 
-    // レコメンド生成の条件を検証
-    followings.validateRecommendation();
+    // レコメンドが生成可能か条件を検証
+    followings.ensureCanGenerateRecommendation();
 
     // レコメンドのソースとなるアーティストを選ぶ
     const sourceArtist =
       this._recommendationDomainService.pickSourceArtist(followings);
+
+    // <<<<<<<<<<< TODO: ここから下をコードリーディング　と　リファクタリング >>>>>>>>>>>>>
+    // ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
 
     // 選ばれたアーティストから いいね楽曲　をランダムに　10曲選び、取得
     const tracks =

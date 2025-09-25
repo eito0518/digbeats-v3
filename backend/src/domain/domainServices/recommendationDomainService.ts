@@ -1,7 +1,7 @@
 import { Followings } from "../valueObjects/followings";
 import { SourceArtist } from "../models/sourceArtist";
-import { RegularArtist } from "../valueObjects/regularArtist";
-import { VirtualArtistFactory } from "../factories/virtualArtistFactory";
+import { StandAloneSourceArtist } from "../valueObjects/standAloneSourceArtist";
+import { virtualSourceArtistFactory } from "../factories/virtualArtistFactory";
 
 export class RecommendationDomainService {
   constructor() {}
@@ -9,22 +9,24 @@ export class RecommendationDomainService {
   // レコメンドのソースとなるアーティストをランダムに選ぶ
   pickSourceArtist(followings: Followings): SourceArtist {
     // アーティストを いいね曲数 によって分類
-    const { availableArtists, groupableArtists } =
-      followings.classifyByPublicFavoritesCount();
+    const { standAloneArtists, groupableArtists } =
+      followings.classifyByTrackLikes();
 
-    // いいね楽曲の数が十分なアーティストは VO（通常アーティスト型） に変換
-    const regularArtists = availableArtists.map(
-      (artist) => new RegularArtist(artist)
+    // いいね楽曲の数が十分なアーティストは VO（単独ソースアーティスト型） に変換
+    const standAloneSourceArtists = standAloneArtists.map(
+      (artist) => new StandAloneSourceArtist(artist)
     );
 
-    // 条件に応じて複数のアーティストをまとめて 仮想アーティスト を作成
-    const virtualArtists = VirtualArtistFactory.create(groupableArtists);
+    // 条件に応じて複数のアーティストをまとめて 仮想ソースアーティスト を作成
+    const virtualSourceArtists =
+      virtualSourceArtistFactory.create(groupableArtists);
 
     // レコメンドのソースとなるアーティストをランダムに1人選んで返す
-    const candidates: SourceArtist[] = [...regularArtists, ...virtualArtists];
-
+    const candidates: SourceArtist[] = [
+      ...standAloneSourceArtists,
+      ...virtualSourceArtists,
+    ];
     const randomIndex = Math.floor(Math.random() * candidates.length); // インデックスをランダムに決定
-
     return candidates[randomIndex];
   }
 }

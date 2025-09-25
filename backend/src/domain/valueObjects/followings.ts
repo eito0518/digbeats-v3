@@ -4,34 +4,34 @@ import { RecommendationRequirementsNotMetError } from "../../errors/domain.error
 export class Followings {
   constructor(private readonly _artists: ArtistInfo[]) {}
 
-  //  レコメンド生成の条件を検証する
-  public validateRecommendation(): void {
-    // 条件1: いいね数が20以上のフォロー中アーティストが5人以上いるかどうか
-    const qualifiedArtists = this._artists.filter(
+  // レコメンドが生成可能か条件を検証する
+  public ensureCanGenerateRecommendation(): void {
+    // 条件1: いいね数が20以上のフォロー中アーティストが、5人以上いるかどうか
+    const artistsWithSufficientTrackLikes = this._artists.filter(
       (artist) =>
         artist.likedTracksCount !== undefined && artist.likedTracksCount >= 20
     );
 
-    if (qualifiedArtists.length < 5) {
-      const message = `Insufficient qualified artists. Required: 5, Found: ${qualifiedArtists.length}`;
+    if (artistsWithSufficientTrackLikes.length < 5) {
+      const message = `Insufficient qualified artists. Required: 5, Found: ${artistsWithSufficientTrackLikes.length}`;
       throw new RecommendationRequirementsNotMetError(message);
     }
 
     // 条件2: フォロー中アーティスト全体のいいねトラック総数が100以上かどうか
-    const totalLikedTracksCount = this._artists.reduce(
+    const totalTrackLikes = this._artists.reduce(
       (sum, artist) => sum + (artist.likedTracksCount || 0),
       0
     );
 
-    if (totalLikedTracksCount < 100) {
-      const message = `Insufficient total liked tracks. Required: 100, Found: ${totalLikedTracksCount}`;
+    if (totalTrackLikes < 100) {
+      const message = `Insufficient total liked tracks. Required: 100, Found: ${totalTrackLikes}`;
       throw new RecommendationRequirementsNotMetError(message);
     }
   }
 
   // アーティストを いいね曲数 によって分類する
-  classifyByPublicFavoritesCount() {
-    const availableArtists = this._artists.filter(
+  classifyByTrackLikes() {
+    const standAloneArtists = this._artists.filter(
       (artist) =>
         artist.likedTracksCount !== undefined && artist.likedTracksCount >= 100
     );
@@ -44,6 +44,6 @@ export class Followings {
         artist.likedTracksCount < 100
     );
 
-    return { availableArtists, groupableArtists };
+    return { standAloneArtists, groupableArtists };
   }
 }
