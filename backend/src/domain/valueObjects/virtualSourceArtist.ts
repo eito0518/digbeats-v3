@@ -1,7 +1,7 @@
 import { SourceArtist } from "../models/sourceArtist";
 import { ArtistInfo } from "./artistInfo";
 
-export class VirtualArtist implements SourceArtist {
+export class VirtualSourceArtist implements SourceArtist {
   constructor(private readonly _artists: ArtistInfo[]) {}
 
   isVirtual(): boolean {
