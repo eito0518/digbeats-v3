@@ -6,7 +6,7 @@ export class Followings {
 
   // レコメンドが生成可能か条件を検証する
   public ensureCanGenerateRecommendation(): void {
-    // 条件1: いいね数が20以上のフォロー中アーティストが、5人以上いるかどうか
+    // 条件: いいね数が20以上のフォロー中アーティストが、5人以上いるかどうか
     const artistsWithSufficientTrackLikes = this._artists.filter(
       (artist) =>
         artist.likedTracksCount !== undefined && artist.likedTracksCount >= 20
@@ -16,21 +16,10 @@ export class Followings {
       const message = `Insufficient qualified artists. Required: 5, Found: ${artistsWithSufficientTrackLikes.length}`;
       throw new RecommendationRequirementsNotMetError(message);
     }
-
-    // 条件2: フォロー中アーティスト全体のいいねトラック総数が100以上かどうか
-    const totalTrackLikes = this._artists.reduce(
-      (sum, artist) => sum + (artist.likedTracksCount || 0),
-      0
-    );
-
-    if (totalTrackLikes < 100) {
-      const message = `Insufficient total liked tracks. Required: 100, Found: ${totalTrackLikes}`;
-      throw new RecommendationRequirementsNotMetError(message);
-    }
   }
 
   // アーティストを いいね曲数 によって分類する
-  classifyByTrackLikes() {
+  public classifyByTrackLikes() {
     const standAloneArtists = this._artists.filter(
       (artist) =>
         artist.likedTracksCount !== undefined && artist.likedTracksCount >= 100
