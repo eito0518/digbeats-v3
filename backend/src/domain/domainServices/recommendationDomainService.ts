@@ -1,7 +1,7 @@
 import { Followings } from "../valueObjects/followings";
 import { SourceArtist } from "../models/sourceArtist";
 import { StandAloneSourceArtist } from "../valueObjects/standAloneSourceArtist";
-import { virtualSourceArtistFactory } from "../factories/virtualArtistFactory";
+import { virtualSourceArtistFactory } from "../factories/virtualSourceArtistFactory";
 
 export class RecommendationDomainService {
   constructor() {}
