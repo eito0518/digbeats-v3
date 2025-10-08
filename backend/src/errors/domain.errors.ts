@@ -12,3 +12,10 @@ export class RecommendationRequirementsNotMetError extends DomainError {
     super(message);
   }
 }
+
+// ドメインのエンティティやValueIbjectのデータが不正な場合にスローされるエラー
+export class InvalidDomainDataError extends DomainError {
+  constructor(message: string) {
+    super(message);
+  }
+}

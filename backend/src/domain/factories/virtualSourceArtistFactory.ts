@@ -1,5 +1,6 @@
 import { ArtistInfo } from "../valueObjects/artistInfo";
 import { VirtualSourceArtist } from "../valueObjects/virtualSourceArtist";
+import { InvalidDomainDataError } from "../../errors/domain.errors";
 
 export const virtualSourceArtistFactory = {
   // 仮想ソースアーティストを生成する
@@ -17,8 +18,7 @@ export const virtualSourceArtistFactory = {
           const message = `likedTracksCount is missing for artist: ${JSON.stringify(
             artist
           )}`;
-          console.error(`[virtualArtistFactory] ${message}`);
-          throw new Error(message);
+          throw new InvalidDomainDataError(message);
         }
         return sum + artist.likedTracksCount;
       }, 0); // sumの初期値
@@ -32,7 +32,7 @@ export const virtualSourceArtistFactory = {
 };
 
 // 配列をシャッフルする関数
-function shuffleArray<T>(array: T[]): T[] {
+export function shuffleArray<T>(array: T[]): T[] {
   // Fisher–Yatesアルゴリズム
   // 1. 最後の位置から順に「その位置に入る要素」をランダムに選び入れ替える
   // 2. 確定した位置は再度入れ替え対象にならない
@@ -46,7 +46,7 @@ function shuffleArray<T>(array: T[]): T[] {
 }
 
 // 配列を分割する関数
-function chunkArray<T>(array: T[], chunkSize: number): T[][] {
+export function chunkArray<T>(array: T[], chunkSize: number): T[][] {
   const result: T[][] = [];
   for (let i = 0; i < array.length; i += chunkSize) {
     result.push(array.slice(i, i + chunkSize)); // sliceメソッド　はインデックス指定が範囲外でも配列末尾までは切り出される
