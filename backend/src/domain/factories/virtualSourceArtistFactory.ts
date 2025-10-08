@@ -1,5 +1,6 @@
 import { ArtistInfo } from "../valueObjects/artistInfo";
 import { VirtualSourceArtist } from "../valueObjects/virtualSourceArtist";
+import { InvalidDomainDataError } from "../../errors/domain.errors";
 
 export const virtualSourceArtistFactory = {
   // 仮想ソースアーティストを生成する
@@ -17,8 +18,7 @@ export const virtualSourceArtistFactory = {
           const message = `likedTracksCount is missing for artist: ${JSON.stringify(
             artist
           )}`;
-          console.error(`[virtualArtistFactory] ${message}`);
-          throw new Error(message);
+          throw new InvalidDomainDataError(message);
         }
         return sum + artist.likedTracksCount;
       }, 0); // sumの初期値
