@@ -8,7 +8,7 @@ export class VirtualSourceArtist implements SourceArtist {
     return true;
   }
 
-  getFetchTargets(): ArtistInfo[] {
+  getComponentArtists(): ArtistInfo[] {
     return this._artists; // そのまま構成アーティストの配列である　ArtistInfo[]　を返す
   }
 }

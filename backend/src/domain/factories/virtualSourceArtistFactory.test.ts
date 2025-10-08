@@ -89,8 +89,8 @@ describe("virtualSourceArtistFactory", () => {
 
       // 生成された各仮想アーティストの合計いいね数が100以上であることをテスト
       virtualSourceArtists.forEach((virtualArtist) => {
-        const artistsInGroup = virtualArtist.getFetchTargets();
-        const totalTrackLikes = artistsInGroup.reduce(
+        const componentArtists = virtualArtist.getComponentArtists();
+        const totalTrackLikes = componentArtists.reduce(
           (sum, artist) => sum + (artist.likedTracksCount || 0),
           0
         );
@@ -119,8 +119,8 @@ describe("virtualSourceArtistFactory", () => {
 
       // 生成された各仮想アーティストの合計いいね数が100以上であることをテスト
       virtualSourceArtists.forEach((virtualArtist) => {
-        const artistsInGroup = virtualArtist.getFetchTargets();
-        const totalTrackLikes = artistsInGroup.reduce(
+        const componentArtists = virtualArtist.getComponentArtists();
+        const totalTrackLikes = componentArtists.reduce(
           (sum, artist) => sum + (artist.likedTracksCount || 0),
           0
         );
