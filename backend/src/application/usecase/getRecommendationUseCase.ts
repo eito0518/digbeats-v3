@@ -36,9 +36,6 @@ export class GetRecommendationUseCase {
     const sourceArtist =
       this._recommendationDomainService.pickSourceArtist(followings);
 
-    // ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
-    // <<<<<<<<<<< TODO: ここから上のテストコードを書く >>>>>>>>>>>>>
-
     // <<<<<<<<<<< TODO: ここから下をコードリーディング　と　リファクタリング >>>>>>>>>>>>>
     // ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
 
