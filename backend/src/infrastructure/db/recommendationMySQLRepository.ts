@@ -25,7 +25,7 @@ export class RecommendationMySQLRepository implements RecommendationRepository {
 
       // テーブル間の依存関係に従って、順番に取得または保存
       //　　IDが付与された楽曲を 取得または保存
-      const savedTracks: Track[] = await Promise.all(
+      const tracksWithId: Track[] = await Promise.all(
         recommendation.tracks.map(async (track) => {
           // DBに アーティスト が存在するか確認し、なければ保存
           const artistId = await this._artistMysqlRepository.findOrCreateId(
@@ -43,8 +43,8 @@ export class RecommendationMySQLRepository implements RecommendationRepository {
         })
       );
 
-      // 楽曲IDを取得
-      const trackIds = savedTracks.map((track) => track.requireId());
+      // 楽曲IDを取得 （中間テーブル保存するため）
+      const trackIds = tracksWithId.map((track) => track.requireId());
 
       // レコメンドを保存
       const [recommendationInsertResults] =
@@ -53,7 +53,7 @@ export class RecommendationMySQLRepository implements RecommendationRepository {
           [recommendation.userId]
         );
 
-      // レコメンドIDを取得
+      // レコメンドIDを取得 （中間テーブル保存するため）
       const recommendationId = recommendationInsertResults.insertId;
 
       // 中間テーブル （レコメンド・楽曲） に保存
@@ -79,9 +79,9 @@ export class RecommendationMySQLRepository implements RecommendationRepository {
       const createdAt = recommendationSelectResults[0].created_at;
 
       // レコメンドにIDを付与して返す
-      return recommendation.withPersistenceInfo(
+      return recommendation.asPersisted(
         recommendationId, // IDを付与
-        savedTracks, // IDが付与された楽曲に差し替え
+        tracksWithId, // IDが付与された楽曲に差し替え
         createdAt // 作成日時を付与
       );
     } catch (error) {

@@ -1,3 +1,4 @@
+import { InvalidDomainDataError } from "../../errors/domain.errors";
 import { ArtistInfo } from "../valueObjects/artistInfo";
 
 export class Track {
@@ -55,9 +56,9 @@ export class Track {
   // 自身がIDを持っているかどうかを判定し、IDを返す
   requireId(): number {
     if (this._id === undefined) {
-      throw new Error(
-        "Track instance does not have an ID (required for persistence)"
-      );
+      const message =
+        "Track instance does not have an ID (required for persistence)";
+      throw new InvalidDomainDataError(message);
     }
     return this._id;
   }
