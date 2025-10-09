@@ -36,9 +36,6 @@ export class GetRecommendationUseCase {
     const sourceArtist =
       this._recommendationDomainService.pickSourceArtist(followings);
 
-    // <<<<<<<<<<< TODO: ここから下をコードリーディング　と　リファクタリング >>>>>>>>>>>>>
-    // ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
-
     // 選ばれたアーティストから いいね楽曲　をランダムに　10曲選び、取得
     const tracks =
       await this._recommendationApplicationService.fetchAndPickLikedTracks(

@@ -8,7 +8,7 @@ export class StandAloneSourceArtist implements SourceArtist {
     return false;
   }
 
-  getFetchTargets(): ArtistInfo[] {
+  getComponentArtists(): ArtistInfo[] {
     return [this._artist]; // ArtistInfo[] に変換
   }
 }

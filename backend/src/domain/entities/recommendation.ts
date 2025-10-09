@@ -25,7 +25,7 @@ export class Recommendation {
   }
 
   // レコメンドIDを付与して、IDが付与されたトラックに差し替え
-  withPersistenceInfo(
+  asPersisted(
     id: number,
     tracksWithId: Track[],
     createdAt: string

@@ -11,15 +11,15 @@ export class RecommendationApplicationService {
     sourceArtist: SourceArtist,
     limit: number // レコメンドとして返す曲数
   ): Promise<Track[]> {
-    // アーティスト1人あたりの最大取得ページ数
-    // - 通常アーティスト: 最大6ページ（最大300曲）
-    // - 仮想アーティスト: 1ページのみ（最大50曲 × 最大5人 = 250曲程度）
+    // 構成アーティスト1人あたりの最大取得ページ数
+    // - 通常ソースアーティスト: 最大6ページ（最大300曲）
+    // - 仮想ソースアーティスト: 1ページのみ（最大50曲 × 最大5人 = 250曲程度）
     const maxPageCount = sourceArtist.isVirtual() ? 1 : 6;
 
-    const fetchTargets = sourceArtist.getFetchTargets(); // regularArtist, virtualArtist のどちらでも同様の処理が可能になる
+    const componentArtists = sourceArtist.getComponentArtists(); // standAloneSourceArtist, virtualSourceArtist のどちらでも同様の処理が可能になる
 
-    const fetchResults = await Promise.all(
-      fetchTargets.map((artist) =>
+    const fetchedTracks = await Promise.all(
+      componentArtists.map((artist) =>
         this._trackApiRepository.fetchLikedTracks(
           accessToken,
           artist.externalUserId,
@@ -29,10 +29,10 @@ export class RecommendationApplicationService {
     );
 
     // Track[][] から Track[] に変換
-    const allTracks = fetchResults.flat();
+    const allFetchedTracks = fetchedTracks.flat();
 
     // 指定された数だけランダムに選択
-    return this.pickRandomN(allTracks, limit);
+    return this.pickRandomN(allFetchedTracks, limit);
   }
 
   // 配列から指定された数の要素をランダムに返す関数
