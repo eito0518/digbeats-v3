@@ -19,14 +19,6 @@ export class ArtistController {
     const artists = await this._searchArtistsUseCase.run(sessionId, artistName);
 
     // レスポンス
-    res
-      .cookie("sessionId", sessionId, {
-        httpOnly: true,
-        secure: true,
-        domain: ".digbeats.jp",
-        sameSite: "lax",
-      })
-      .status(200)
-      .json(ArtistPresenter.toDTOList(artists));
+    res.status(200).json(ArtistPresenter.toDTOList(artists));
   };
 }

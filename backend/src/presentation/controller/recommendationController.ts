@@ -2,7 +2,6 @@ import { GetRecommendationUseCase } from "../../application/usecase/getRecommend
 import { GetTodayRecommendationsUseCase } from "../../application/usecase/getTodayRecommendationsUseCase";
 import { GetHistoriesUseCase } from "../../application/usecase/getHistoriesUseCase";
 import { Request, Response } from "express";
-import { validateSessionId } from "../utils/validation";
 import { RecommendationPresenter } from "../presenter/recommendationPresenter";
 
 export class RecommendationController {
@@ -17,22 +16,11 @@ export class RecommendationController {
     // リクエスト
     const sessionId = req.cookies.sessionId;
 
-    // バリデーション
-    validateSessionId(sessionId);
-
     // ユースケース
     const recommendation = await this._getRecommendationUseCase.run(sessionId);
 
     // レスポンス
-    res
-      .cookie("sessionId", sessionId, {
-        httpOnly: true,
-        secure: true,
-        domain: ".digbeats.jp",
-        sameSite: "lax",
-      })
-      .status(200)
-      .json(RecommendationPresenter.toDTO(recommendation));
+    res.status(200).json(RecommendationPresenter.toDTO(recommendation));
   };
 
   // 「今日のレコメンド」 を取得する
@@ -43,9 +31,6 @@ export class RecommendationController {
     // リクエスト
     const sessionId = req.cookies.sessionId;
 
-    // バリデーション
-    validateSessionId(sessionId);
-
     // ユースケース
     const todayRecommendations = await this._getTodayRecommendationsUseCase.run(
       sessionId
@@ -53,12 +38,6 @@ export class RecommendationController {
 
     // レスポンス
     res
-      .cookie("sessionId", sessionId, {
-        httpOnly: true,
-        secure: true,
-        domain: ".digbeats.jp",
-        sameSite: "lax",
-      })
       .status(200)
       .json(RecommendationPresenter.toDTOList(todayRecommendations));
   };
@@ -68,21 +47,10 @@ export class RecommendationController {
     // リクエスト
     const sessionId = req.cookies.sessionId;
 
-    // バリデーション
-    validateSessionId(sessionId);
-
     // ユースケース
     const histories = await this._getHistoriesUseCase.run(sessionId);
 
     // レスポンス
-    res
-      .cookie("sessionId", sessionId, {
-        httpOnly: true,
-        secure: true,
-        domain: ".digbeats.jp",
-        sameSite: "lax",
-      })
-      .status(200)
-      .json(RecommendationPresenter.toDTOList(histories));
+    res.status(200).json(RecommendationPresenter.toDTOList(histories));
   };
 }

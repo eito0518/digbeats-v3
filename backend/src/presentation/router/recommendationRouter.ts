@@ -1,8 +1,12 @@
 import { Router } from "express";
 import { asyncHandler } from "../../middleware/asyncHandler";
 import { recommendationController } from "../di/recommendationController.di";
+import { sessionHandler } from "../../middleware/sessionHandler";
 
 export const recommendationRouter = Router();
+
+// ミドルウェア
+recommendationRouter.use(sessionHandler);
 
 // レコメンドを取得するエンドポイント
 recommendationRouter.get(

@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { asyncHandler } from "../../middleware/asyncHandler";
 import { authController } from "../di/authController.di";
+import { sessionHandler } from "../../middleware/sessionHandler";
 
 export const authRouter = Router();
 
@@ -8,4 +9,9 @@ export const authRouter = Router();
 authRouter.post("/authorize", asyncHandler(authController.authorizeUser));
 
 // ユーザーがログイン中か判定するエンドポイント
-authRouter.get("/session", asyncHandler(authController.checkSession));
+// ミドルウェア(sessionHandler)を適応
+authRouter.get(
+  "/session",
+  sessionHandler,
+  asyncHandler(authController.checkSession)
+);

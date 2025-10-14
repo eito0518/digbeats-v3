@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { AuthorizeUserUseCase } from "../../application/usecase/authorizeUserUseCase";
 import { CheckSessionUseCase } from "../../application/usecase/checkSessionUseCase";
-import { validateAuthParams, validateSessionId } from "../utils/validation";
+import { validateAuthParams } from "../utils/validation";
 
 export class AuthController {
   constructor(
@@ -39,21 +39,10 @@ export class AuthController {
     // リクエスト
     const sessionId = req.cookies.sessionId;
 
-    // バリデーション
-    validateSessionId(sessionId);
-
     // ユースケース
     await this._checkSessionUseCase.run(sessionId);
 
     // レスポンス
-    res
-      .cookie("sessionId", sessionId, {
-        httpOnly: true,
-        secure: true,
-        domain: ".digbeats.jp",
-        sameSite: "lax",
-      })
-      .status(200)
-      .json({ message: "OK" });
+    res.status(200).json({ message: "OK" });
   };
 }
