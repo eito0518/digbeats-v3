@@ -1,8 +1,12 @@
 import { Router } from "express";
 import { asyncHandler } from "../../middleware/asyncHandler";
 import { userController } from "../di/userController.di";
+import { sessionHandler } from "../../middleware/sessionHandler";
 
 export const userRouter = Router();
+
+// ミドルウェア
+userRouter.use(sessionHandler);
 
 // 自分のユーザー情報を取得するエンドポイント
 userRouter.get("/", asyncHandler(userController.fetchMyUserInfo));

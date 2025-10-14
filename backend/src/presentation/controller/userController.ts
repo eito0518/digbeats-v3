@@ -6,7 +6,6 @@ import { UnfollowArtistUseCase } from "../../application/usecase/unfollowArtistU
 import { LikeTrackUseCase } from "../../application/usecase/likeTrackUseCase";
 import { UnlikeTrackUseCase } from "../../application/usecase/unlikeTrackUseCase";
 import {
-  validateSessionId,
   validateSoundCloudArtistId,
   validateLikeParams,
 } from "../utils/validation";
@@ -28,22 +27,11 @@ export class UserController {
     // リクエスト
     const sessionId = req.cookies.sessionId;
 
-    // バリデーション
-    validateSessionId(sessionId);
-
     // ユースケース
     const user = await this._fetchMyUserInfoUseCase.run(sessionId);
 
     // レスポンス
-    res
-      .cookie("sessionId", sessionId, {
-        httpOnly: true,
-        secure: true,
-        domain: ".digbeats.jp",
-        sameSite: "lax",
-      })
-      .status(200)
-      .json(UserPresenter.toDTO(user));
+    res.status(200).json(UserPresenter.toDTO(user));
   };
 
   // フォロー中のアーティストを取得する
@@ -51,22 +39,11 @@ export class UserController {
     // リクエスト
     const sessionId = req.cookies.sessionId;
 
-    // バリデーション
-    validateSessionId(sessionId);
-
     // ユースケース
     const followings = await this._fetchMyFollowingsUseCase.run(sessionId);
 
     // レスポンス
-    res
-      .cookie("sessionId", sessionId, {
-        httpOnly: true,
-        secure: true,
-        domain: ".digbeats.jp",
-        sameSite: "lax",
-      })
-      .status(200)
-      .json(ArtistPresenter.toDTOList(followings));
+    res.status(200).json(ArtistPresenter.toDTOList(followings));
   };
 
   // アーティストをフォローする
@@ -76,8 +53,6 @@ export class UserController {
     const soundcloudArtistIdRaw = req.body.soundcloudArtistId;
 
     // バリデーション
-    validateSessionId(sessionId);
-
     const soundcloudArtistId = validateSoundCloudArtistId(
       soundcloudArtistIdRaw
     );
@@ -86,15 +61,7 @@ export class UserController {
     await this._followArtistUseCase.run(sessionId, soundcloudArtistId);
 
     // レスポンス
-    res
-      .cookie("sessionId", sessionId, {
-        httpOnly: true,
-        secure: true,
-        domain: ".digbeats.jp",
-        sameSite: "lax",
-      })
-      .status(200)
-      .json({ message: "Followed artist successfully" });
+    res.status(200).json({ message: "Followed artist successfully" });
   };
 
   // アーティストをフォロー解除する
@@ -104,8 +71,6 @@ export class UserController {
     const soundcloudArtistIdRaw = req.body.soundcloudArtistId;
 
     // バリデーション
-    validateSessionId(sessionId);
-
     const soundcloudArtistId = validateSoundCloudArtistId(
       soundcloudArtistIdRaw
     );
@@ -114,27 +79,16 @@ export class UserController {
     await this._unfollowArtistUseCase.run(sessionId, soundcloudArtistId);
 
     // レスポンス
-    res
-      .cookie("sessionId", sessionId, {
-        httpOnly: true,
-        secure: true,
-        domain: ".digbeats.jp",
-        sameSite: "lax",
-      })
-      .status(200)
-      .json({ message: "unfollowed artist successfully" });
+    res.status(200).json({ message: "unfollowed artist successfully" });
   };
 
   // 楽曲のいいねを登録する
   likeTrack = async (req: Request, res: Response): Promise<void> => {
     // リクエスト
     const sessionId = req.cookies.sessionId;
-
     const { recommendationId, trackId } = req.body;
 
     // バリデーション
-    validateSessionId(sessionId);
-
     const validatedLikeParams = validateLikeParams(recommendationId, trackId);
 
     // ユースケース
@@ -145,27 +99,16 @@ export class UserController {
     );
 
     // レスポンス
-    res
-      .cookie("sessionId", sessionId, {
-        httpOnly: true,
-        secure: true,
-        domain: ".digbeats.jp",
-        sameSite: "lax",
-      })
-      .status(200)
-      .json({ message: "liked track successfully" });
+    res.status(200).json({ message: "liked track successfully" });
   };
 
   // 楽曲のいいねを解除する
   unlikeTrack = async (req: Request, res: Response): Promise<void> => {
     // リクエスト
     const sessionId = req.cookies.sessionId;
-
     const { recommendationId, trackId } = req.body;
 
     // バリデーション
-    validateSessionId(sessionId);
-
     const validatedLikeParams = validateLikeParams(recommendationId, trackId);
 
     // ユースケース
@@ -176,14 +119,6 @@ export class UserController {
     );
 
     // レスポンス
-    res
-      .cookie("sessionId", sessionId, {
-        httpOnly: true,
-        secure: true,
-        domain: ".digbeats.jp",
-        sameSite: "lax",
-      })
-      .status(200)
-      .json({ message: "unliked track successfully" });
+    res.status(200).json({ message: "unliked track successfully" });
   };
 }
