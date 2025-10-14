@@ -244,8 +244,6 @@ DigBeats は SoundCloud アカウントがあればすぐに始められます�
 
 <br>
 
-「リクエストで受け取った変数をバリデーションする」関数
-
 - [validation.test.ts](backend/src/presentation/utils/validation.test.ts)：不正なリクエストデータがビジネスロジックに渡らないことを保証する、バリデーション関数のテスト
 
 <br>
