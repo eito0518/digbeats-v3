@@ -5,7 +5,7 @@ import { config } from "../../config/config";
 
 const sslCertPath = path.join(
   __dirname, // 本番環境で実行中のファイルのディレクトリパス (/.../backend/dist/infrastructure/db))
-  "../../../config/cert.prod/DigiCertGlobalRootCA.crt.pem" // そこからの相対パス
+  "../../../config/cert.prod/DigiCertGlobalRootG2.crt.pem" // そこからの相対パス
 );
 
 export const MysqlClient = mysql.createPool({
