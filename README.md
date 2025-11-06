@@ -16,6 +16,8 @@
 
 サービス URL： https://www.digbeats.jp
 
+デモ動画 URL： https://youtu.be/S2ZjkgXOHXM
+
 ※ 外部サービス [SoundCloud](https://soundcloud.com) のアカウント登録が必要です
 
 ![ランディングページ画像](docs/assets/landing-page.png)
